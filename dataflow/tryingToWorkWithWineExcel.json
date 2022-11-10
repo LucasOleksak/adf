@@ -14,7 +14,7 @@
 			],
 			"sinks": [
 				{
-					"name": "sink1"
+					"name": "sink22"
 				}
 			],
 			"transformations": [],
@@ -175,7 +175,7 @@
 				"     store: 'cache',",
 				"     format: 'inline',",
 				"     output: false,",
-				"     saveOrder: 1) ~> sink1"
+				"     saveOrder: 1) ~> sink22"
 			]
 		}
 	}
