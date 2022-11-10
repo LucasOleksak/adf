@@ -107,6 +107,9 @@
 				},
 				{
 					"name": "SelectColumns"
+				},
+				{
+					"name": "sort1"
 				}
 			],
 			"scriptLines": [
@@ -190,6 +193,8 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+				"AggByPageAndDay sort(desc(date, true),",
+				"     desc(visits, true)) ~> sort1",
 				"SortByNumber sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['agg_visits_by_page_name.csv'],",
@@ -199,14 +204,16 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> sink1",
-				"AggByPageAndDay sink(allowSchemaDrift: true,",
+				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['visits_by_page_and_date.csv'],",
+				"     truncate: true,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     quoteAll: true,",
 				"     header: (['page','date','visits']),",
 				"     partitionBy('hash', 1)) ~> toCSV",
 				"JoinWithEmails sink(allowSchemaDrift: true,",
