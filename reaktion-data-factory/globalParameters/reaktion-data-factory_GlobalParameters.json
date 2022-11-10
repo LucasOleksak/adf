@@ -1,0 +1,6 @@
+{
+	"redirectDaysWindow": {
+		"type": "int",
+		"value": -14
+	}
+}

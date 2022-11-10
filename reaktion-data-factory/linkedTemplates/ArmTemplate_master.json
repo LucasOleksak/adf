@@ -1,0 +1,208 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "reaktion-data-factory"
+		},
+		"BCF_Julkorten_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'BCF_Julkorten'"
+		},
+		"DataLake_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'DataLake'"
+		},
+		"HRNyttDatabase_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HRNyttDatabase'"
+		},
+		"HRNytt_Stage_Azure_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HRNytt_Stage_Azure'"
+		},
+		"MongoDB_Tracking_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'MongoDB_Tracking'"
+		},
+		"ReaktionCore_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ReaktionCore'"
+		},
+		"ReaktionCore_Heroku_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ReaktionCore_Heroku'"
+		},
+		"Storage_DataFactory_Reaktion_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Storage_DataFactory_Reaktion'"
+		},
+		"Unregister_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Unregister'"
+		},
+		"charmaJSON_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'charmaJSON'"
+		},
+		"DataLake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datalakereaktion.dfs.core.windows.net/"
+		},
+		"MongoDB_Tracking_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "tracking-prod"
+		},
+		"charmaJSON_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datalakereaktion.dfs.core.windows.net/"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_startDate": {
+			"type": "string",
+			"defaultValue": "2022-11-09"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_domain_id": {
+			"type": "string",
+			"defaultValue": "107"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_project_name": {
+			"type": "string",
+			"defaultValue": "charma"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_dest_path": {
+			"type": "string",
+			"defaultValue": "charma/stats"
+		},
+		"TriggerBCF_properties_BCF_stats_parameters_startDate": {
+			"type": "string",
+			"defaultValue": "2022-10-25"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "reaktion-data-factory_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"BCF_Julkorten_connectionString": {
+						"value": "[parameters('BCF_Julkorten_connectionString')]"
+					},
+					"DataLake_accountKey": {
+						"value": "[parameters('DataLake_accountKey')]"
+					},
+					"HRNyttDatabase_connectionString": {
+						"value": "[parameters('HRNyttDatabase_connectionString')]"
+					},
+					"HRNytt_Stage_Azure_connectionString": {
+						"value": "[parameters('HRNytt_Stage_Azure_connectionString')]"
+					},
+					"MongoDB_Tracking_connectionString": {
+						"value": "[parameters('MongoDB_Tracking_connectionString')]"
+					},
+					"ReaktionCore_connectionString": {
+						"value": "[parameters('ReaktionCore_connectionString')]"
+					},
+					"ReaktionCore_Heroku_connectionString": {
+						"value": "[parameters('ReaktionCore_Heroku_connectionString')]"
+					},
+					"Storage_DataFactory_Reaktion_connectionString": {
+						"value": "[parameters('Storage_DataFactory_Reaktion_connectionString')]"
+					},
+					"Unregister_connectionString": {
+						"value": "[parameters('Unregister_connectionString')]"
+					},
+					"charmaJSON_accountKey": {
+						"value": "[parameters('charmaJSON_accountKey')]"
+					},
+					"DataLake_properties_typeProperties_url": {
+						"value": "[parameters('DataLake_properties_typeProperties_url')]"
+					},
+					"MongoDB_Tracking_properties_typeProperties_database": {
+						"value": "[parameters('MongoDB_Tracking_properties_typeProperties_database')]"
+					},
+					"charmaJSON_properties_typeProperties_url": {
+						"value": "[parameters('charmaJSON_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "reaktion-data-factory_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "reaktion-data-factory_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_startDate": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Campaign_9_october_parameters_startDate')]"
+					},
+					"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_domain_id": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Campaign_9_october_parameters_domain_id')]"
+					},
+					"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_project_name": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Campaign_9_october_parameters_project_name')]"
+					},
+					"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_dest_path": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Campaign_9_october_parameters_dest_path')]"
+					},
+					"TriggerBCF_properties_BCF_stats_parameters_startDate": {
+						"value": "[parameters('TriggerBCF_properties_BCF_stats_parameters_startDate')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory_ArmTemplate_1')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,63 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "reaktion-data-factory"
+		},
+		"BCF_Julkorten_connectionString": {
+			"value": ""
+		},
+		"DataLake_accountKey": {
+			"value": ""
+		},
+		"HRNyttDatabase_connectionString": {
+			"value": ""
+		},
+		"HRNytt_Stage_Azure_connectionString": {
+			"value": ""
+		},
+		"MongoDB_Tracking_connectionString": {
+			"value": ""
+		},
+		"ReaktionCore_connectionString": {
+			"value": ""
+		},
+		"ReaktionCore_Heroku_connectionString": {
+			"value": ""
+		},
+		"Storage_DataFactory_Reaktion_connectionString": {
+			"value": ""
+		},
+		"Unregister_connectionString": {
+			"value": ""
+		},
+		"charmaJSON_accountKey": {
+			"value": ""
+		},
+		"DataLake_properties_typeProperties_url": {
+			"value": "https://datalakereaktion.dfs.core.windows.net/"
+		},
+		"MongoDB_Tracking_properties_typeProperties_database": {
+			"value": "tracking-prod"
+		},
+		"charmaJSON_properties_typeProperties_url": {
+			"value": "https://datalakereaktion.dfs.core.windows.net/"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_startDate": {
+			"value": "2022-11-09"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_domain_id": {
+			"value": "107"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_project_name": {
+			"value": "charma"
+		},
+		"CharmaCampaign_9_October_properties_Campaign_9_october_parameters_dest_path": {
+			"value": "charma/stats"
+		},
+		"TriggerBCF_properties_BCF_stats_parameters_startDate": {
+			"value": "2022-10-25"
+		}
+	}
+}
