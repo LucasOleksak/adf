@@ -207,6 +207,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     header: (['page','date','visits']),",
 				"     partitionBy('hash', 1)) ~> toCSV",
 				"JoinWithEmails sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
