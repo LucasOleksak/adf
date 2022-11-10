@@ -1,0 +1,24 @@
+{
+	"name": "TriggerAggRedirects",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "aggRedirects",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-10-26T01:02:00",
+				"timeZone": "W. Europe Standard Time"
+			}
+		}
+	}
+}

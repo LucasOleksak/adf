@@ -1,0 +1,181 @@
+{
+	"name": "Campaign_9_october",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyDataFromCharma",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbMongoDbApiSource",
+						"batchSize": 100,
+						"filter": {
+							"value": "{ \n    domain_id: @{pipeline().parameters.domain_id}\n    createdAt : { $gte : ISODate('@{pipeline().parameters.startDate}') }\n}",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": "charma.csv"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['tags'][0]"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 1
+								}
+							},
+							{
+								"source": {
+									"path": "$['categories'][0]"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 2
+								}
+							},
+							{
+								"source": {
+									"path": "$['createdAt']['$date']"
+								},
+								"sink": {
+									"type": "Int64",
+									"ordinal": 3
+								}
+							},
+							{
+								"source": {
+									"path": "$['updatedAt']['$date']"
+								},
+								"sink": {
+									"type": "Int64",
+									"ordinal": 4
+								}
+							},
+							{
+								"source": {
+									"path": "$['uid']"
+								},
+								"sink": {
+									"type": "Int32",
+									"ordinal": 5
+								}
+							},
+							{
+								"source": {
+									"path": "$['url']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 6
+								}
+							},
+							{
+								"source": {
+									"path": "$['domain_id']"
+								},
+								"sink": {
+									"type": "Int16",
+									"ordinal": 7
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Mongo_Tracking_Trackings",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_Charma_Source",
+						"type": "DatasetReference",
+						"parameters": {
+							"project_folder": "charma/sources",
+							"source_file": "charma.csv"
+						}
+					}
+				]
+			},
+			{
+				"name": "Charma",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "CopyDataFromCharma",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Charma",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"startDate": {
+				"type": "string",
+				"defaultValue": "2022-10-09"
+			},
+			"domain_id": {
+				"type": "string",
+				"defaultValue": "107"
+			},
+			"project_name": {
+				"type": "string",
+				"defaultValue": "charma"
+			},
+			"dest_path": {
+				"type": "string",
+				"defaultValue": "charma/stats"
+			}
+		},
+		"folder": {
+			"name": "EDR/Charma"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-09T15:33:50Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

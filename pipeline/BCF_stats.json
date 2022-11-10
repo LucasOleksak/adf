@@ -1,0 +1,175 @@
+{
+	"name": "BCF_stats",
+	"properties": {
+		"activities": [
+			{
+				"name": "CP_SimpleTracking_For_BCF",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbMongoDbApiSource",
+						"batchSize": 100,
+						"filter": {
+							"value": "{ domain : \"barncancerfonden.se\" ,\ncreatedAt: { $gte : ISODate(\"@{pipeline().parameters.startDate}\") } }",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['uuid']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 1
+								}
+							},
+							{
+								"source": {
+									"path": "$['uid']"
+								},
+								"sink": {
+									"type": "Int32",
+									"ordinal": 2
+								}
+							},
+							{
+								"source": {
+									"path": "$['url']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 3
+								}
+							},
+							{
+								"source": {
+									"path": "$['referrer_url']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 4
+								}
+							},
+							{
+								"source": {
+									"path": "$['page_title']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 5
+								}
+							},
+							{
+								"source": {
+									"path": "$['domain']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 6
+								}
+							},
+							{
+								"source": {
+									"path": "$['createdAt']['$date']"
+								},
+								"sink": {
+									"type": "Int64",
+									"ordinal": 7
+								}
+							},
+							{
+								"source": {
+									"path": "$['updatedAt']['$date']"
+								},
+								"sink": {
+									"type": "Int64",
+									"ordinal": 8
+								}
+							}
+						],
+						"collectionReference": ""
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Mongo_TrackingSimpleTracking",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_BCF_uid",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "DF_BCF_Pixel",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "CP_SimpleTracking_For_BCF",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_BCF_uid",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"startDate": {
+				"type": "string",
+				"defaultValue": "2022-10-25"
+			}
+		},
+		"folder": {
+			"name": "BCF"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-27T13:27:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,193 @@
+{
+	"name": "AggRedirects",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DatasetRedirects",
+						"type": "DatasetReference"
+					},
+					"name": "RedirectsLast7Days"
+				},
+				{
+					"dataset": {
+						"referenceName": "CSV_ReaktionHeroku_Emails",
+						"type": "DatasetReference"
+					},
+					"name": "ReaktionHerokuEmails"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "saveToDataLakeRedirectsFromLast7Days"
+				},
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "saveRedirectAggByName"
+				},
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "RedirectsWithEmail"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CreateDateColumnFromTimestamp"
+				},
+				{
+					"name": "AggByDateAndRedirectName"
+				},
+				{
+					"name": "SortByDays"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "sortByName"
+				},
+				{
+					"name": "aggregate2"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          tag as integer,",
+				"          category as string,",
+				"          uid as integer,",
+				"          uuid as string,",
+				"          ip as string,",
+				"          domain_id as string,",
+				"          url_without_params as string,",
+				"          url as string,",
+				"          redirect_id as short,",
+				"          referrer_url as string,",
+				"          created as long,",
+				"          updated as long,",
+				"          redirect_name as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RedirectsLast7Days",
+				"source(output(",
+				"          id as integer,",
+				"          email as string,",
+				"          unregister as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> ReaktionHerokuEmails",
+				"aggregate2 derive(day = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm')) ~> CreateDateColumnFromTimestamp",
+				"CreateDateColumnFromTimestamp aggregate(groupBy(day,",
+				"          redirect_name),",
+				"     visits = count(redirect_name)) ~> AggByDateAndRedirectName",
+				"AggByDateAndRedirectName sort(asc(day, true),",
+				"     partitionBy('hash', 1)) ~> SortByDays",
+				"CreateDateColumnFromTimestamp aggregate(groupBy(redirect_name),",
+				"     visits = count(redirect_name)) ~> aggregate1",
+				"aggregate1 sort(asc(redirect_name, true),",
+				"     partitionBy('hash', 1)) ~> sortByName",
+				"filter1 aggregate(groupBy(uid,",
+				"          redirect_name),",
+				"     created = max(created),",
+				"     partitionBy('hash', 1)) ~> aggregate2",
+				"RedirectsLast7Days filter(!isNull(uid)) ~> filter1",
+				"aggregate2 derive(day = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm'),",
+				"     partitionBy('hash', 1)) ~> derivedColumn1",
+				"derivedColumn1, ReaktionHerokuEmails join(uid == id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> join1",
+				"select1 sort(asc(redirect_name, true),",
+				"     partitionBy('hash', 1)) ~> sort1",
+				"join1 select(mapColumn(",
+				"          uid,",
+				"          redirect_name,",
+				"          day,",
+				"          email,",
+				"          unregister",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"SortByDays sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'tracking',",
+				"     folderPath: 'redirects/computed',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['redirectsLast7days.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> saveToDataLakeRedirectsFromLast7Days",
+				"sortByName sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'tracking',",
+				"     folderPath: 'redirects/computed',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['redirectAggByName.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> saveRedirectAggByName",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'tracking',",
+				"     folderPath: 'redirects/computed',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['redirectsWithEmails.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> RedirectsWithEmail"
+			]
+		}
+	}
+}

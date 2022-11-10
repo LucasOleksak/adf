@@ -1,0 +1,16 @@
+{
+	"name": "HRNytt_Registations",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "HRNyttDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "HRNytt"
+		},
+		"annotations": [],
+		"type": "AzurePostgreSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

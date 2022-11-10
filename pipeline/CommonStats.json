@@ -1,0 +1,55 @@
+{
+	"name": "CommonStats",
+	"properties": {
+		"activities": [
+			{
+				"name": "HRNytt_Banners",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "HRNytt_Banners",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"monthAgo": {
+				"type": "int",
+				"defaultValue": -30
+			},
+			"yearAgo": {
+				"type": "int",
+				"defaultValue": -365
+			},
+			"monthsAgo_3": {
+				"type": "string",
+				"defaultValue": "-90"
+			},
+			"monthsAgo_6": {
+				"type": "string",
+				"defaultValue": "-180"
+			}
+		},
+		"folder": {
+			"name": "HRNytt"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-08T15:00:44Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

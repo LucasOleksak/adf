@@ -1,0 +1,57 @@
+{
+	"name": "HRNytt_Stage_Banners_Clicks",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "HRNytt_Stage_Azure",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "HRNytt/Sources"
+		},
+		"annotations": [],
+		"type": "AzurePostgreSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "integer",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "url",
+				"type": "character varying",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "full_url",
+				"type": "character varying",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "date",
+				"type": "date",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "created",
+				"type": "timestamp with time zone",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "banner_id",
+				"type": "integer",
+				"precision": 0,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "public",
+			"table": "banner_bannerclicks"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
