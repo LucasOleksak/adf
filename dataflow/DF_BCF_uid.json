@@ -25,7 +25,7 @@
 						"referenceName": "CSV_BCF_agg_visits_by_page_title",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "aggVisitsByPageTitle"
 				},
 				{
 					"dataset": {
@@ -203,7 +203,11 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1",
+				"     mapColumn(",
+				"          page = page_title,",
+				"          visits",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> aggVisitsByPageTitle",
 				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['visits_by_page_and_date.csv'],",
