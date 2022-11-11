@@ -115,8 +115,8 @@
 						"referenceName": "CSV_Charma_Source",
 						"type": "DatasetReference",
 						"parameters": {
-							"project_folder": "charma/sources",
-							"source_file": "charma.csv"
+							"project_folder": "mind/sources",
+							"source_file": "mind.csv"
 						}
 					}
 				]
@@ -164,7 +164,7 @@
 			},
 			"project_name": {
 				"type": "string",
-				"defaultValue": "midn"
+				"defaultValue": "mind"
 			},
 			"dest_path": {
 				"type": "string",
