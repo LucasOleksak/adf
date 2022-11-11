@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "CopyDataFromCharma",
+				"name": "CopyDataFromMind",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -112,7 +112,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CSV_Charma_Source",
+						"referenceName": "EDR_CSV_Source",
 						"type": "DatasetReference",
 						"parameters": {
 							"project_folder": "mind/sources",
@@ -126,7 +126,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "CopyDataFromCharma",
+						"activity": "CopyDataFromMind",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -142,12 +142,12 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Charma",
+						"referenceName": "EDR_BasicFlow",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"getDataFromCSVSource": {
 								"project_folder": "mind",
-								"source_file": "mind.csv"
+								"source_file": "sources/mind.csv"
 							},
 							"saveToRedirectsCSV": {
 								"dest_path": "mind/stats"
@@ -181,7 +181,7 @@
 			}
 		},
 		"folder": {
-			"name": "EDR/Charma"
+			"name": "EDR"
 		},
 		"annotations": [],
 		"lastPublishTime": "2022-11-09T15:33:50Z"

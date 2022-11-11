@@ -1,5 +1,5 @@
 {
-	"name": "Charma",
+	"name": "EDR_BasicFlow",
 	"properties": {
 		"folder": {
 			"name": "EDR"
@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CSV_Charma_Source",
+						"referenceName": "EDR_CSV_Source",
 						"type": "DatasetReference"
 					},
 					"name": "getDataFromCSVSource"
@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "CSV_ClickedUrls",
+						"referenceName": "EDR_CSV_Clicks",
 						"type": "DatasetReference"
 					},
 					"name": "saveToRedirectsCSV"

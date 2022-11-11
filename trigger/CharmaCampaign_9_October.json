@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "Campaign_9_october",
+					"referenceName": "Charma",
 					"type": "PipelineReference"
 				},
 				"parameters": {

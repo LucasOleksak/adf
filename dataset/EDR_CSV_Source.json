@@ -1,5 +1,5 @@
 {
-	"name": "CSV_Charma_Source",
+	"name": "EDR_CSV_Source",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "DataLake",

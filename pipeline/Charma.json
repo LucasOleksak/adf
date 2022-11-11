@@ -1,5 +1,5 @@
 {
-	"name": "Campaign_9_october",
+	"name": "Charma",
 	"properties": {
 		"activities": [
 			{
@@ -112,7 +112,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CSV_Charma_Source",
+						"referenceName": "EDR_CSV_Source",
 						"type": "DatasetReference",
 						"parameters": {
 							"project_folder": "charma/sources",
@@ -142,7 +142,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Charma",
+						"referenceName": "EDR_BasicFlow",
 						"type": "DataFlowReference"
 					},
 					"compute": {
@@ -172,7 +172,7 @@
 			}
 		},
 		"folder": {
-			"name": "EDR/Charma"
+			"name": "EDR"
 		},
 		"annotations": [],
 		"lastPublishTime": "2022-11-09T15:33:50Z"
