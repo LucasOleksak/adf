@@ -156,7 +156,7 @@
 		"parameters": {
 			"startDate": {
 				"type": "string",
-				"defaultValue": "2022-10-09"
+				"defaultValue": "2022-11-09"
 			},
 			"domain_id": {
 				"type": "string",
