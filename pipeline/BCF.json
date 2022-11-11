@@ -115,8 +115,8 @@
 						"referenceName": "EDR_CSV_Source",
 						"type": "DatasetReference",
 						"parameters": {
-							"project_folder": "mind/sources",
-							"source_file": "mind.csv"
+							"project_folder": "bcf/sources",
+							"source_file": "bcf.csv"
 						}
 					}
 				]
