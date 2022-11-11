@@ -122,7 +122,7 @@
 				]
 			},
 			{
-				"name": "Mind",
+				"name": "BCF",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -146,11 +146,11 @@
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"getDataFromCSVSource": {
-								"project_folder": "mind",
-								"source_file": "sources/mind.csv"
+								"project_folder": "bcf",
+								"source_file": "sources/bcf.csv"
 							},
 							"saveToRedirectsCSV": {
-								"dest_path": "mind/stats"
+								"dest_path": "bcf/stats"
 							}
 						}
 					},
