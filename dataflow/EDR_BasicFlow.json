@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "EDR_CSV_Clicks",
+						"referenceName": "EDR_CSV_Redirects",
 						"type": "DatasetReference"
 					},
 					"name": "saveToRedirectsCSV"
@@ -58,6 +58,10 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
+				"     mapColumn(",
+				"          tag,",
+				"          visits",
+				"     ),",
 				"     partitionBy('hash', 1)) ~> saveToRedirectsCSV"
 			]
 		}

@@ -1,5 +1,5 @@
 {
-	"name": "EDR_CSV_Clicks",
+	"name": "EDR_CSV_Redirects",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "DataLake",
