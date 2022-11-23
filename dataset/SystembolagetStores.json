@@ -1,0 +1,48 @@
+{
+	"name": "SystembolagetStores",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Wines"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "stores.csv",
+				"folderPath": "stores",
+				"fileSystem": "wines"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ID",
+				"type": "String"
+			},
+			{
+				"name": "Butiksnamn",
+				"type": "String"
+			},
+			{
+				"name": "Adress",
+				"type": "String"
+			},
+			{
+				"name": "Postnummer",
+				"type": "String"
+			},
+			{
+				"name": "Ort",
+				"type": "String"
+			}
+		]
+	}
+}
