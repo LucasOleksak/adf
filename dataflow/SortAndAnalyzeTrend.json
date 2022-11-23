@@ -37,7 +37,7 @@
 				"     format: 'delimited',",
 				"     fileSystem: 'wines',",
 				"     folderPath: 'trends',",
-				"     fileName: 'segment-share-dudet.csv',",
+				"     fileName: 'dudet.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
