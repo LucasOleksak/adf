@@ -60,7 +60,13 @@
 							"typeProperties": {
 								"dataflow": {
 									"referenceName": "SortAndAnalyzeTrend",
-									"type": "DataFlowReference"
+									"type": "DataFlowReference",
+									"parameters": {
+										"item": {
+											"value": "'@{item()}'",
+											"type": "Expression"
+										}
+									}
 								},
 								"compute": {
 									"coreCount": 8,
