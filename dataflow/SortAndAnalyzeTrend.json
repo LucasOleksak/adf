@@ -12,23 +12,47 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source1"
+					"name": "Dudet"
+				},
+				{
+					"dataset": {
+						"referenceName": "SystembolagetStores",
+						"type": "DatasetReference"
+					},
+					"name": "SystembolagetStores"
 				}
 			],
 			"sinks": [
 				{
-					"name": "sink1"
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SaveToCSV"
 				}
 			],
 			"transformations": [
 				{
-					"name": "sort1"
+					"name": "SortTrends"
+				},
+				{
+					"name": "JoinStoresWithSortedTrends"
+				},
+				{
+					"name": "RemoveSomeField"
+				},
+				{
+					"name": "SortFromWorseTrendToBest"
+				},
+				{
+					"name": "OnlyNegativeTrends"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          {_col0_} as string,",
-				"          {_col1_} as double",
+				"          ID as integer,",
+				"          Wine as string,",
+				"          Trend as double",
 				"     ),",
 				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
@@ -41,16 +65,56 @@
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: false) ~> source1",
-				"source1 sort(desc({_col1_}, true),",
-				"     partitionBy('hash', 1)) ~> sort1",
-				"sort1 sink(validateSchema: false,",
+				"     columnNamesAsHeader: true,",
+				"     partitionBy('hash', 1)) ~> Dudet",
+				"source(output(",
+				"          ID as integer,",
+				"          Butiksnamn as string,",
+				"          Adress as string,",
+				"          Postnummer as string,",
+				"          Ort as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SystembolagetStores",
+				"Dudet sort(asc(Trend, true),",
+				"     partitionBy('hash', 1)) ~> SortTrends",
+				"SortTrends, SystembolagetStores join(Dudet@ID == SystembolagetStores@ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> JoinStoresWithSortedTrends",
+				"JoinStoresWithSortedTrends select(mapColumn(",
+				"          StoreID = Dudet@ID,",
+				"          Wine,",
+				"          Trend,",
+				"          Butiksnamn,",
+				"          Adress,",
+				"          Postnummer,",
+				"          Ort",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RemoveSomeField",
+				"RemoveSomeField sort(asc(Trend, true)) ~> SortFromWorseTrendToBest",
+				"SortFromWorseTrendToBest filter(Trend < 0,",
+				"     partitionBy('hash', 1)) ~> OnlyNegativeTrends",
+				"OnlyNegativeTrends sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'wines',",
+				"     folderPath: 'reports',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['dudet.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     store: 'cache',",
-				"     format: 'inline',",
-				"     output: false,",
-				"     saveOrder: 1) ~> sink1"
+				"     partitionBy('hash', 1)) ~> SaveToCSV"
 			]
 		}
 	}
