@@ -84,7 +84,8 @@
 				"type": "Array",
 				"defaultValue": [
 					"dudet",
-					"bv"
+					"bv",
+					"morgon"
 				]
 			}
 		},
