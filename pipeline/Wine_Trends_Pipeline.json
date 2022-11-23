@@ -18,46 +18,27 @@
 					"functionName": "calculateTendency",
 					"method": "POST",
 					"body": {
-						"wine_name": "Segment share DUDET.xlsx"
+						"value": "{\"wine_name\" : \"{@pipeline().parameters.source_file}\" }",
+						"type": "Expression"
 					}
 				},
 				"linkedServiceName": {
 					"referenceName": "AF_WineSalesTendency",
 					"type": "LinkedServiceReference"
 				}
-			},
-			{
-				"name": "SortAndAnalyzeTrend",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "AF_CalculateTrend",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "SortAndAnalyzeTrend",
-						"type": "DataFlowReference"
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
 			}
 		],
+		"parameters": {
+			"source_file": {
+				"type": "string",
+				"defaultValue": "Segment share DUDET.xlsx"
+			}
+		},
+		"variables": {
+			"source_file": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "Wines"
 		},
