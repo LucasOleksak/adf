@@ -50,7 +50,8 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     item as string",
+				"     item as string,",
+				"     workspace as string",
 				"}",
 				"source(output(",
 				"          ID as integer,",
@@ -62,7 +63,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
-				"     fileSystem: 'wines',",
+				"     fileSystem: ($workspace),",
 				"     folderPath: 'trends',",
 				"     fileName: (concat($item, \".csv\")),",
 				"     columnDelimiter: ',',",

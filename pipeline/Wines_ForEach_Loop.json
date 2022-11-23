@@ -5,11 +5,18 @@
 			{
 				"name": "LoopOverExcelFiles",
 				"type": "ForEach",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "SetWorkspaceName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@variables('files')",
+						"value": "@variables('file_items')",
 						"type": "Expression"
 					},
 					"activities": [
@@ -29,7 +36,7 @@
 								"functionName": "calculateTendency",
 								"method": "POST",
 								"body": {
-									"value": "{ \"wine_name\" : \"@{item()}\" }",
+									"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
 									"type": "Expression"
 								}
 							},
@@ -65,6 +72,10 @@
 										"item": {
 											"value": "'@{item()}'",
 											"type": "Expression"
+										},
+										"workspace": {
+											"value": "'@{variables('workspace')}'",
+											"type": "Expression"
 										}
 									}
 								},
@@ -77,6 +88,37 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "SetWorkspaceName",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetFileNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "workspace",
+					"value": "wines"
+				}
+			},
+			{
+				"name": "SetFileNames",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "file_items",
+					"value": [
+						"morgon",
+						"dudet",
+						"bv"
+					]
+				}
 			}
 		],
 		"variables": {
@@ -87,6 +129,12 @@
 					"dudet",
 					"bv"
 				]
+			},
+			"workspace": {
+				"type": "String"
+			},
+			"file_items": {
+				"type": "Array"
 			}
 		},
 		"folder": {
