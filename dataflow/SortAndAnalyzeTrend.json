@@ -8,9 +8,9 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "Dudet",
-						"type": "DatasetReference"
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
 					},
 					"name": "source1"
 				}
@@ -20,32 +20,31 @@
 					"name": "sink1"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "sort1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
-				"          Region as string,",
-				"          Municipial as string,",
-				"          Store as string,",
-				"          Profile as string,",
-				"          {Store group} as string,",
-				"          Column_6 as double,",
-				"          Column_7 as double,",
-				"          Column_8 as double,",
-				"          Column_9 as double,",
-				"          Column_10 as double,",
-				"          Column_11 as double,",
-				"          Column_12 as double,",
-				"          Column_13 as double,",
-				"          Column_14 as double,",
-				"          Column_15 as double,",
-				"          Column_16 as double,",
-				"          Column_17 as double,",
-				"          Column_18 as double",
+				"          {_col0_} as string,",
+				"          {_col1_} as double",
 				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 sink(validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'wines',",
+				"     folderPath: 'trends',",
+				"     fileName: 'segment-share-dudet.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false) ~> source1",
+				"source1 sort(desc({_col1_}, true),",
+				"     partitionBy('hash', 1)) ~> sort1",
+				"sort1 sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     store: 'cache',",
