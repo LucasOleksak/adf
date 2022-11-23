@@ -83,8 +83,8 @@
 			"files": {
 				"type": "Array",
 				"defaultValue": [
-					"dudet.xlsx",
-					"bv.xlsx"
+					"dudet",
+					"bv"
 				]
 			}
 		},
