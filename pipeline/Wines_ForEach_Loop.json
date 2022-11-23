@@ -1,0 +1,90 @@
+{
+	"name": "Wines_ForEach_Loop",
+	"properties": {
+		"activities": [
+			{
+				"name": "LoopOverExcelFiles",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('files')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "FindTendency",
+							"type": "AzureFunctionActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"functionName": "calculateTendency",
+								"method": "POST",
+								"body": {
+									"value": "{ \"wine_name\" : \"@{item()}\" }",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AF_WineSalesTendency",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "DataFlow",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "FindTendency",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "SortAndAnalyzeTrend",
+									"type": "DataFlowReference"
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"files": {
+				"type": "Array",
+				"defaultValue": [
+					"dudet.xlsx",
+					"bv.xlsx"
+				]
+			}
+		},
+		"folder": {
+			"name": "Wines"
+		},
+		"annotations": []
+	}
+}
