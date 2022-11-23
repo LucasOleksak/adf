@@ -1,0 +1,66 @@
+{
+	"name": "Wine_Trends_Pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Azure Function1",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "calculateTendency",
+					"method": "POST",
+					"body": {
+						"wine_name": "Segment share DUDET.xlsx"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AF_WineSalesTendency",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SortAndAnalyzeTrend",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Azure Function1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "SortAndAnalyzeTrend",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "Wines"
+		},
+		"annotations": []
+	}
+}

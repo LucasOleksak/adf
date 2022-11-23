@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "SortAndAnalyzeTrend",
 	"properties": {
 		"folder": {
 			"name": "Wines"
@@ -15,7 +15,11 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
@@ -24,7 +28,7 @@
 				"          Store as string,",
 				"          Profile as string,",
 				"          {Store group} as string,",
-				"          Column_6 as double '#########.###%',",
+				"          Column_6 as double,",
 				"          Column_7 as double,",
 				"          Column_8 as double,",
 				"          Column_9 as double,",
@@ -40,7 +44,14 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 sink(validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1) ~> sink1"
 			]
 		}
 	}
