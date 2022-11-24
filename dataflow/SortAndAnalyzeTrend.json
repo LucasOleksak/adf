@@ -120,7 +120,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:[(concat($item, \".csv\"))],",
+				"     partitionFileNames:[(concat($item,\"-\",toString(currentDate('YY-mm-dd')), \".csv\"))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
