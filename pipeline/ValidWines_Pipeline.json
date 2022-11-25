@@ -1,0 +1,146 @@
+{
+	"name": "ValidWines_Pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "LoopOverExcelFiles",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "SetWorkspaceName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('file_items')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "FindTendency",
+							"type": "AzureFunctionActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"functionName": "calculateTendency",
+								"method": "POST",
+								"body": {
+									"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AF_WineSalesTendency",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "DataFlow",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "FindTendency",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "SortAndAnalyzeTrend",
+									"type": "DataFlowReference",
+									"parameters": {
+										"item": {
+											"value": "'@{item()}'",
+											"type": "Expression"
+										},
+										"workspace": {
+											"value": "'@{variables('workspace')}'",
+											"type": "Expression"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "SetWorkspaceName",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetFileNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "workspace",
+					"value": "validwines"
+				}
+			},
+			{
+				"name": "SetFileNames",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "file_items",
+					"value": [
+						"Morgon",
+						"Dudet",
+						"BV",
+						"Dopff"
+					]
+				}
+			}
+		],
+		"variables": {
+			"files": {
+				"type": "Array",
+				"defaultValue": [
+					"morgon",
+					"dudet",
+					"bv"
+				]
+			},
+			"workspace": {
+				"type": "String"
+			},
+			"file_items": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "Wines"
+		},
+		"annotations": []
+	}
+}

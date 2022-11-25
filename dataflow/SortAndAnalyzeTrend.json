@@ -114,7 +114,7 @@
 				"OnlyNegativeTrends sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
-				"     fileSystem: 'wines',",
+				"     fileSystem: '$workspace',",
 				"     folderPath: (concat(\"reports/\", $item)),",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
