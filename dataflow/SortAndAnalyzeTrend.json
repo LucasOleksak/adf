@@ -29,13 +29,6 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "SaveToCSV"
-				},
-				{
-					"dataset": {
-						"referenceName": "ValidWinePostgres",
-						"type": "DatasetReference"
-					},
-					"name": "saveToPostgres"
 				}
 			],
 			"transformations": [
@@ -142,34 +135,8 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 1,",
-				"     partitionBy('hash', 1)) ~> SaveToCSV",
-				"CalculateFactorAndSetCurrentDate sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          id as long,",
-				"          wine_name as string,",
-				"          date as date,",
-				"          tendency as double,",
-				"          monthly_change as double,",
-				"          big_factor as double,",
-				"          store_id as long",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     mapColumn(",
-				"          wine_name = Wine,",
-				"          date = today,",
-				"          tendency = Trend,",
-				"          monthly_change = Diff_4_weeks,",
-				"          big_factor = factor,",
-				"          store_id = ID",
-				"     )) ~> saveToPostgres"
+				"     saveOrder: 0,",
+				"     partitionBy('hash', 1)) ~> SaveToCSV"
 			]
 		}
 	}
