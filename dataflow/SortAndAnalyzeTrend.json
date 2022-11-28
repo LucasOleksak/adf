@@ -127,7 +127,7 @@
 				"     skipDuplicateMapOutputs: true) ~> RemoveSomeField",
 				"RemoveSomeField sort(asc(Diff_4_weeks, true),",
 				"     partitionBy('hash', 1)) ~> SortFromWorseTrendToBest",
-				"SortFromWorseTrendToBest derive(TrendFactor = ERROR_FUNCTION('(toFloat(Diff_4_weeks)*toFloat(Trend)'),",
+				"SortFromWorseTrendToBest derive(TrendFactor = toFloat(Diff_4_weeks)*toFloat(Trend),",
 				"     partitionBy('hash', 1)) ~> derivedColumn1",
 				"derivedColumn1 sort(desc(TrendFactor, true),",
 				"     partitionBy('hash', 1)) ~> sort1",
