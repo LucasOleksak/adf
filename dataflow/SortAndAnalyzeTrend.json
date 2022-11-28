@@ -29,6 +29,13 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "SaveToCSV"
+				},
+				{
+					"dataset": {
+						"referenceName": "ValidWinePostgres",
+						"type": "DatasetReference"
+					},
+					"name": "saveToPostgres"
 				}
 			],
 			"transformations": [
@@ -134,7 +141,25 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     partitionBy('hash', 1)) ~> SaveToCSV"
+				"     partitionBy('hash', 1)) ~> SaveToCSV",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as long,",
+				"          wine_name as string,",
+				"          date as date,",
+				"          tendency as double,",
+				"          monthly_change as double,",
+				"          big_factor as double,",
+				"          store_id as long",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> saveToPostgres"
 			]
 		}
 	}
