@@ -39,7 +39,7 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink1"
+					"name": "sink13333"
 				}
 			],
 			"transformations": [
@@ -228,7 +228,7 @@
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true,",
+				"     columnNamesAsHeader: false,",
 				"     partitionFileNames:['report1.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
@@ -236,7 +236,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> sink13333"
 			]
 		}
 	}
