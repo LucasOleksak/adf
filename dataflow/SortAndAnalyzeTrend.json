@@ -134,7 +134,22 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Sink"
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          ID,",
+				"          Wine,",
+				"          Trend,",
+				"          Diff_4_weeks,",
+				"          Median,",
+				"          Butiksnamn,",
+				"          Adress,",
+				"          Postnummer,",
+				"          Ort,",
+				"          Lat,",
+				"          Lng,",
+				"          Range",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> Sink"
 			]
 		}
 	}
