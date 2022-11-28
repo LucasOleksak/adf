@@ -28,7 +28,7 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "SaveToCSV"
+					"name": "Sink"
 				}
 			],
 			"transformations": [
@@ -123,20 +123,18 @@
 				"OnlyNegativeTrends sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
-				"     fileSystem: (validwines),",
-				"     folderPath: (reports/Dudet),",
+				"     fileSystem: 'validwines',",
+				"     folderPath: 'reports',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:[(concat($item,\"-\",toString(currentDate('YY-mm-dd')), \".csv\"))],",
+				"     partitionFileNames:['report.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 0,",
-				"     partitionBy('hash', 1)) ~> SaveToCSV"
+				"     skipDuplicateMapOutputs: true) ~> Sink"
 			]
 		}
 	}
