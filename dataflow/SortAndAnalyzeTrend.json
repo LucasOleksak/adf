@@ -159,7 +159,7 @@
 				"     folderPath: 'reports',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
+				"     quoteChar: '',",
 				"     columnNamesAsHeader: true,",
 				"     partitionFileNames:['report.csv'],",
 				"     umask: 0022,",
