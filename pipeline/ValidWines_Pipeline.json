@@ -114,8 +114,7 @@
 				"typeProperties": {
 					"variableName": "file_items",
 					"value": [
-						"Dudet",
-						"BV"
+						"Dudet"
 					]
 				}
 			}
