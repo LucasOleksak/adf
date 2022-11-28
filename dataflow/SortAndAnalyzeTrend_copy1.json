@@ -42,10 +42,13 @@
 					"name": "sort1"
 				},
 				{
-					"name": "select1"
+					"name": "join2"
 				},
 				{
-					"name": "join2"
+					"name": "select2"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -87,7 +90,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SystembolagetStores",
-				"select1 cast(output(",
+				"sort1 cast(output(",
 				"          ID as string,",
 				"          Wine as string,",
 				"          Trend as string,",
@@ -97,18 +100,24 @@
 				"          countFactor as string",
 				"     ),",
 				"     errors: false) ~> cast1",
-				"join2 derive(countFactor = Trend*Diff_4_weeks,",
+				"select2 derive(countFactor = Trend*Diff_4_weeks,",
 				"     partitionBy('hash', 1)) ~> derivedColumn1",
 				"derivedColumn1 sort(asc(countFactor, true),",
 				"     partitionBy('hash', 1)) ~> sort1",
-				"sort1 select(mapColumn(",
+				"TrendCSVFile, SystembolagetStores join(TrendCSVFile@ID == SystembolagetStores@ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> join2",
+				"join2 select(mapColumn(",
 				"          ID = TrendCSVFile@ID,",
 				"          Wine,",
 				"          Trend,",
 				"          Diff_4_weeks,",
 				"          Median,",
 				"          Variance,",
-				"          countFactor,",
+				"          ID = SystembolagetStores@ID,",
 				"          Butiksnamn,",
 				"          Adress,",
 				"          Postnummer,",
@@ -119,14 +128,10 @@
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"TrendCSVFile, SystembolagetStores join(TrendCSVFile@ID == SystembolagetStores@ID,",
-				"     joinType:'inner',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     partitionBy('hash', 1),",
-				"     broadcast: 'auto')~> join2",
-				"cast1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"cast1 aggregate(groupBy(ID),",
+				"     each(match(name != 'ID'), $$ = first($$))) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'validwines',",
@@ -141,22 +146,6 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     mapColumn(",
-				"          ID,",
-				"          Wine,",
-				"          Trend,",
-				"          Diff_4_weeks,",
-				"          Median,",
-				"          Variance,",
-				"          countFactor,",
-				"          Butiksnamn,",
-				"          Adress,",
-				"          Postnummer,",
-				"          Ort,",
-				"          Lat,",
-				"          Lng,",
-				"          Range",
-				"     ),",
 				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
