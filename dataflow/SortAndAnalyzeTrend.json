@@ -28,7 +28,11 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "Sink"
+					"name": "Sink",
+					"rejectedDataLinkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -117,6 +121,20 @@
 				"     partitionBy('hash', 1)) ~> OnlyNegativeTrends",
 				"OnlyNegativeTrends sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          ID as string,",
+				"          Wine as string,",
+				"          Trend as string,",
+				"          Diff_4_weeks as string,",
+				"          Median as string,",
+				"          Butiksnamn as string,",
+				"          Adress as string,",
+				"          Postnummer as string,",
+				"          Ort as string,",
+				"          Lat as string,",
+				"          Lng as string,",
+				"          Range as string",
+				"     ),",
 				"     format: 'delimited',",
 				"     fileSystem: 'validwines',",
 				"     folderPath: 'reports',",
