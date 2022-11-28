@@ -55,7 +55,7 @@
 					"name": "OnlyNegativeTrends"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "CalculateFactorAndSetCurrentDate"
 				}
 			],
 			"scriptLines": [
@@ -125,7 +125,7 @@
 				"SortFromWorseTrendToBest filter(Diff_4_weeks< -5 && Trend < 0,",
 				"     partitionBy('hash', 1)) ~> OnlyNegativeTrends",
 				"OnlyNegativeTrends derive(factor = toFloat(Diff_4_weeks)*toFloat(Trend),",
-				"          today = currentDate(\"YYYY-mm-dd\")) ~> derivedColumn1",
+				"          today = currentDate(\"YYYY-mm-dd\")) ~> CalculateFactorAndSetCurrentDate",
 				"OnlyNegativeTrends sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -143,7 +143,7 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
 				"     partitionBy('hash', 1)) ~> SaveToCSV",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"CalculateFactorAndSetCurrentDate sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          id as long,",
