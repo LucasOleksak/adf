@@ -33,6 +33,13 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"dataset": {
+						"referenceName": "ValidWinePostgres",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
 				}
 			],
 			"transformations": [
@@ -53,6 +60,9 @@
 				},
 				{
 					"name": "sort1"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -125,6 +135,8 @@
 				"     partitionBy('hash', 1)) ~> derivedColumn1",
 				"derivedColumn1 sort(desc(TrendFactor, true),",
 				"     partitionBy('hash', 1)) ~> sort1",
+				"sort1 derive(current_date = currentDate(),",
+				"     partitionBy('hash', 1)) ~> derivedColumn2",
 				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -168,7 +180,35 @@
 				"          Range,",
 				"          factor = TrendFactor",
 				"     ),",
-				"     partitionBy('hash', 1)) ~> Sink"
+				"     partitionBy('hash', 1)) ~> Sink",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as long,",
+				"          wine_name as string,",
+				"          date as date,",
+				"          tendency as double,",
+				"          monthly_change as double,",
+				"          big_factor as double,",
+				"          store_id as long",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          id = ID,",
+				"          wine_name = Wine,",
+				"          date = current_date,",
+				"          tendency = Trend,",
+				"          monthly_change = Diff_4_weeks,",
+				"          big_factor = TrendFactor,",
+				"          store_id = ID",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
