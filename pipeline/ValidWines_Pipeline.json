@@ -126,13 +126,14 @@
 			"files": {
 				"type": "Array",
 				"defaultValue": [
-					"morgon",
-					"dudet",
-					"bv"
+					"Morgon",
+					"Dudet",
+					"BV"
 				]
 			},
 			"workspace": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "validwines"
 			},
 			"file_items": {
 				"type": "Array"
