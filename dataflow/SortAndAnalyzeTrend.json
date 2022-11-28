@@ -63,6 +63,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "surrogateKey1"
 				}
 			],
 			"scriptLines": [
@@ -137,6 +140,9 @@
 				"     partitionBy('hash', 1)) ~> sort1",
 				"sort1 derive(current_date = currentDate(),",
 				"     partitionBy('hash', 1)) ~> derivedColumn2",
+				"derivedColumn2 keyGenerate(output(newID as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
 				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -181,7 +187,7 @@
 				"          factor = TrendFactor",
 				"     ),",
 				"     partitionBy('hash', 1)) ~> Sink",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"surrogateKey1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          id as long,",
@@ -200,7 +206,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     mapColumn(",
-				"          id = ID,",
+				"          id = newID,",
 				"          wine_name = Wine,",
 				"          date = current_date,",
 				"          tendency = Trend,",
