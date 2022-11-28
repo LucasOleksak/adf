@@ -48,14 +48,7 @@
 						{
 							"name": "DataFlow",
 							"type": "ExecuteDataFlow",
-							"dependsOn": [
-								{
-									"activity": "FindTendency",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
+							"dependsOn": [],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -77,6 +70,41 @@
 											"value": "'@{variables('workspace')}'",
 											"type": "Expression"
 										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						},
+						{
+							"name": "SortAndAnalyzeTrend_copy1",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "FindTendency",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "SortAndAnalyzeTrend_copy1",
+									"type": "DataFlowReference",
+									"parameters": {
+										"item": "'Dopff'",
+										"workspace": "'validwines'"
 									}
 								},
 								"compute": {

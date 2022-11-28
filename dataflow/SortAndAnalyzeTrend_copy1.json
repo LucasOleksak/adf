@@ -1,0 +1,106 @@
+{
+	"name": "SortAndAnalyzeTrend_copy1",
+	"properties": {
+		"folder": {
+			"name": "Wines"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "TrendCSVFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "SystembolagetStores",
+						"type": "DatasetReference"
+					},
+					"name": "SystembolagetStores"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     item as string ('Dopff'),",
+				"     workspace as string ('validwines')",
+				"}",
+				"source(output(",
+				"          ID as short,",
+				"          Wine as string,",
+				"          Trend as double '000,000,000.000',",
+				"          Diff_4_weeks as double '000,000,000.000',",
+				"          Median as double '000,000,000.000',",
+				"          Variance as double '000,000,000.000'",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: ($workspace),",
+				"     folderPath: (concat(\"trends/\", $item)),",
+				"     fileName: (concat($item, \"-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\")),",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionBy('hash', 1)) ~> TrendCSVFile",
+				"source(output(",
+				"          ID as short,",
+				"          Butiksnamn as string,",
+				"          Adress as string,",
+				"          Postnummer as string,",
+				"          Ort as string,",
+				"          Lat as double,",
+				"          Lng as double,",
+				"          Range as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SystembolagetStores",
+				"TrendCSVFile cast(output(",
+				"          ID as string,",
+				"          Wine as string,",
+				"          Trend as string,",
+				"          Diff_4_weeks as string,",
+				"          Median as string,",
+				"          Variance as string",
+				"     ),",
+				"     errors: false) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'validwines',",
+				"     folderPath: 'reports',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['test2.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
