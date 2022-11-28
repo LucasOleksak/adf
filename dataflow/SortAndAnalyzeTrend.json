@@ -65,6 +65,9 @@
 				},
 				{
 					"name": "derivedColumn3"
+				},
+				{
+					"name": "cast1"
 				}
 			],
 			"scriptLines": [
@@ -144,6 +147,16 @@
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey1",
 				"TrendCSVFile derive(TrendFactor = toFloat(Trend)*toFloat(Diff_4_weeks)) ~> derivedColumn3",
+				"derivedColumn3 cast(output(",
+				"          ID as string,",
+				"          Wine as string,",
+				"          Trend as string,",
+				"          Diff_4_weeks as string,",
+				"          Median as string,",
+				"          Variance as string,",
+				"          TrendFactor as string",
+				"     ),",
+				"     errors: true) ~> cast1",
 				"sort1 sink(allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     input(",
@@ -186,7 +199,7 @@
 				"          factor = TrendFactor",
 				"     ),",
 				"     partitionBy('hash', 1)) ~> Sink",
-				"derivedColumn3 sink(allowSchemaDrift: false,",
+				"cast1 sink(allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['report1.csv'],",
 				"     skipDuplicateMapInputs: true,",
