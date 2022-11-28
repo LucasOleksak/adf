@@ -34,6 +34,9 @@
 			"transformations": [
 				{
 					"name": "cast1"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -75,15 +78,17 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SystembolagetStores",
-				"TrendCSVFile cast(output(",
+				"derivedColumn1 cast(output(",
 				"          ID as string,",
 				"          Wine as string,",
 				"          Trend as string,",
 				"          Diff_4_weeks as string,",
 				"          Median as string,",
-				"          Variance as string",
+				"          Variance as string,",
+				"          countFactor as string",
 				"     ),",
 				"     errors: false) ~> cast1",
+				"TrendCSVFile derive(countFactor = Trend*Diff_4_weeks) ~> derivedColumn1",
 				"cast1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",

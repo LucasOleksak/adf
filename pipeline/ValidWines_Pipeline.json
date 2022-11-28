@@ -66,17 +66,11 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataflow": {
-									"referenceName": "SortAndAnalyzeTrend",
+									"referenceName": "SortAndAnalyzeTrend_copy1",
 									"type": "DataFlowReference",
 									"parameters": {
-										"item": {
-											"value": "'@{item()}'",
-											"type": "Expression"
-										},
-										"workspace": {
-											"value": "'@{variables('workspace')}'",
-											"type": "Expression"
-										}
+										"item": "'Dopff'",
+										"workspace": "'validwines'"
 									}
 								},
 								"compute": {
