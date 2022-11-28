@@ -47,6 +47,9 @@
 				},
 				{
 					"name": "SortFromWorseTrendToBest"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -114,7 +117,8 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> RemoveSomeField",
 				"RemoveSomeField sort(asc(Diff_4_weeks, true)) ~> SortFromWorseTrendToBest",
-				"SortFromWorseTrendToBest sink(allowSchemaDrift: true,",
+				"SortFromWorseTrendToBest derive(factor = round((toFloat(Diff_4_weeks)*toFloat(Trend)),2)) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ID as string,",
