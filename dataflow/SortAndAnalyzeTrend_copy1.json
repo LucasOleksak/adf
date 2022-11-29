@@ -51,10 +51,10 @@
 					"name": "aggregate1"
 				},
 				{
-					"name": "filter1"
+					"name": "filter2"
 				},
 				{
-					"name": "filter2"
+					"name": "sort2"
 				}
 			],
 			"scriptLines": [
@@ -137,9 +137,9 @@
 				"     skipDuplicateMapOutputs: true) ~> select2",
 				"cast1 aggregate(groupBy(ID),",
 				"     each(match(name != 'ID'), $$ = first($$))) ~> aggregate1",
-				"aggregate1 filter(ERROR_FUNCTION('Diff_4_weeks < 0 and Trend < 0')) ~> filter1",
 				"select2 filter(Trend < 0 && Diff_4_weeks < 0) ~> filter2",
-				"filter1 sink(allowSchemaDrift: true,",
+				"aggregate1 sort(desc(countFactor, true)) ~> sort2",
+				"sort2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: ($workspace),",
