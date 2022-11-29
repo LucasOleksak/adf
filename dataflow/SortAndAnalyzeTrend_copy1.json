@@ -106,7 +106,7 @@
 				"          countFactor as string",
 				"     ),",
 				"     errors: false) ~> cast1",
-				"filter2 derive(countFactor = Trend*Diff_4_weeks,",
+				"filter2 derive(countFactor = round(Trend*Diff_4_weeks,1,2),",
 				"     partitionBy('hash', 1)) ~> derivedColumn1",
 				"derivedColumn1 sort(asc(countFactor, true),",
 				"     partitionBy('hash', 1)) ~> sort1",
