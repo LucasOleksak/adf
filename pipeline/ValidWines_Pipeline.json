@@ -69,8 +69,14 @@
 									"referenceName": "SortAndAnalyzeTrend_copy1",
 									"type": "DataFlowReference",
 									"parameters": {
-										"item": "'Dopff'",
-										"workspace": "'validwines'"
+										"item": {
+											"value": "'@{variables('files')}'",
+											"type": "Expression"
+										},
+										"workspace": {
+											"value": "'@{variables('workspace')}'",
+											"type": "Expression"
+										}
 									}
 								},
 								"compute": {
