@@ -3,11 +3,11 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "LoopOverExcelFiles",
+				"name": "Loop_Over_Excel_Files",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "SetWorkspaceName",
+						"activity": "Set_Workspace_Name",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -90,11 +90,11 @@
 				}
 			},
 			{
-				"name": "SetWorkspaceName",
+				"name": "Set_Workspace_Name",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "SetFileNames",
+						"activity": "Set_File_Names",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -107,7 +107,7 @@
 				}
 			},
 			{
-				"name": "SetFileNames",
+				"name": "Set_File_Names",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"userProperties": [],
