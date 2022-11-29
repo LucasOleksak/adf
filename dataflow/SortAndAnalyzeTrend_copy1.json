@@ -49,6 +49,9 @@
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "sort2"
 				}
 			],
 			"scriptLines": [
@@ -131,10 +134,12 @@
 				"     skipDuplicateMapOutputs: true) ~> select2",
 				"cast1 aggregate(groupBy(ID),",
 				"     each(match(name != 'ID'), $$ = first($$))) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate1 sort(desc(countFactor, true),",
+				"     partitionBy('hash', 1)) ~> sort2",
+				"sort2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
-				"     fileSystem: '$workspace',",
+				"     fileSystem: ($workspace),",
 				"     folderPath: (concat(\"reports/\", $item)),",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
