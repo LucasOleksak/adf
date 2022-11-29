@@ -52,9 +52,6 @@
 				},
 				{
 					"name": "filter2"
-				},
-				{
-					"name": "sort2"
 				}
 			],
 			"scriptLines": [
@@ -106,9 +103,9 @@
 				"          countFactor as string",
 				"     ),",
 				"     errors: false) ~> cast1",
-				"filter2 derive(countFactor = round(Trend*Diff_4_weeks,1,2),",
+				"filter2 derive(countFactor = round(Trend*Diff_4_weeks,2,2),",
 				"     partitionBy('hash', 1)) ~> derivedColumn1",
-				"derivedColumn1 sort(asc(countFactor, true),",
+				"derivedColumn1 sort(desc(countFactor, true),",
 				"     partitionBy('hash', 1)) ~> sort1",
 				"TrendCSVFile, SystembolagetStores join(TrendCSVFile@ID == SystembolagetStores@ID,",
 				"     joinType:'inner',",
@@ -138,8 +135,7 @@
 				"cast1 aggregate(groupBy(ID),",
 				"     each(match(name != 'ID'), $$ = first($$))) ~> aggregate1",
 				"select2 filter(Trend < 0 && Diff_4_weeks < 0) ~> filter2",
-				"aggregate1 sort(desc(countFactor, true)) ~> sort2",
-				"sort2 sink(allowSchemaDrift: true,",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: ($workspace),",
