@@ -28,33 +28,33 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink1"
+					"name": "SaveToCSV"
 				}
 			],
 			"transformations": [
 				{
-					"name": "cast1"
+					"name": "CastEverythingToString"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "CountTrendXDiff"
 				},
 				{
-					"name": "sort1"
+					"name": "SortByCountFactor"
 				},
 				{
-					"name": "join2"
+					"name": "JoinWithSystembolaget"
 				},
 				{
-					"name": "select2"
+					"name": "RemoveDoubleIDs"
 				},
 				{
-					"name": "aggregate1"
+					"name": "RemoveDoubles"
 				},
 				{
-					"name": "filter2"
+					"name": "OnlyNegativeTrendsAndDiff"
 				},
 				{
-					"name": "sort2"
+					"name": "SortByCountDesc"
 				}
 			],
 			"scriptLines": [
@@ -97,7 +97,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> SystembolagetStores",
-				"sort1 cast(output(",
+				"SortByCountFactor cast(output(",
 				"          ID as string,",
 				"          Wine as string,",
 				"          Trend as string,",
@@ -106,18 +106,18 @@
 				"          Variance as string,",
 				"          countFactor as string",
 				"     ),",
-				"     errors: false) ~> cast1",
-				"filter2 derive(countFactor = round(Trend*Diff_4_weeks,2,2),",
-				"     partitionBy('hash', 1)) ~> derivedColumn1",
-				"derivedColumn1 sort(desc(countFactor, true),",
-				"     partitionBy('hash', 1)) ~> sort1",
+				"     errors: false) ~> CastEverythingToString",
+				"OnlyNegativeTrendsAndDiff derive(countFactor = round(Trend*Diff_4_weeks,2,2),",
+				"     partitionBy('hash', 1)) ~> CountTrendXDiff",
+				"CountTrendXDiff sort(desc(countFactor, true),",
+				"     partitionBy('hash', 1)) ~> SortByCountFactor",
 				"TrendCSVFile, SystembolagetStores join(TrendCSVFile@ID == SystembolagetStores@ID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     partitionBy('hash', 1),",
-				"     broadcast: 'auto')~> join2",
-				"join2 select(mapColumn(",
+				"     broadcast: 'auto')~> JoinWithSystembolaget",
+				"JoinWithSystembolaget select(mapColumn(",
 				"          ID = TrendCSVFile@ID,",
 				"          Wine,",
 				"          Trend,",
@@ -135,14 +135,14 @@
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
-				"cast1 aggregate(groupBy(ID),",
-				"     each(match(name != 'ID'), $$ = first($$)),",
-				"     partitionBy('hash', 1)) ~> aggregate1",
-				"select2 filter(Trend < 0 && Diff_4_weeks < 0) ~> filter2",
-				"aggregate1 sort(desc(countFactor, true),",
-				"     partitionBy('hash', 1)) ~> sort2",
-				"sort2 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> RemoveDoubleIDs",
+				"CastEverythingToString aggregate(groupBy(ID),",
+				"     each(match(name!='ID'), $$ = first($$)),",
+				"     partitionBy('hash', 1)) ~> RemoveDoubles",
+				"RemoveDoubleIDs filter(Trend < 0 && Diff_4_weeks < 0) ~> OnlyNegativeTrendsAndDiff",
+				"RemoveDoubles sort(desc(countFactor, true),",
+				"     partitionBy('hash', 1)) ~> SortByCountDesc",
+				"SortByCountDesc sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: ($workspace),",
@@ -157,7 +157,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> SaveToCSV"
 			]
 		}
 	}
