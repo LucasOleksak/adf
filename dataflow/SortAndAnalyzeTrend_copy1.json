@@ -158,6 +158,7 @@
 				"     partitionBy('hash', 1)) ~> SortByCountDesc",
 				"RemoveDoubleIDs aggregate(groupBy(Segment),",
 				"     average = round(avg(Median),2,2),",
+				"          no_of_stores = count(Segment),",
 				"     partitionBy('hash', 1)) ~> AggByAVG",
 				"AggByAVG rank(desc(average, true),",
 				"     output(rank as long),",
