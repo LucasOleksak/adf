@@ -55,6 +55,9 @@
 				},
 				{
 					"name": "SortByCountDesc"
+				},
+				{
+					"name": "AggByAVG"
 				}
 			],
 			"scriptLines": [
@@ -65,10 +68,11 @@
 				"source(output(",
 				"          ID as short,",
 				"          Wine as string,",
-				"          Trend as double '000,000,000.000',",
-				"          Diff_4_weeks as double '000,000,000.000',",
-				"          Median as double '000,000,000.000',",
-				"          Variance as double '000,000,000.000'",
+				"          Trend as double,",
+				"          Diff_4_weeks as double,",
+				"          Median as double,",
+				"          Variance as double,",
+				"          Segment as string",
 				"     ),",
 				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
@@ -124,7 +128,7 @@
 				"          Diff_4_weeks,",
 				"          Median,",
 				"          Variance,",
-				"          ID = SystembolagetStores@ID,",
+				"          Segment,",
 				"          Butiksnamn,",
 				"          Adress,",
 				"          Postnummer,",
@@ -142,6 +146,9 @@
 				"RemoveDoubleIDs filter(Trend < 0 && Diff_4_weeks < 0) ~> OnlyNegativeTrendsAndDiff",
 				"RemoveDoubles sort(desc(countFactor, true),",
 				"     partitionBy('hash', 1)) ~> SortByCountDesc",
+				"RemoveDoubleIDs aggregate(groupBy(Segment),",
+				"     average = round(avg(Median),1,1),",
+				"     partitionBy('hash', 1)) ~> AggByAVG",
 				"SortByCountDesc sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
