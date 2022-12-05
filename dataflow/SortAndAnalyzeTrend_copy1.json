@@ -157,7 +157,7 @@
 				"RemoveDoubles sort(desc(countFactor, true),",
 				"     partitionBy('hash', 1)) ~> SortByCountDesc",
 				"RemoveDoubleIDs aggregate(groupBy(Segment),",
-				"     average = round(avg(Median),1,1),",
+				"     average = round(avg(Median),2,2),",
 				"     partitionBy('hash', 1)) ~> AggByAVG",
 				"AggByAVG rank(desc(average, true),",
 				"     output(rank as long),",
