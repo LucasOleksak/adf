@@ -176,7 +176,7 @@
 					"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 					"method": "POST",
 					"body": {
-						"value": "{  \"ListOfFiles\" : \"@{variables('file_items')}\" }",
+						"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
 						"type": "Expression"
 					}
 				}
