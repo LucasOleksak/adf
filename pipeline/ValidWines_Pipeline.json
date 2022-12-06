@@ -154,7 +154,7 @@
 				}
 			},
 			{
-				"name": "SendInfoWhenPipelineIsDone",
+				"name": "SendInfo_Done",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
@@ -174,6 +174,30 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
+					"method": "POST"
+				}
+			},
+			{
+				"name": "SendInfo_Error",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Loop_Over_Excel_Files",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
 					"method": "POST"
 				}
 			}
