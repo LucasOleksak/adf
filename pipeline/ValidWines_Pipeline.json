@@ -85,6 +85,38 @@
 								},
 								"traceLevel": "Fine"
 							}
+						},
+						{
+							"name": "CalculateSegments",
+							"type": "AzureFunctionActivity",
+							"dependsOn": [
+								{
+									"activity": "DataFlow",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"functionName": "calculateSegments",
+								"method": "POST",
+								"body": {
+									"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AF_WineSalesTendency",
+								"type": "LinkedServiceReference"
+							}
 						}
 					]
 				}
