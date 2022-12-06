@@ -173,7 +173,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://prod-22.norwayeast.logic.azure.com:443/workflows/c705c9309bf1449db6c8a9c7dc7d4741/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2bY4Ae7b2tUzP7jYdCJMhqQ-rBQCb7Ti7bu1x659fXM",
+					"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 					"method": "POST"
 				}
 			}
