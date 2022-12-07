@@ -7,7 +7,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "ForEach1",
+						"activity": "AppendFilesName",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -36,7 +36,7 @@
 								"functionName": "calculateTendency",
 								"method": "POST",
 								"body": {
-									"value": "{ \"wine_name\" : \"@{item().name}\", \"workspace\" : \"@{variables('workspace')}\" }",
+									"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
 									"type": "Expression"
 								}
 							},
@@ -70,7 +70,7 @@
 									"type": "DataFlowReference",
 									"parameters": {
 										"item": {
-											"value": "'@{item().name}'",
+											"value": "'@{item()}'",
 											"type": "Expression"
 										},
 										"workspace": {
@@ -109,7 +109,7 @@
 								"functionName": "calculateSegments",
 								"method": "POST",
 								"body": {
-									"value": "{ \"wine_name\" : \"@{item().name}\", \"workspace\" : \"@{variables('workspace')}\" }",
+									"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
 									"type": "Expression"
 								}
 							},
@@ -174,11 +174,11 @@
 				}
 			},
 			{
-				"name": "GetAllSourceFiles",
+				"name": "GetAllSourceFilesInAttachmentsDir",
 				"type": "GetMetadata",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "SetWorkspaceName",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -210,7 +210,7 @@
 				}
 			},
 			{
-				"name": "Set variable1",
+				"name": "SetWorkspaceName",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"userProperties": [],
@@ -220,11 +220,11 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "AppendFilesName",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "GetAllSourceFiles",
+						"activity": "GetAllSourceFilesInAttachmentsDir",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -233,19 +233,19 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetAllSourceFiles').output.childItems",
+						"value": "@activity('GetAllSourceFilesInAttachmentsDir').output.childItems",
 						"type": "Expression"
 					},
 					"activities": [
 						{
-							"name": "Append variable1",
+							"name": "AppendFilename",
 							"type": "AppendVariable",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "file_items",
 								"value": {
-									"value": "@item()",
+									"value": "@split(item().name, '.')[0]",
 									"type": "Expression"
 								}
 							}
