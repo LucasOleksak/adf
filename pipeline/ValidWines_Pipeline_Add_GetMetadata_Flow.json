@@ -158,6 +158,18 @@
 						"dependencyConditions": [
 							"Failed"
 						]
+					},
+					{
+						"activity": "AppendFilesName",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "GetAllSourceFilesInAttachmentsDir",
+						"dependencyConditions": [
+							"Failed"
+						]
 					}
 				],
 				"policy": {
