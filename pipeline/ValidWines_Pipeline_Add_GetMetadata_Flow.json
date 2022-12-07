@@ -214,6 +214,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -268,16 +269,10 @@
 		],
 		"variables": {
 			"files": {
-				"type": "Array",
-				"defaultValue": [
-					"Morgon",
-					"Dudet",
-					"BV"
-				]
+				"type": "Array"
 			},
 			"workspace": {
-				"type": "String",
-				"defaultValue": "validwines"
+				"type": "String"
 			},
 			"file_items": {
 				"type": "Array"
