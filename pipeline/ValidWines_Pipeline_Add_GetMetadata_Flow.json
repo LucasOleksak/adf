@@ -194,7 +194,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DelimitedText1",
+						"referenceName": "AttachemntsWorkspace",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
