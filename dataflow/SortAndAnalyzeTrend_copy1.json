@@ -19,7 +19,7 @@
 						"referenceName": "SystembolagetStores",
 						"type": "DatasetReference"
 					},
-					"name": "SystembolagetStores"
+					"name": "SystembolagetStore"
 				}
 			],
 			"sinks": [
@@ -110,7 +110,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     partitionBy('hash', 1)) ~> SystembolagetStores",
+				"     partitionBy('hash', 1)) ~> SystembolagetStore",
 				"SortByCountFactor cast(output(",
 				"          ID as string,",
 				"          Wine as string,",
@@ -125,7 +125,7 @@
 				"     partitionBy('hash', 1)) ~> CountTrendXDiff",
 				"CountTrendXDiff sort(desc(countFactor, true),",
 				"     partitionBy('hash', 1)) ~> SortByCountFactor",
-				"TrendCSVFile, SystembolagetStores join(TrendCSVFile@ID == SystembolagetStores@ID,",
+				"TrendCSVFile, SystembolagetStore join(TrendCSVFile@ID == SystembolagetStore@ID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
