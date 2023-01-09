@@ -42,10 +42,13 @@
 					"name": "select1"
 				},
 				{
-					"name": "filter1"
+					"name": "FilterOverBlacklist"
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "RemoveDuplicates"
 				}
 			],
 			"scriptLines": [
@@ -109,7 +112,7 @@
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> RenameColumns",
-				"filter1, ReaktionEmails join(uid == id,",
+				"RemoveDuplicates, ReaktionEmails join(uid == id,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -123,9 +126,12 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"derivedColumn1 filter(!in($ruid, uid),",
-				"     partitionBy('hash', 1)) ~> filter1",
+				"     partitionBy('hash', 1)) ~> FilterOverBlacklist",
 				"RenameColumns derive(click_date = toDate(toLong(toString(date)),'yyyy-MM-dd', 'Europe/Stockholm'),",
 				"          click_time = toDate(toLong(toString(date)),'HH:mm', 'Europe/Stockholm')) ~> derivedColumn1",
+				"FilterOverBlacklist aggregate(groupBy(uid),",
+				"     each(match(name != 'uid'), $$ = first($$)),",
+				"     partitionBy('hash', 1)) ~> RemoveDuplicates",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
