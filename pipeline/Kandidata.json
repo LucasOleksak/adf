@@ -3,219 +3,153 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "copy_kandidata-banner-jan-23",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "CosmosDbMongoDbApiSource",
-						"batchSize": 100,
-						"filter": "{ redirect_id: 913, redirect_name: \"kandidata-banner-jan-23\" }"
-					},
-					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".csv"
-						}
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "$['uid']"
-								},
-								"sink": {
-									"type": "Int32",
-									"ordinal": 1
-								}
-							},
-							{
-								"source": {
-									"path": "$['uuid']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 2
-								}
-							},
-							{
-								"source": {
-									"path": "$['url_without_params']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 3
-								}
-							},
-							{
-								"source": {
-									"path": "$['redirect_id']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 4
-								}
-							},
-							{
-								"source": {
-									"path": "$['redirect_name']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 5
-								}
-							},
-							{
-								"source": {
-									"path": "$['createdAt']['$date']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 6
-								}
-							}
-						]
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "Mongo_TrackingRedirects",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "CSV_kandidata_banner_jan_23",
-						"type": "DatasetReference"
-					}
-				]
-			},
-			{
-				"name": "copy_kandidata-banner-jan-23_copy1",
-				"type": "Copy",
+				"name": "ForEach1",
+				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "copy_kandidata-banner-jan-23",
+						"activity": "Set variable1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					}
 				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "CosmosDbMongoDbApiSource",
-						"batchSize": 100,
-						"filter": "{ redirect_id: 904, redirect_name: \"HRN0073WW-kandidata-banner-dec-22\" }"
+					"items": {
+						"value": "@variables('redirect_ids')",
+						"type": "Expression"
 					},
-					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".csv"
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "CosmosDbMongoDbApiSource",
+									"batchSize": 100,
+									"filter": {
+										"value": "{ \"redirect_name\" : \"@{item()}\" } ",
+										"type": "Expression"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"path": "$['uid']"
+											},
+											"sink": {
+												"type": "Int64",
+												"ordinal": 1
+											}
+										},
+										{
+											"source": {
+												"path": "$['uuid']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 2
+											}
+										},
+										{
+											"source": {
+												"path": "$['url_without_params']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 3
+											}
+										},
+										{
+											"source": {
+												"path": "$['redirect_id']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 4
+											}
+										},
+										{
+											"source": {
+												"path": "$['redirect_name']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 5
+											}
+										},
+										{
+											"source": {
+												"path": "$['createdAt']['$date']"
+											},
+											"sink": {
+												"type": "Int64",
+												"ordinal": 6
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Mongo_TrackingRedirects",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Kandidata",
+									"type": "DatasetReference"
+								}
+							]
 						}
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "$['uid']"
-								},
-								"sink": {
-									"type": "Int32",
-									"ordinal": 1
-								}
-							},
-							{
-								"source": {
-									"path": "$['uuid']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 2
-								}
-							},
-							{
-								"source": {
-									"path": "$['url_without_params']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 3
-								}
-							},
-							{
-								"source": {
-									"path": "$['redirect_id']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 4
-								}
-							},
-							{
-								"source": {
-									"path": "$['redirect_name']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 5
-								}
-							},
-							{
-								"source": {
-									"path": "$['createdAt']['$date']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 6
-								}
-							}
-						]
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "Mongo_TrackingRedirects",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "CSV_kandidata_banner_jan_23",
-						"type": "DatasetReference"
-					}
-				]
+					]
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "redirect_ids",
+					"value": [
+						"kandidata-banner-jan-23"
+					]
+				}
 			}
 		],
+		"variables": {
+			"kandidata_campaigns": {
+				"type": "Array"
+			},
+			"redirect_ids": {
+				"type": "Array"
+			}
+		},
 		"folder": {
 			"name": "HRNytt"
 		},
