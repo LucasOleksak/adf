@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "kandidata_banner_jan_23.csv",
 				"folderPath": "stats/kandidata",
 				"fileSystem": "hrnytt"
 			},
