@@ -48,7 +48,7 @@
 			"scriptLines": [
 				"parameters{",
 				"     redirect_name as string ('HRN0073WW-kandidata-banner-dec-22'),",
-				"     ruid as integer[] ([50884, 1038400])",
+				"     ruid as integer[] ([ 50844 ])",
 				"}",
 				"source(output(",
 				"          {_col0_} as integer,",
