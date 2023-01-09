@@ -12,7 +12,7 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source1"
+					"name": "DataFromTracking"
 				},
 				{
 					"dataset": {
@@ -28,7 +28,7 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink1"
+					"name": "SaveToCSV"
 				}
 			],
 			"transformations": [
@@ -37,6 +37,9 @@
 				},
 				{
 					"name": "JoinWithReaktionEmailsDB"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -62,7 +65,7 @@
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: false) ~> source1",
+				"     columnNamesAsHeader: false) ~> DataFromTracking",
 				"source(output(",
 				"          id as integer,",
 				"          reaktion_uid as string,",
@@ -88,7 +91,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> ReaktionEmails",
-				"source1 select(mapColumn(",
+				"DataFromTracking select(mapColumn(",
 				"          uid = {_col0_},",
 				"          uuid = {_col1_},",
 				"          url = {_col2_},",
@@ -104,7 +107,15 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> JoinWithReaktionEmailsDB",
-				"JoinWithReaktionEmailsDB sink(allowSchemaDrift: true,",
+				"JoinWithReaktionEmailsDB select(mapColumn(",
+				"          url,",
+				"          redirect_name,",
+				"          date,",
+				"          email",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'hrnytt',",
@@ -120,7 +131,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> SaveToCSV"
 			]
 		}
 	}
