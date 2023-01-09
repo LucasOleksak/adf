@@ -39,7 +39,7 @@
 					"name": "JoinWithReaktionEmailsDB"
 				},
 				{
-					"name": "select1"
+					"name": "SelectOnlyEmail"
 				},
 				{
 					"name": "FilterOverBlacklist"
@@ -124,7 +124,7 @@
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
+				"     skipDuplicateMapOutputs: true) ~> SelectOnlyEmail",
 				"derivedColumn1 filter(!in($ruid, uid),",
 				"     partitionBy('hash', 1)) ~> FilterOverBlacklist",
 				"RenameColumns derive(click_date = toDate(toLong(toString(date)),'yyyy-MM-dd', 'Europe/Stockholm'),",
@@ -132,7 +132,7 @@
 				"FilterOverBlacklist aggregate(groupBy(uid),",
 				"     each(match(name != 'uid'), $$ = first($$)),",
 				"     partitionBy('hash', 1)) ~> RemoveDuplicates",
-				"select1 sink(allowSchemaDrift: true,",
+				"SelectOnlyEmail sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'hrnytt',",
