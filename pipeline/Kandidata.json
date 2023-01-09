@@ -7,7 +7,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Kandidata_Redirects_Names",
+						"activity": "Set_Kandidata_Redirect_Names",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -31,7 +31,6 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": [],
 							"typeProperties": {
 								"source": {
 									"type": "CosmosDbMongoDbApiSource",
@@ -153,18 +152,15 @@
 										"redirect_name": {
 											"value": "'@{item()}'",
 											"type": "Expression"
+										},
+										"ruid": {
+											"value": "@variables('ruid')",
+											"type": "Expression"
 										}
 									},
 									"datasetParameters": {
-										"source1": {
+										"DataFromTracking": {
 											"redirect_name": "@item()"
-										}
-									},
-									"linkedServiceParameters": {
-										"source1": {
-											"schemaLinkedService": {
-												"redirect_name": "@item()"
-											}
 										}
 									}
 								},
@@ -179,18 +175,42 @@
 				}
 			},
 			{
-				"name": "Kandidata_Redirects_Names",
+				"name": "Set_Kandidata_Redirect_Names",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "redirect_ids",
+					"variableName": "ruid",
 					"value": [
-						"kandidata-banner-jan-23",
-						"HRN0073WW-kandidata-banner-dec-22",
-						"HRN0174A-kandidata-edr-2",
-						"HRN0174A-kandidata-edr-1",
-						"kandidata-artikel-dec-22"
+						287962,
+						77602,
+						77233,
+						278328,
+						4,
+						1,
+						315594,
+						315769,
+						278594,
+						77229,
+						77212,
+						287409,
+						287410,
+						287411,
+						287412,
+						287408,
+						287479,
+						287457,
+						287463,
+						287464,
+						287474,
+						287477,
+						287478,
+						287481,
+						287482,
+						287483,
+						298466,
+						422164,
+						1038400
 					]
 				}
 			}
@@ -200,6 +220,9 @@
 				"type": "Array"
 			},
 			"redirect_ids": {
+				"type": "Array"
+			},
+			"ruid": {
 				"type": "Array"
 			}
 		},
