@@ -43,6 +43,9 @@
 				},
 				{
 					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -115,13 +118,14 @@
 				"JoinWithReaktionEmailsDB select(mapColumn(",
 				"          email,",
 				"          url,",
-				"          date",
+				"          date = click_date",
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"RenameColumns filter(!in($ruid, uid),",
+				"derivedColumn1 filter(!in($ruid, uid),",
 				"     partitionBy('hash', 1)) ~> filter1",
+				"RenameColumns derive(click_date = toDate(toLong(toString(date)),'yyyy-MM-dd', 'Europe/Stockholm')) ~> derivedColumn1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
