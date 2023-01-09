@@ -158,11 +158,6 @@
 											"value": "@variables('ruid')",
 											"type": "Expression"
 										}
-									},
-									"datasetParameters": {
-										"DataFromTracking": {
-											"redirect_name": "@item()"
-										}
 									}
 								},
 								"compute": {
