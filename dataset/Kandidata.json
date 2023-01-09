@@ -5,11 +5,21 @@
 			"referenceName": "DataLake",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"redirect_name": {
+				"type": "string",
+				"defaultValue": "@item()"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().redirect_name, '.csv')",
+					"type": "Expression"
+				},
 				"folderPath": "stats/kandidata",
 				"fileSystem": "hrnytt"
 			},
