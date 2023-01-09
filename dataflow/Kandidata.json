@@ -40,11 +40,15 @@
 				},
 				{
 					"name": "select1"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
 				"parameters{",
-				"     redirect_name as string ('HRN0073WW-kandidata-banner-dec-22')",
+				"     redirect_name as string ('HRN0073WW-kandidata-banner-dec-22'),",
+				"     ruid as integer[] ([50884, 1038400])",
 				"}",
 				"source(output(",
 				"          {_col0_} as integer,",
@@ -102,18 +106,22 @@
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> RenameColumns",
-				"RenameColumns, ReaktionEmails join(uid == id,",
+				"filter1, ReaktionEmails join(uid == id,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
 				"     broadcast: 'auto')~> JoinWithReaktionEmailsDB",
 				"JoinWithReaktionEmailsDB select(mapColumn(",
 				"          email,",
 				"          url,",
 				"          date",
 				"     ),",
+				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
+				"RenameColumns filter(!in($ruid, uid),",
+				"     partitionBy('hash', 1)) ~> filter1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
