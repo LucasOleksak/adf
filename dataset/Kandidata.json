@@ -10,10 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "concat(@item(),\".csv\")",
-					"type": "Expression"
-				},
 				"folderPath": "stats/kandidata",
 				"fileSystem": "hrnytt"
 			},
