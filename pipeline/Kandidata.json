@@ -149,6 +149,12 @@
 								"dataflow": {
 									"referenceName": "Kandidata",
 									"type": "DataFlowReference",
+									"parameters": {
+										"redirect_name": {
+											"value": "'@{item()}'",
+											"type": "Expression"
+										}
+									},
 									"datasetParameters": {
 										"source1": {
 											"redirect_name": "@item()"
