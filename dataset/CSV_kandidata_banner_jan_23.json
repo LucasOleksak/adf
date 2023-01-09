@@ -1,0 +1,22 @@
+{
+	"name": "CSV_kandidata_banner_jan_23",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "stats/kandidata",
+				"fileSystem": "hrnytt"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
