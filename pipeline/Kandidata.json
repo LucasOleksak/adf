@@ -7,7 +7,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Set_Kandidata_Redirect_Names",
+						"activity": "Set_Blacklist_Of_UIDs",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -31,6 +31,7 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
+							"userProperties": [],
 							"typeProperties": {
 								"source": {
 									"type": "CosmosDbMongoDbApiSource",
@@ -180,45 +181,37 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"variableName": "redirect_ids",
+					"value": [
+						"kandidata-banner-jan-23",
+						"HRN0073WW-kandidata-banner-dec-22",
+						"HRN0174A-kandidata-edr-2",
+						"HRN0174A-kandidata-edr-1",
+						"kandidata-artikel-dec-22"
+					]
+				}
+			},
+			{
+				"name": "Set_Blacklist_Of_UIDs",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set_Kandidata_Redirect_Names",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
 					"variableName": "ruid",
 					"value": [
-						287962,
-						77602,
-						77233,
-						278328,
-						4,
-						1,
-						315594,
-						315769,
-						278594,
-						77229,
-						77212,
-						287409,
-						287410,
-						287411,
-						287412,
-						287408,
-						287479,
-						287457,
-						287463,
-						287464,
-						287474,
-						287477,
-						287478,
-						287481,
-						287482,
-						287483,
-						298466,
-						422164,
-						1038400
+						50884
 					]
 				}
 			}
 		],
 		"variables": {
-			"kandidata_campaigns": {
-				"type": "Array"
-			},
 			"redirect_ids": {
 				"type": "Array"
 			},
