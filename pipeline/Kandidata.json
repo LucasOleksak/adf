@@ -122,7 +122,10 @@
 							"outputs": [
 								{
 									"referenceName": "Kandidata",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"redirect_name": "@item()"
+									}
 								}
 							]
 						},
@@ -214,7 +217,7 @@
 							"typeProperties": {
 								"variableName": "fileName",
 								"value": {
-									"value": "@concat(item(), '2023-01-10', '.csv')",
+									"value": "@concat(item(), '-',utcNow('yyyy-MM-dd'), '.csv')",
 									"type": "Expression"
 								}
 							}
@@ -335,6 +338,9 @@
 				"type": "String"
 			},
 			"fileName": {
+				"type": "String"
+			},
+			"currentDate": {
 				"type": "String"
 			}
 		},
