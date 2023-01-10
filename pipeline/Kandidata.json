@@ -240,11 +240,7 @@
 				"typeProperties": {
 					"variableName": "redirect_ids",
 					"value": [
-						"kandidata-banner-jan-23",
-						"HRN0073WW-kandidata-banner-dec-22",
-						"HRN0174A-kandidata-edr-2",
-						"HRN0174A-kandidata-edr-1",
-						"kandidata-artikel-dec-22"
+						"kandidata-banner-jan-23"
 					]
 				}
 			},
