@@ -141,7 +141,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:[(concat($redirect_name, '-joined', '.csv'))],",
+				"     partitionFileNames:[(concat($redirect_name, '-', toString(currentDate('YYYY-mm-dd')), '.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
