@@ -25,7 +25,7 @@
 			"sinks": [
 				{
 					"linkedService": {
-						"referenceName": "DataLake",
+						"referenceName": "EDRPlatform",
 						"type": "LinkedServiceReference"
 					},
 					"name": "SaveToCSV"
@@ -130,13 +130,13 @@
 				"RenameColumns derive(click_date = toDate(toLong(toString(date)),'yyyy-MM-dd', 'Europe/Stockholm'),",
 				"          click_time = toDate(toLong(toString(date)),'HH:mm', 'Europe/Stockholm')) ~> derivedColumn1",
 				"FilterOverBlacklist aggregate(groupBy(uid),",
-				"     each(match(name != 'uid'), $$ = first($$)),",
+				"     each(match(name!='uid'), $$ = first($$)),",
 				"     partitionBy('hash', 1)) ~> RemoveDuplicates",
 				"SelectOnlyEmail sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
-				"     fileSystem: 'hrnytt',",
-				"     folderPath: 'stats/kandidata/joined',",
+				"     fileSystem: 'edrplatform',",
+				"     folderPath: 'kandidata/stats',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
