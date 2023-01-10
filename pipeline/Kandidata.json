@@ -166,6 +166,58 @@
 								},
 								"traceLevel": "Fine"
 							}
+						},
+						{
+							"name": "AddStatsToAzureTable",
+							"type": "AzureFunctionActivity",
+							"dependsOn": [
+								{
+									"activity": "fileName",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"functionName": "create_stats",
+								"method": "POST",
+								"body": {
+									"value": "{ \"fileName\" : \"@{variables('fileName')}\", \"partitionKey\" : \"@{variables('campaign_uid')}\", \"customerName\" : \"kandidata\"  }",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AF_AddToEDRStats",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "fileName",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "ProcessRedirects",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "fileName",
+								"value": {
+									"value": "@concat(item(), '2023-01-10', '.csv')",
+									"type": "Expression"
+								}
+							}
 						}
 					]
 				}
@@ -173,7 +225,14 @@
 			{
 				"name": "Set_Kandidata_Redirect_Names",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set_SiteID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "redirect_ids",
@@ -233,6 +292,33 @@
 						1038400
 					]
 				}
+			},
+			{
+				"name": "Set_CampaignUID",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "campaign_uid",
+					"value": "38aa18bf-827f-4d5d-8cac-62cc39e0bee3"
+				}
+			},
+			{
+				"name": "Set_SiteID",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set_CampaignUID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "site_id",
+					"value": "1"
+				}
 			}
 		],
 		"variables": {
@@ -241,6 +327,15 @@
 			},
 			"ruid": {
 				"type": "Array"
+			},
+			"campaign_uid": {
+				"type": "String"
+			},
+			"site_id": {
+				"type": "String"
+			},
+			"fileName": {
+				"type": "String"
 			}
 		},
 		"folder": {
