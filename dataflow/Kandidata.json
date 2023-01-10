@@ -26,7 +26,7 @@
 						"referenceName": "HRNyttAllContactsToTM",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "HRNyttAllContacts"
 				}
 			],
 			"sinks": [
@@ -56,6 +56,9 @@
 				},
 				{
 					"name": "RemoveDuplicates"
+				},
+				{
+					"name": "join1"
 				}
 			],
 			"scriptLines": [
@@ -119,7 +122,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
+				"     ignoreNoFilesFound: false) ~> HRNyttAllContacts",
 				"DataFromTracking select(mapColumn(",
 				"          uid = {_col0_},",
 				"          uuid = {_col1_},",
@@ -151,7 +154,13 @@
 				"FilterOverBlacklist aggregate(groupBy(uid),",
 				"     each(match(name!='uid'), $$ = first($$)),",
 				"     partitionBy('hash', 1)) ~> RemoveDuplicates",
-				"SelectOnlyEmail sink(allowSchemaDrift: true,",
+				"SelectOnlyEmail, HRNyttAllContacts join(email == Epost,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> join1",
+				"join1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'edrplatform',",
