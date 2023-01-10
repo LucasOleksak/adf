@@ -20,6 +20,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "ReaktionEmails"
+				},
+				{
+					"dataset": {
+						"referenceName": "HRNyttAllContactsToTM",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
 				}
 			],
 			"sinks": [
@@ -101,6 +108,18 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> ReaktionEmails",
+				"source(output(",
+				"          Epost as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string,",
+				"          Column_7 as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
 				"DataFromTracking select(mapColumn(",
 				"          uid = {_col0_},",
 				"          uuid = {_col1_},",
