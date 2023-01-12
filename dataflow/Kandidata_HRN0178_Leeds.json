@@ -59,6 +59,9 @@
 				},
 				{
 					"name": "join1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -160,7 +163,20 @@
 				"     ignoreSpaces: false,",
 				"     partitionBy('hash', 1),",
 				"     broadcast: 'auto')~> join1",
-				"join1 sink(allowSchemaDrift: true,",
+				"join1 select(mapColumn(",
+				"          Epost = email,",
+				"          LeedDate = date,",
+				"          FirstName,",
+				"          LastName,",
+				"          Position,",
+				"          Company,",
+				"          OrgNumber,",
+				"          Telefon",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'edrplatform',",
@@ -175,6 +191,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     header: (['Epost','LeedDate','FirstName','LastName','Position','CompanyName','OrgNumber','Telefon']),",
 				"     saveOrder: 1,",
 				"     partitionBy('hash', 1)) ~> SaveToCSV"
 			]
