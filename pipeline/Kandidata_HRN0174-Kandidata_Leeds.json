@@ -121,11 +121,8 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "Kandidata",
-									"type": "DatasetReference",
-									"parameters": {
-										"redirect_name": "@item()"
-									}
+									"referenceName": "Kandidata_HRN0178_Leeds",
+									"type": "DatasetReference"
 								}
 							]
 						},
@@ -150,17 +147,13 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataflow": {
-									"referenceName": "Kandidata",
+									"referenceName": "Kandidata_HRN0178_Leeds",
 									"type": "DataFlowReference",
 									"parameters": {
-										"redirect_name": {
-											"value": "'@{item()}'",
-											"type": "Expression"
-										},
-										"ruid": {
-											"value": "@variables('ruid')",
-											"type": "Expression"
-										}
+										"redirect_name": "'HRN0073WW-kandidata-banner-dec-22'",
+										"ruid": [
+											50844
+										]
 									}
 								},
 								"compute": {
