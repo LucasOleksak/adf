@@ -21,7 +21,7 @@
 					},
 					"activities": [
 						{
-							"name": "CopyDataForEveryRedirectToCSV",
+							"name": "CopyDataForPixelToCSV",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -85,7 +85,7 @@
 										},
 										{
 											"source": {
-												"path": "$['referrer_url']"
+												"path": "$['page_title']"
 											},
 											"sink": {
 												"type": "String",
@@ -94,29 +94,11 @@
 										},
 										{
 											"source": {
-												"path": "$['ip']"
-											},
-											"sink": {
-												"type": "String",
-												"ordinal": 5
-											}
-										},
-										{
-											"source": {
-												"path": "$['page_title']"
-											},
-											"sink": {
-												"type": "String",
-												"ordinal": 6
-											}
-										},
-										{
-											"source": {
 												"path": "$['domain']"
 											},
 											"sink": {
 												"type": "Int16",
-												"ordinal": 7
+												"ordinal": 5
 											}
 										},
 										{
@@ -125,16 +107,7 @@
 											},
 											"sink": {
 												"type": "Int64",
-												"ordinal": 8
-											}
-										},
-										{
-											"source": {
-												"path": "$['updatedAt']['$date']"
-											},
-											"sink": {
-												"type": "Int64",
-												"ordinal": 9
+												"ordinal": 6
 											}
 										}
 									]
@@ -161,7 +134,7 @@
 							"type": "ExecuteDataFlow",
 							"dependsOn": [
 								{
-									"activity": "CopyDataForEveryRedirectToCSV",
+									"activity": "CopyDataForPixelToCSV",
 									"dependencyConditions": [
 										"Succeeded"
 									]
