@@ -227,6 +227,7 @@
 			},
 			{
 				"name": "Set_Kandidata_Redirect_Names",
+				"description": "Redirects name",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
@@ -294,6 +295,7 @@
 			},
 			{
 				"name": "Set_CampaignUID",
+				"description": "UID used to create landing paging in EDR Platform",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"userProperties": [],
@@ -304,6 +306,7 @@
 			},
 			{
 				"name": "Set_SiteID",
+				"description": "SiteID - 1 for HRNytt",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
