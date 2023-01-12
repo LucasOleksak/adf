@@ -1,0 +1,375 @@
+{
+	"name": "Kandidata_HRN0174-Kandidata_Leeds",
+	"properties": {
+		"activities": [
+			{
+				"name": "LoopOverRedirects",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set_Blacklist_Of_UIDs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('redirect_ids')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "CopyDataForEveryRedirectToCSV",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "CosmosDbMongoDbApiSource",
+									"batchSize": 100,
+									"filter": {
+										"value": "{ \"page_title\" : \"@{item()}\", \"domain\" : 11 } ",
+										"type": "Expression"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"path": "$['uid']"
+											},
+											"sink": {
+												"type": "Int64",
+												"ordinal": 1
+											}
+										},
+										{
+											"source": {
+												"path": "$['uuid']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 2
+											}
+										},
+										{
+											"source": {
+												"path": "$['url']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 3
+											}
+										},
+										{
+											"source": {
+												"path": "$['referrer_url']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 4
+											}
+										},
+										{
+											"source": {
+												"path": "$['ip']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 5
+											}
+										},
+										{
+											"source": {
+												"path": "$['page_title']"
+											},
+											"sink": {
+												"type": "String",
+												"ordinal": 6
+											}
+										},
+										{
+											"source": {
+												"path": "$['domain']"
+											},
+											"sink": {
+												"type": "Int16",
+												"ordinal": 7
+											}
+										},
+										{
+											"source": {
+												"path": "$['createdAt']['$date']"
+											},
+											"sink": {
+												"type": "Int64",
+												"ordinal": 8
+											}
+										},
+										{
+											"source": {
+												"path": "$['updatedAt']['$date']"
+											},
+											"sink": {
+												"type": "Int64",
+												"ordinal": 9
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Mongo_TrackingPixels",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Kandidata",
+									"type": "DatasetReference",
+									"parameters": {
+										"redirect_name": "@item()"
+									}
+								}
+							]
+						},
+						{
+							"name": "ProcessRedirects",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "CopyDataForEveryRedirectToCSV",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "Kandidata",
+									"type": "DataFlowReference",
+									"parameters": {
+										"redirect_name": {
+											"value": "'@{item()}'",
+											"type": "Expression"
+										},
+										"ruid": {
+											"value": "@variables('ruid')",
+											"type": "Expression"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						},
+						{
+							"name": "AddStatsToAzureTable",
+							"type": "AzureFunctionActivity",
+							"dependsOn": [
+								{
+									"activity": "fileName",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"functionName": "create_stats",
+								"method": "POST",
+								"body": {
+									"value": "{ \"fileName\" : \"@{variables('fileName')}\", \"partitionKey\" : \"@{variables('campaign_uid')}\", \"customerName\" : \"kandidata\"  }",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AF_AddToEDRStats",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "fileName",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "ProcessRedirects",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "fileName",
+								"value": {
+									"value": "@concat(item(), '-',utcNow('yyyy-MM-dd'), '.csv')",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Set_Kandidata_Redirect_Names",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set_SiteID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "redirect_ids",
+					"value": [
+						"Ser du dina medarbetare? - Ledarskap - HRnytt"
+					]
+				}
+			},
+			{
+				"name": "Set_Blacklist_Of_UIDs",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set_Kandidata_Redirect_Names",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ruid",
+					"value": [
+						287962,
+						77602,
+						77233,
+						278328,
+						4,
+						1,
+						315594,
+						315769,
+						278594,
+						77229,
+						77212,
+						287409,
+						287410,
+						287411,
+						287412,
+						287408,
+						287479,
+						287457,
+						287463,
+						287464,
+						287474,
+						287477,
+						287478,
+						287481,
+						287482,
+						287483,
+						298466,
+						422164,
+						50884,
+						1038400
+					]
+				}
+			},
+			{
+				"name": "Set_CampaignUID",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "campaign_uid",
+					"value": "38aa18bf-827f-4d5d-8cac-62cc39e0bee3"
+				}
+			},
+			{
+				"name": "Set_SiteID",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set_CampaignUID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "site_id",
+					"value": "1"
+				}
+			}
+		],
+		"variables": {
+			"redirect_ids": {
+				"type": "Array"
+			},
+			"ruid": {
+				"type": "Array"
+			},
+			"campaign_uid": {
+				"type": "String"
+			},
+			"site_id": {
+				"type": "String"
+			},
+			"fileName": {
+				"type": "String"
+			},
+			"currentDate": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "HRNytt"
+		},
+		"annotations": []
+	}
+}
