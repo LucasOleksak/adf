@@ -81,7 +81,7 @@
 				"     format: 'delimited',",
 				"     fileSystem: 'hrnytt',",
 				"     folderPath: 'stats/kandidata',",
-				"     fileName: (concat($redirect_name, '.csv')),",
+				"     fileName: (concat('conctkandidata_pixel_hrn0178','.csv')),",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
