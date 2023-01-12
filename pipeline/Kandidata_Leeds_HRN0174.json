@@ -1,6 +1,7 @@
 {
 	"name": "Kandidata_Leeds_HRN0174",
 	"properties": {
+		"description": "TODO: \npage_title and filename should not be set as hard-coded text but pass in array/object",
 		"activities": [
 			{
 				"name": "LoopOverRedirects",
