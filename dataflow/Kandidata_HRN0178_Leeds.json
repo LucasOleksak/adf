@@ -65,16 +65,16 @@
 					"name": "RemoveDuplicates"
 				},
 				{
-					"name": "join1"
+					"name": "JoinWithHRNyttAllContacts"
 				},
 				{
-					"name": "select1"
+					"name": "SelectBeforeSink"
 				},
 				{
 					"name": "FilteeOnDomainAndActive"
 				},
 				{
-					"name": "join2"
+					"name": "JoinWithActiveSubscriptions"
 				}
 			],
 			"scriptLines": [
@@ -188,8 +188,8 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     partitionBy('hash', 1),",
-				"     broadcast: 'auto')~> join1",
-				"join2 select(mapColumn(",
+				"     broadcast: 'auto')~> JoinWithHRNyttAllContacts",
+				"JoinWithActiveSubscriptions select(mapColumn(",
 				"          Epost = email,",
 				"          LeedDate = click_date,",
 				"          FirstName,",
@@ -201,14 +201,14 @@
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
+				"     skipDuplicateMapOutputs: true) ~> SelectBeforeSink",
 				"Subscriptions filter(domain_id == 11 && is_active == true()) ~> FilteeOnDomainAndActive",
-				"join1, FilteeOnDomainAndActive join(uid == email_id,",
+				"JoinWithHRNyttAllContacts, FilteeOnDomainAndActive join(uid == email_id,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join2",
-				"select1 sink(allowSchemaDrift: true,",
+				"     broadcast: 'auto')~> JoinWithActiveSubscriptions",
+				"SelectBeforeSink sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'edrplatform',",
