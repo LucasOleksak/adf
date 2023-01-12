@@ -38,8 +38,7 @@
 								},
 								"sink": {
 									"name": "id",
-									"type": "Int32",
-									"physicalType": "INT_32"
+									"type": "Int32"
 								}
 							},
 							{
@@ -49,8 +48,7 @@
 								},
 								"sink": {
 									"name": "email",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								}
 							},
 							{
@@ -60,27 +58,15 @@
 								},
 								"sink": {
 									"name": "remove_from_adressgruppen",
-									"type": "Boolean",
-									"physicalType": "BOOLEAN"
+									"type": "Boolean"
 								}
 							}
-						],
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
+						]
 					}
 				},
 				"inputs": [
 					{
 						"referenceName": "ReaktionCore_Heroku",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "ReaktionCore_Emails_parquet",
 						"type": "DatasetReference"
 					}
 				]
