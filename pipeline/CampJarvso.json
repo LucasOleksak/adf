@@ -15,8 +15,18 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"source": {
+						"type": "CosmosDbMongoDbApiSource",
+						"batchSize": 100
+					},
 					"enableStaging": false
-				}
+				},
+				"inputs": [
+					{
+						"referenceName": "Mongo_TrackingRedirects",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"folder": {
