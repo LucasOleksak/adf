@@ -1,0 +1,12 @@
+{
+	"name": "ReaktionSynapse",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSynapseArtifacts",
+		"typeProperties": {
+			"endpoint": "https://reaktion-synapse.dev.azuresynapse.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/f561b4fe-6e18-41b7-af8b-3a3ecdbd623f/resourceGroups/reaktion-synapse/providers/Microsoft.Synapse/workspaces/reaktion-synapse"
+		}
+	}
+}
