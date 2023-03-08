@@ -21,7 +21,7 @@
 					},
 					"activities": [
 						{
-							"name": "FindTendency",
+							"name": "CalculateWeightFactor",
 							"type": "AzureFunctionActivity",
 							"dependsOn": [],
 							"policy": {
