@@ -67,7 +67,17 @@
 							"typeProperties": {
 								"dataflow": {
 									"referenceName": "SystembolagetAdresses",
-									"type": "DataFlowReference"
+									"type": "DataFlowReference",
+									"parameters": {
+										"item": {
+											"value": "'@{item()}'",
+											"type": "Expression"
+										},
+										"workspace": {
+											"value": "'@{variables('workspace')}'",
+											"type": "Expression"
+										}
+									}
 								},
 								"compute": {
 									"coreCount": 8,
