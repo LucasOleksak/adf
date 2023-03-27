@@ -27,6 +27,9 @@
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "join1"
 				}
 			],
 			"scriptLines": [
@@ -65,6 +68,11 @@
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> WineCalculations",
 				"WineCalculations derive(ID = regexExtract(Store, '(\\\\d+)')) ~> derivedColumn1",
+				"SystembolagetAdresses, derivedColumn1 join(SystembolagetAdresses@ID == derivedColumn1@ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
 				"SystembolagetAdresses sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
