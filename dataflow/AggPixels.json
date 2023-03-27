@@ -1,0 +1,189 @@
+{
+	"name": "AggPixels",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DestinationCSVPixels",
+						"type": "DatasetReference"
+					},
+					"name": "mongoPixels"
+				},
+				{
+					"dataset": {
+						"referenceName": "ReaktionCoreEmail",
+						"type": "DatasetReference"
+					},
+					"name": "reaktionCore"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "aggAll"
+				},
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "uid"
+				},
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "aggUuid"
+				}
+			],
+			"transformations": [
+				{
+					"name": "createDateColumn"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "aggregate2"
+				},
+				{
+					"name": "domain104"
+				},
+				{
+					"name": "aggByDateAndPageTitle"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          uid as integer,",
+				"          uuid as string,",
+				"          url as string,",
+				"          referral as string,",
+				"          client as string,",
+				"          page_title as string,",
+				"          domain as integer,",
+				"          created as string,",
+				"          updated as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> mongoPixels",
+				"source(output(",
+				"          id as integer,",
+				"          reaktion_uid as string,",
+				"          email as string,",
+				"          person_id as integer,",
+				"          position_id as integer,",
+				"          address_id as integer,",
+				"          is_company_mail as boolean,",
+				"          is_private_mail as boolean,",
+				"          is_optin as boolean,",
+				"          is_unsubscibed as boolean,",
+				"          is_active as boolean,",
+				"          hash as string,",
+				"          created_at as timestamp,",
+				"          updated_at as timestamp,",
+				"          is_bounced as boolean,",
+				"          eyebeep_active as boolean,",
+				"          eyebeep_source as string,",
+				"          remove_from_adressgruppen as boolean,",
+				"          remove_from_adressgruppen_date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     limit: 100,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> reaktionCore",
+				"mongoPixels derive(date = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm'),",
+				"          time = toTimestamp(toLong(toString(created)),'hh:mm:ss', 'Europe/Stockholm')) ~> createDateColumn",
+				"domain104 split(isNull(uid) && !isNull(uuid),",
+				"     isNull(uuid) && !isNull(uid),",
+				"     disjoint: true) ~> split1@(hasNotUID, hasUID)",
+				"split1@hasNotUID aggregate(groupBy(uuid,",
+				"          page_title,",
+				"          date),",
+				"     page = count(page_title)) ~> aggregate2",
+				"createDateColumn filter(date > subDays(toDate('2022-10-14'), 356) && domain == 104) ~> domain104",
+				"domain104 aggregate(groupBy(page_title,",
+				"          date,",
+				"          domain),",
+				"     title = count(page_title)) ~> aggByDateAndPageTitle",
+				"aggByDateAndPageTitle sort(asc(date, true),",
+				"     desc(title, true)) ~> sort1",
+				"select1 filter(!isNull(id) && id > 500000) ~> filter2",
+				"reaktionCore select(mapColumn(",
+				"          id,",
+				"          email,",
+				"          hash,",
+				"          updated_at,",
+				"          remove_from_adressgruppen",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'pixels',",
+				"     folderPath: 'all',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['all.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> aggAll",
+				"split1@hasUID sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'pixels',",
+				"     folderPath: 'uid',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['agg_with_uid.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> uid",
+				"aggregate2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'pixels',",
+				"     folderPath: 'uuid',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['uuid'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> aggUuid"
+			]
+		}
+	}
+}

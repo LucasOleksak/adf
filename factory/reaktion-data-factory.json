@@ -1,0 +1,20 @@
+{
+	"name": "reaktion-data-factory",
+	"properties": {
+		"globalParameters": {
+			"redirectDaysWindow": {
+				"type": "int",
+				"value": -14
+			}
+		},
+		"globalConfigurations": {
+			"PipelineBillingEnabled": "false"
+		}
+	},
+	"location": "norwayeast",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "605b25c7-62ca-4e07-bc87-f2ca3f741825",
+		"tenantId": "e5d7eee1-2099-4668-b5b2-63962fcab437"
+	}
+}

@@ -1,0 +1,245 @@
+{
+	"name": "DF_BCF_uid",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CSV_BCF_uid",
+						"type": "DatasetReference"
+					},
+					"name": "BCFCopiedData"
+				},
+				{
+					"dataset": {
+						"referenceName": "CSV_ReaktionHeroku_Emails",
+						"type": "DatasetReference"
+					},
+					"name": "Emails"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CSV_BCF_agg_visits_by_page_title",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "CSV_BCF_agg_vists_by_page_and_date",
+						"type": "DatasetReference"
+					},
+					"name": "toCSV"
+				},
+				{
+					"dataset": {
+						"referenceName": "CSV_BCF_agg_visits_by_uid",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "CSV_visits_by_uuid",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
+				},
+				{
+					"dataset": {
+						"referenceName": "CSV_MostActive_Agg_By_Page_And_Visits",
+						"type": "DatasetReference"
+					},
+					"name": "sink4"
+				}
+			],
+			"transformations": [
+				{
+					"name": "selectOnlyColumnsWeNees"
+				},
+				{
+					"name": "AggregateNonUID"
+				},
+				{
+					"name": "AggreagteMostActiveUID"
+				},
+				{
+					"name": "CreateDateColumn"
+				},
+				{
+					"name": "AggByPageAndDay"
+				},
+				{
+					"name": "AggByPage"
+				},
+				{
+					"name": "SortByNumber"
+				},
+				{
+					"name": "FilterNotNullUID"
+				},
+				{
+					"name": "ByNumberOfVisits"
+				},
+				{
+					"name": "SortByVisitsDESC2"
+				},
+				{
+					"name": "FilterOnlyUUIDRecords"
+				},
+				{
+					"name": "SortByRankingDESC"
+				},
+				{
+					"name": "JoinWithEmails"
+				},
+				{
+					"name": "AggByUidAndPage"
+				},
+				{
+					"name": "SortByVisitsDESC"
+				},
+				{
+					"name": "JoinWithEmailsTable"
+				},
+				{
+					"name": "SelectColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          uuid as string,",
+				"          uid as integer,",
+				"          url as string,",
+				"          referrer_url as string,",
+				"          page_title as string,",
+				"          domain as string,",
+				"          created as long,",
+				"          updated as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> BCFCopiedData",
+				"source(output(",
+				"          id as integer,",
+				"          email as string,",
+				"          is_active as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Emails",
+				"CreateDateColumn select(mapColumn(",
+				"          uuid,",
+				"          uid,",
+				"          referrer_url,",
+				"          page_title,",
+				"          created,",
+				"          updated,",
+				"          date",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectOnlyColumnsWeNees",
+				"FilterOnlyUUIDRecords aggregate(groupBy(page_title),",
+				"     ranking = count(page_title)) ~> AggregateNonUID",
+				"FilterNotNullUID aggregate(groupBy(uid),",
+				"     visits = count(uid),",
+				"     partitionBy('hash', 1)) ~> AggreagteMostActiveUID",
+				"BCFCopiedData derive(date = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm')) ~> CreateDateColumn",
+				"selectOnlyColumnsWeNees aggregate(groupBy(page_title,",
+				"          date),",
+				"     visits = count(page_title)) ~> AggByPageAndDay",
+				"selectOnlyColumnsWeNees aggregate(groupBy(page_title),",
+				"     visits = count(page_title),",
+				"     partitionBy('hash', 1)) ~> AggByPage",
+				"AggByPage sort(desc(visits, true)) ~> SortByNumber",
+				"selectOnlyColumnsWeNees filter(!isNull(uid)) ~> FilterNotNullUID",
+				"AggreagteMostActiveUID filter(visits > 0) ~> ByNumberOfVisits",
+				"ByNumberOfVisits sort(desc(visits, true),",
+				"     partitionBy('hash', 1)) ~> SortByVisitsDESC2",
+				"selectOnlyColumnsWeNees filter(!isNull(uuid) && isNull(uid),",
+				"     partitionBy('hash', 1)) ~> FilterOnlyUUIDRecords",
+				"AggregateNonUID sort(desc(ranking, true)) ~> SortByRankingDESC",
+				"SortByVisitsDESC2, Emails join(uid == id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> JoinWithEmails",
+				"FilterNotNullUID aggregate(groupBy(page_title,",
+				"          uid),",
+				"     visits = count(page_title)) ~> AggByUidAndPage",
+				"AggByUidAndPage sort(desc(visits, true),",
+				"     partitionBy('hash', 1)) ~> SortByVisitsDESC",
+				"SortByVisitsDESC, Emails join(uid == id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> JoinWithEmailsTable",
+				"JoinWithEmailsTable select(mapColumn(",
+				"          page_title,",
+				"          uid,",
+				"          visits,",
+				"          id,",
+				"          email,",
+				"          is_active",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+				"SortByNumber sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['agg_visits_by_page_name.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"AggByPageAndDay sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['visits_by_page_and_date.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> toCSV",
+				"JoinWithEmails sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['most_active_uses.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2",
+				"SortByRankingDESC sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['agg_visits_by_uuid.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink3",
+				"SelectColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string",
+				"     ),",
+				"     partitionFileNames:['most_active_agg_by_page_name.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink4"
+			]
+		}
+	}
+}

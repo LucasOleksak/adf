@@ -1,0 +1,26 @@
+{
+	"name": "DestinationCSVPixels",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Storage_DataFactory_Reaktion",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "CSV_Destinations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "csv_pixels",
+				"container": "csv"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

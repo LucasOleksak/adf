@@ -1,0 +1,171 @@
+{
+	"name": "aggStatistics",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyTrackings",
+				"description": "",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbMongoDbApiSource",
+						"batchSize": 100,
+						"filter": {
+							"value": "{ domain_id : 11, createdAt: { $gte: ISODate('2022-09-01') } }",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['tags'][0]"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 1
+								}
+							},
+							{
+								"source": {
+									"path": "$['categories'][0]"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 2
+								}
+							},
+							{
+								"source": {
+									"path": "$['createdAt']['$date']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 3
+								}
+							},
+							{
+								"source": {
+									"path": "$['updatedAt']['$date']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 4
+								}
+							},
+							{
+								"source": {
+									"path": "$['uid']"
+								},
+								"sink": {
+									"type": "Int64",
+									"ordinal": 5
+								}
+							},
+							{
+								"source": {
+									"path": "$['url']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 6
+								}
+							},
+							{
+								"source": {
+									"path": "$['client']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 7
+								}
+							},
+							{
+								"source": {
+									"path": "$['domain_id']"
+								},
+								"sink": {
+									"type": "Int16",
+									"ordinal": 8
+								}
+							},
+							{
+								"source": {
+									"path": "$['referrer_url']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 9
+								}
+							},
+							{
+								"source": {
+									"path": "$['url_without_params']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 10
+								}
+							},
+							{
+								"source": {
+									"path": "$['ip']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 11
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Mongo_Tracking_Trackings",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_trackings_copied",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"domain_id": {
+				"type": "int",
+				"defaultValue": 11
+			}
+		},
+		"folder": {
+			"name": "DataFromTracking"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-28T14:41:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

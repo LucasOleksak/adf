@@ -1,0 +1,28 @@
+{
+	"name": "TriggerBCF",
+	"properties": {
+		"description": "Creates stats for BCF simple pixel",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "BCF_stats",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"startDate": "2022-10-25"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-10-28T03:36:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}

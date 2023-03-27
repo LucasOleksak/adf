@@ -1,0 +1,227 @@
+{
+	"name": "HRNytt_Banners",
+	"properties": {
+		"folder": {
+			"name": "HRNytt"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "HRNytt_Stage_Banners_Clicks",
+						"type": "DatasetReference"
+					},
+					"name": "BannersClicks"
+				},
+				{
+					"dataset": {
+						"referenceName": "HRNytt_Stage_Banners",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "HRNytt_Banners_Current_Month",
+						"type": "DatasetReference"
+					},
+					"name": "saveCurrentMonthStats"
+				},
+				{
+					"dataset": {
+						"referenceName": "HRNytt_banners_last_3_months",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "HRNytt_Agg_By_Page",
+						"type": "DatasetReference"
+					},
+					"name": "saveCurrentMonthAggByPage"
+				}
+			],
+			"transformations": [
+				{
+					"name": "aggByDateCurrentMonth"
+				},
+				{
+					"name": "sortByBannerIDandDateCurrentMonth"
+				},
+				{
+					"name": "aMonthAgo"
+				},
+				{
+					"name": "ThreeMonthsAgo"
+				},
+				{
+					"name": "currentMonth"
+				},
+				{
+					"name": "aggByBannerIDandDate2"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "aggByPagesCurrentMonth"
+				},
+				{
+					"name": "sortByMostClicked"
+				},
+				{
+					"name": "joinWithBannersTable"
+				},
+				{
+					"name": "sort2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     firstDayOfMonth as date (subDays(currentDate(),dayOfMonth(currentDate())))",
+				"}",
+				"source(output(",
+				"          id as integer,",
+				"          url as string,",
+				"          full_url as string,",
+				"          date as date,",
+				"          created as timestamp,",
+				"          banner_id as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> BannersClicks",
+				"source(output(",
+				"          id as integer,",
+				"          published as timestamp,",
+				"          image as string,",
+				"          position as string,",
+				"          created as timestamp,",
+				"          updated as timestamp,",
+				"          code as string,",
+				"          order as integer,",
+				"          title as string,",
+				"          image_url as string,",
+				"          code_mobile as string,",
+				"          valid_until as timestamp,",
+				"          clicks as integer,",
+				"          impressions as integer,",
+				"          mobile_image as string,",
+				"          small_mobile_image as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> source1",
+				"currentMonth aggregate(groupBy(banner_id,",
+				"          date),",
+				"     cliks = count(banner_id),",
+				"     partitionBy('hash', 1)) ~> aggByDateCurrentMonth",
+				"aggByDateCurrentMonth sort(desc(banner_id, true),",
+				"     desc(date, true),",
+				"     partitionBy('hash', 1)) ~> sortByBannerIDandDateCurrentMonth",
+				"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 1))) ~> aMonthAgo",
+				"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 3))) ~> ThreeMonthsAgo",
+				"BannersClicks filter(date <= lastDayOfMonth((currentDate('Europe/Stockholm'))) && date > subDays(currentDate(), dayOfMonth(currentDate()))) ~> currentMonth",
+				"ThreeMonthsAgo aggregate(groupBy(banner_id,",
+				"          date),",
+				"     clicks = count(banner_id),",
+				"     partitionBy('hash', 1)) ~> aggByBannerIDandDate2",
+				"aggByBannerIDandDate2 sort(desc(banner_id, true),",
+				"     desc(date, true),",
+				"     partitionBy('hash', 1)) ~> sort1",
+				"source1 select(mapColumn(",
+				"          id,",
+				"          published,",
+				"          position,",
+				"          title,",
+				"          valid_until,",
+				"          impressions",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"sortByBannerIDandDateCurrentMonth, select1 join(banner_id == id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> join1",
+				"currentMonth aggregate(groupBy(url,",
+				"          banner_id),",
+				"     clicks = count(banner_id),",
+				"     partitionBy('hash', 1)) ~> aggByPagesCurrentMonth",
+				"aggByPagesCurrentMonth sort(desc(clicks, true),",
+				"     partitionBy('hash', 1)) ~> sortByMostClicked",
+				"sortByMostClicked, select1 join(banner_id == id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinWithBannersTable",
+				"joinWithBannersTable sort(desc(clicks, true),",
+				"     partitionBy('hash', 1)) ~> sort2",
+				"join1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('banners-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     mapColumn(",
+				"          date,",
+				"          cliks,",
+				"          title",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> saveCurrentMonthStats",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string",
+				"     ),",
+				"     partitionFileNames:[(concat('banners-last-3-months','.csv'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"sort2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string",
+				"     ),",
+				"     partitionFileNames:[(concat('banners-by-page-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     header: (['url']),",
+				"     mapColumn(",
+				"          url,",
+				"          clicks,",
+				"          position,",
+				"          title",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> saveCurrentMonthAggByPage"
+			]
+		}
+	}
+}

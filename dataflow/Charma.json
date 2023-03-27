@@ -1,0 +1,65 @@
+{
+	"name": "Charma",
+	"properties": {
+		"folder": {
+			"name": "EDR"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CSV_Charma_Source",
+						"type": "DatasetReference"
+					},
+					"name": "getDataFromCSVSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CSV_ClickedUrls",
+						"type": "DatasetReference"
+					},
+					"name": "saveToRedirectsCSV"
+				}
+			],
+			"transformations": [
+				{
+					"name": "aggByTag"
+				},
+				{
+					"name": "sortByVisitsDesc"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          tag as string,",
+				"          category as string,",
+				"          created as string,",
+				"          updated as string,",
+				"          uid as string,",
+				"          url as string,",
+				"          domain_id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> getDataFromCSVSource",
+				"getDataFromCSVSource aggregate(groupBy(tag),",
+				"     visits = count(tag),",
+				"     partitionBy('hash', 1)) ~> aggByTag",
+				"aggByTag sort(desc(visits, true)) ~> sortByVisitsDesc",
+				"sortByVisitsDesc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['redirects.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     partitionBy('hash', 1)) ~> saveToRedirectsCSV"
+			]
+		}
+	}
+}

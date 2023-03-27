@@ -1,0 +1,19 @@
+{
+	"name": "AzureTable_Unregister",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Unregister",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureTable"
+		},
+		"annotations": [],
+		"type": "AzureTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "unregister"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

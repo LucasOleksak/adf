@@ -1,0 +1,19 @@
+{
+	"name": "Mongo_TrackingRedirects",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MongoDB_Tracking",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Mongo_Tracking"
+		},
+		"annotations": [],
+		"type": "CosmosDbMongoDbApiCollection",
+		"schema": [],
+		"typeProperties": {
+			"collection": "redirects"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

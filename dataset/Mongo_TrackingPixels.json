@@ -1,0 +1,19 @@
+{
+	"name": "Mongo_TrackingPixels",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MongoDB_Tracking",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Mongo_Tracking"
+		},
+		"annotations": [],
+		"type": "CosmosDbMongoDbApiCollection",
+		"schema": [],
+		"typeProperties": {
+			"collection": "pixels"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

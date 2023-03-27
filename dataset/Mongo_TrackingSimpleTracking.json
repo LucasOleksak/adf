@@ -1,0 +1,19 @@
+{
+	"name": "Mongo_TrackingSimpleTracking",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MongoDB_Tracking",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Mongo_Tracking"
+		},
+		"annotations": [],
+		"type": "CosmosDbMongoDbApiCollection",
+		"schema": [],
+		"typeProperties": {
+			"collection": "simple_trackings"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

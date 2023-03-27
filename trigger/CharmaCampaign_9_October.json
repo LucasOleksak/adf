@@ -1,0 +1,30 @@
+{
+	"name": "CharmaCampaign_9_October",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Campaign_9_october",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"startDate": "2022-11-09",
+					"domain_id": "107",
+					"project_name": "charma",
+					"dest_path": "charma/stats"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-11-10T03:23:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
