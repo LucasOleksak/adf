@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "join1"
+				},
+				{
+					"name": "sort1"
 				}
 			],
 			"scriptLines": [
@@ -73,6 +76,8 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
+				"join1 sort(asc(Weight, true),",
+				"     partitionBy('hash', 1)) ~> sort1",
 				"SystembolagetAdresses sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
