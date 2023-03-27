@@ -19,6 +19,10 @@
 			],
 			"transformations": [],
 			"scriptLines": [
+				"parameters{",
+				"     item as string ('bonnet'),",
+				"     workspace as string ('validwaines')",
+				"}",
 				"source(output(",
 				"          ID as string,",
 				"          Butiksnamn as string,",
