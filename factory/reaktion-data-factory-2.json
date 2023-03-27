@@ -1,0 +1,9 @@
+{
+	"name": "reaktion-data-factory-2",
+	"location": "norwayeast",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "b14caf13-2580-464f-a9ea-ff06d950df69",
+		"tenantId": "e5d7eee1-2099-4668-b5b2-63962fcab437"
+	}
+}
