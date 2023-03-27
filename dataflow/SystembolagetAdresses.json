@@ -1,0 +1,42 @@
+{
+	"name": "SystembolagetAdresses",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SystembolagetStores",
+						"type": "DatasetReference"
+					},
+					"name": "SystembolagetAdresses"
+				}
+			],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          ID as string,",
+				"          Butiksnamn as string,",
+				"          Adress as string,",
+				"          Postnummer as string,",
+				"          Ort as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SystembolagetAdresses",
+				"SystembolagetAdresses sink(validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1) ~> sink1"
+			]
+		}
+	}
+}

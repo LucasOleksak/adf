@@ -46,7 +46,7 @@
 							}
 						},
 						{
-							"name": "Data flow1",
+							"name": "AddSystembolagetAdresses",
 							"type": "ExecuteDataFlow",
 							"dependsOn": [
 								{
@@ -65,6 +65,10 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
+								"dataflow": {
+									"referenceName": "SystembolagetAdresses",
+									"type": "DataFlowReference"
+								},
 								"compute": {
 									"coreCount": 8,
 									"computeType": "General"
