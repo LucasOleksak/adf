@@ -28,7 +28,7 @@
 			"scriptLines": [
 				"parameters{",
 				"     item as string ('bonnet'),",
-				"     workspace as string ('validwaines')",
+				"     workspace as string ('validwines')",
 				"}",
 				"source(output(",
 				"          ID as string,",
