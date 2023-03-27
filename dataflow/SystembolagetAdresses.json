@@ -22,6 +22,9 @@
 			"sinks": [
 				{
 					"name": "sink1"
+				},
+				{
+					"name": "sink2"
 				}
 			],
 			"transformations": [
@@ -29,10 +32,10 @@
 					"name": "derivedColumn1"
 				},
 				{
-					"name": "join1"
+					"name": "JoinWineWithSystembolagetAdresses"
 				},
 				{
-					"name": "sort1"
+					"name": "SortOnWeight"
 				}
 			],
 			"scriptLines": [
@@ -75,16 +78,23 @@
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
-				"join1 sort(asc(Weight, true),",
-				"     partitionBy('hash', 1)) ~> sort1",
+				"     broadcast: 'auto')~> JoinWineWithSystembolagetAdresses",
+				"JoinWineWithSystembolagetAdresses sort(asc(Weight, true),",
+				"     partitionBy('hash', 1)) ~> SortOnWeight",
 				"SystembolagetAdresses sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     store: 'cache',",
 				"     format: 'inline',",
 				"     output: false,",
-				"     saveOrder: 1) ~> sink1"
+				"     saveOrder: 1) ~> sink1",
+				"SortOnWeight sink(validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1) ~> sink2"
 			]
 		}
 	}
