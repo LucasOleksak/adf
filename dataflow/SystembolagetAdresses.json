@@ -24,7 +24,11 @@
 					"name": "sink1"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
 				"     item as string ('bonnet'),",
@@ -40,18 +44,27 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SystembolagetAdresses",
-				"source(useSchema: false,",
+				"source(output(",
+				"          Store as string,",
+				"          {Store group} as string,",
+				"          Shop_Segment_Diff as double '000,000,000.000',",
+				"          Trend as double '000,000,000.000',",
+				"          Precent_of_whole_volume as double '000,000,000.000',",
+				"          Weight as double '000,000,000.000'",
+				"     ),",
+				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
-				"     fileSystem: '$workspace',",
+				"     fileSystem: 'validwines',",
 				"     folderPath: 'reports/latest',",
 				"     fileName: (concat($item, '.csv')),",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: false) ~> WineCalculations",
+				"     columnNamesAsHeader: true) ~> WineCalculations",
+				"WineCalculations derive(ID = regexExtract(Store, '(\\\\d+)')) ~> derivedColumn1",
 				"SystembolagetAdresses sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
