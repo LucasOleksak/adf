@@ -36,6 +36,9 @@
 				},
 				{
 					"name": "SortOnWeight"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -81,6 +84,20 @@
 				"     broadcast: 'auto')~> JoinWineWithSystembolagetAdresses",
 				"JoinWineWithSystembolagetAdresses sort(asc(Weight, true),",
 				"     partitionBy('hash', 1)) ~> SortOnWeight",
+				"SortOnWeight select(mapColumn(",
+				"          ID = SystembolagetAdresses@ID,",
+				"          Butiksnamn,",
+				"          Adress,",
+				"          Postnummer,",
+				"          Ort,",
+				"          {Store group},",
+				"          Shop_Segment_Diff,",
+				"          Trend,",
+				"          Precent_of_whole_volume,",
+				"          Weight",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
 				"SystembolagetAdresses sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
@@ -88,7 +105,7 @@
 				"     format: 'inline',",
 				"     output: false,",
 				"     saveOrder: 1) ~> sink1",
-				"SortOnWeight sink(validateSchema: false,",
+				"select1 sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     store: 'cache',",
