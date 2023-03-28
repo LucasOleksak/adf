@@ -116,6 +116,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     header: (['Butik', 'Street', 'Zipcode', 'City', 'Segment', 'Profile', 'Shop_Segment_Diff', 'Trend', 'Precent_of_whole_volume', 'Weight' ]),",
 				"     saveOrder: 1,",
 				"     partitionBy('hash', 1)) ~> sink2"
 			]
