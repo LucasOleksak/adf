@@ -24,6 +24,10 @@
 					"name": "sink1"
 				},
 				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
 					"name": "sink2"
 				}
 			],
@@ -107,9 +111,21 @@
 				"     saveOrder: 1) ~> sink1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'validwines',",
+				"     folderPath: 'reports/latest',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:[(concat($item, 'full', '.csv'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 1) ~> sink2"
+				"     saveOrder: 1,",
+				"     partitionBy('hash', 1)) ~> sink2"
 			]
 		}
 	}
