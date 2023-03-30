@@ -74,7 +74,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
-				"     fileSystem: 'validwines',",
+				"     fileSystem: '$workspace',",
 				"     folderPath: 'reports/latest',",
 				"     fileName: (concat($item, '.csv')),",
 				"     columnDelimiter: ',',",
