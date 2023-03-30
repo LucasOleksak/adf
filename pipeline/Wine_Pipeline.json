@@ -1,6 +1,7 @@
 {
-	"name": "SOURCE_ValidWines_Pipeline_Add_GetMetadata_Flow_copy1",
+	"name": "Wine_Pipeline",
 	"properties": {
+		"description": "Define container name in 'workspace' \nReport is stored in 'reports/latest/{wine_name.csv} ",
 		"activities": [
 			{
 				"name": "Loop_Over_Excel_Files",
