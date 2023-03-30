@@ -25,12 +25,12 @@
 						"referenceName": "DataLake",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink2"
+					"name": "SinkToCSV"
 				}
 			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "GetIDofShopFromStoreColumn"
 				},
 				{
 					"name": "JoinWineWithSystembolagetAdresses"
@@ -39,7 +39,7 @@
 					"name": "SortOnWeight"
 				},
 				{
-					"name": "select1"
+					"name": "SelectColumnsWeNeed"
 				}
 			],
 			"scriptLines": [
@@ -74,15 +74,15 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
-				"     fileSystem: '$workspace',",
+				"     fileSystem: ($workspace),",
 				"     folderPath: 'reports/latest',",
 				"     fileName: (concat($item, '.csv')),",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> WineCalculations",
-				"WineCalculations derive(ID = regexExtract(Store, '(\\\\d+)')) ~> derivedColumn1",
-				"SystembolagetAdresses, derivedColumn1 join(SystembolagetAdresses@ID == derivedColumn1@ID,",
+				"WineCalculations derive(ID = regexExtract(Store, '(\\\\d+)')) ~> GetIDofShopFromStoreColumn",
+				"SystembolagetAdresses, GetIDofShopFromStoreColumn join(SystembolagetAdresses@ID == GetIDofShopFromStoreColumn@ID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -108,11 +108,11 @@
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumnsWeNeed",
+				"SelectColumnsWeNeed sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
-				"     fileSystem: 'validwines',",
+				"     fileSystem: ($workspace),",
 				"     folderPath: 'reports/latest',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
@@ -125,7 +125,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     partitionBy('hash', 1)) ~> sink2"
+				"     partitionBy('hash', 1)) ~> SinkToCSV"
 			]
 		}
 	}
