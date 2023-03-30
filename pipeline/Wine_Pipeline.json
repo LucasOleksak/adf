@@ -14,7 +14,12 @@
 						]
 					}
 				],
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "workspace",
+						"value": "validwines"
+					}
+				],
 				"typeProperties": {
 					"items": {
 						"value": "@variables('file_items')",
