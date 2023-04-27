@@ -1,0 +1,256 @@
+{
+	"name": "Wine_Pipeline_No_AZ_function",
+	"properties": {
+		"description": "Define container name in 'workspace' \nReport is stored in 'reports/latest/{wine_name.csv} ",
+		"activities": [
+			{
+				"name": "Loop_Over_Excel_Files",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "AppendFilesName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [
+					{
+						"name": "workspace",
+						"value": "validwines"
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('file_items')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "AddSystembolagetAdresses",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "SystembolagetAdresses",
+									"type": "DataFlowReference",
+									"parameters": {
+										"item": {
+											"value": "'@{item()}'",
+											"type": "Expression"
+										},
+										"workspace": {
+											"value": "'@{variables('workspace')}'",
+											"type": "Expression"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "SendInfo_Done",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Loop_Over_Excel_Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
+					"method": "POST",
+					"body": {
+						"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SendInfo_Error",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Loop_Over_Excel_Files",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "AppendFilesName",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "GetAllSourceFilesInAttachmentsDir",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Validation1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
+					"method": "POST",
+					"body": "Å"
+				}
+			},
+			{
+				"name": "GetAllSourceFilesInAttachmentsDir",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "SetWorkspaceName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "AttachemntsWorkspace",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "SetWorkspaceName",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Validation1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "workspace",
+					"value": "validwines"
+				}
+			},
+			{
+				"name": "AppendFilesName",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetAllSourceFilesInAttachmentsDir",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetAllSourceFilesInAttachmentsDir').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "AppendFilename",
+							"type": "AppendVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "file_items",
+								"value": {
+									"value": "@split(item().name, '.')[0]",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Validation1",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "SystembolagetStores",
+						"type": "DatasetReference"
+					},
+					"timeout": "0.12:00:00",
+					"sleep": 10
+				}
+			}
+		],
+		"variables": {
+			"files": {
+				"type": "Array"
+			},
+			"workspace": {
+				"type": "String"
+			},
+			"file_items": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "Wines"
+		},
+		"annotations": []
+	}
+}
