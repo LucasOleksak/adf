@@ -46,9 +46,6 @@
 					"name": "aggregate2"
 				},
 				{
-					"name": "domain104"
-				},
-				{
 					"name": "aggByDateAndPageTitle"
 				},
 				{
@@ -72,15 +69,14 @@
 				"     ignoreNoFilesFound: false) ~> mongoPixels",
 				"mongoPixels derive(date = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm'),",
 				"          time = toTimestamp(toLong(toString(created)),'hh:mm:ss', 'Europe/Stockholm')) ~> createDateColumn",
-				"domain104 split(isNull(uid) && !isNull(uuid),",
+				"createDateColumn split(isNull(uid) && !isNull(uuid),",
 				"     isNull(uuid) && !isNull(uid),",
 				"     disjoint: true) ~> split1@(hasNotUID, hasUID)",
 				"split1@hasNotUID aggregate(groupBy(uuid,",
 				"          page_title,",
 				"          date),",
 				"     page = count(page_title)) ~> aggregate2",
-				"createDateColumn filter(date > subDays(toDate('2022-10-14'), 356) && domain == 104) ~> domain104",
-				"domain104 aggregate(groupBy(page_title,",
+				"createDateColumn aggregate(groupBy(page_title,",
 				"          date,",
 				"          domain),",
 				"     title = count(page_title)) ~> aggByDateAndPageTitle",
