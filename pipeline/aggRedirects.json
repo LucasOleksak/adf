@@ -214,9 +214,9 @@
 						"referenceName": "AggRedirects",
 						"type": "DataFlowReference"
 					},
-					"integrationRuntime": {
-						"referenceName": "integrationRuntime1",
-						"type": "IntegrationRuntimeReference"
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
 					},
 					"traceLevel": "Fine"
 				}
@@ -327,6 +327,12 @@
 				}
 			}
 		],
+		"variables": {
+			"redirectDaysWindow": {
+				"type": "Integer",
+				"defaultValue": 14
+			}
+		},
 		"folder": {
 			"name": "DataFromTracking"
 		},
