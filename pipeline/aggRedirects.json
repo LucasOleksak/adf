@@ -36,7 +36,7 @@
 						"type": "CosmosDbMongoDbApiSource",
 						"batchSize": 100,
 						"filter": {
-							"value": "{\"createdAt\":{$gt: ISODate(\"@{adddays(utcnow(),14)}\")}}",
+							"value": "{\"createdAt\":{$gt: ISODate(\"@{adddays(utcnow(),-14)}\")}}",
 							"type": "Expression"
 						}
 					},
