@@ -71,7 +71,7 @@
 									"path": "$['uid']"
 								},
 								"sink": {
-									"type": "Int32",
+									"type": "String",
 									"ordinal": 1
 								}
 							},
