@@ -327,6 +327,12 @@
 				}
 			}
 		],
+		"parameters": {
+			"redirectDaysWindow": {
+				"type": "int",
+				"defaultValue": 14
+			}
+		},
 		"variables": {
 			"redirectDaysWindow": {
 				"type": "Integer",
