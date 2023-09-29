@@ -48,7 +48,8 @@
 				"typeProperties": {
 					"source": {
 						"type": "CosmosDbMongoDbApiSource",
-						"batchSize": 500
+						"batchSize": 500,
+						"filter": "{\"createdAt\":{$gt: ISODate(\"@{adddays(utcnow(),-14)}\")}}"
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
