@@ -2,7 +2,7 @@
 	"name": "DestinationCSVPixels",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "Storage_DataFactory_Reaktion",
+			"referenceName": "DataLake",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -12,9 +12,9 @@
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
-				"fileName": "csv_pixels",
-				"container": "csv"
+				"type": "AzureBlobFSLocation",
+				"fileName": "current_pixels.csv",
+				"fileSystem": "pixels"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
