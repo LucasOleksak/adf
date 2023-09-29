@@ -20,7 +20,7 @@
 					},
 					{
 						"name": "Destination",
-						"value": "csv//csv_pixels.csv"
+						"value": "csv/csv_pixels.csv"
 					}
 				],
 				"typeProperties": {
@@ -31,7 +31,8 @@
 					"sink": {
 						"type": "DelimitedTextSink",
 						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
+							"type": "AzureBlobStorageWriteSettings",
+							"copyBehavior": "FlattenHierarchy"
 						},
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
@@ -40,7 +41,6 @@
 						}
 					},
 					"enableStaging": false,
-					"validateDataConsistency": false,
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
@@ -136,7 +136,14 @@
 			{
 				"name": "AnalyzePixels",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "CopyPixels",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
