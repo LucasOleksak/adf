@@ -10,13 +10,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "mongoPixels"
-				},
-				{
-					"dataset": {
-						"referenceName": "ReaktionCoreEmail",
-						"type": "DatasetReference"
-					},
-					"name": "reaktionCore"
 				}
 			],
 			"sinks": [
@@ -60,12 +53,6 @@
 				},
 				{
 					"name": "sort1"
-				},
-				{
-					"name": "filter2"
-				},
-				{
-					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -83,32 +70,6 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> mongoPixels",
-				"source(output(",
-				"          id as integer,",
-				"          reaktion_uid as string,",
-				"          email as string,",
-				"          person_id as integer,",
-				"          position_id as integer,",
-				"          address_id as integer,",
-				"          is_company_mail as boolean,",
-				"          is_private_mail as boolean,",
-				"          is_optin as boolean,",
-				"          is_unsubscibed as boolean,",
-				"          is_active as boolean,",
-				"          hash as string,",
-				"          created_at as timestamp,",
-				"          updated_at as timestamp,",
-				"          is_bounced as boolean,",
-				"          eyebeep_active as boolean,",
-				"          eyebeep_source as string,",
-				"          remove_from_adressgruppen as boolean,",
-				"          remove_from_adressgruppen_date as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     limit: 100,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> reaktionCore",
 				"mongoPixels derive(date = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm'),",
 				"          time = toTimestamp(toLong(toString(created)),'hh:mm:ss', 'Europe/Stockholm')) ~> createDateColumn",
 				"domain104 split(isNull(uid) && !isNull(uuid),",
@@ -125,16 +86,6 @@
 				"     title = count(page_title)) ~> aggByDateAndPageTitle",
 				"aggByDateAndPageTitle sort(asc(date, true),",
 				"     desc(title, true)) ~> sort1",
-				"select1 filter(!isNull(id) && id > 500000) ~> filter2",
-				"reaktionCore select(mapColumn(",
-				"          id,",
-				"          email,",
-				"          hash,",
-				"          updated_at,",
-				"          remove_from_adressgruppen",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
 				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
