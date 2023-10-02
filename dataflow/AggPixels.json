@@ -88,7 +88,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:[(concat('PixelTrackingExtract_', toString(currentUTC('UTC')),'.csv.zip'))],",
+				"     partitionFileNames:[(concat('PixelTrackingExtract_', toString(currentUTC('UTC')),'.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
