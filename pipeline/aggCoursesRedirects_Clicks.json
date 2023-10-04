@@ -1,0 +1,170 @@
+{
+	"name": "aggCoursesRedirects_Clicks",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyDataFromRedirects",
+				"description": "Copy redirect from courses redirects",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbMongoDbApiSource",
+						"batchSize": 100,
+						"filter": "{ domain_id: 11, url_without_params : { $regex: '/utbildning/redirect/' }}"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "FlattenHierarchy"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['uid']"
+								},
+								"sink": {
+									"name": "uid",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['uuid']"
+								},
+								"sink": {
+									"name": "uuid",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['ip']"
+								},
+								"sink": {
+									"name": "ip",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['web_client']"
+								},
+								"sink": {
+									"name": "web_client",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['domain_id']"
+								},
+								"sink": {
+									"name": "domain_id",
+									"type": "Int16"
+								}
+							},
+							{
+								"source": {
+									"path": "$['url_without_params']"
+								},
+								"sink": {
+									"name": "url_without_params",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['url']"
+								},
+								"sink": {
+									"name": "url",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['redirect_id']"
+								},
+								"sink": {
+									"name": "redirect_id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['redirect_name']"
+								},
+								"sink": {
+									"name": "redirect_name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['referrer_url']"
+								},
+								"sink": {
+									"name": "referrer_url",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['createdAt']['$date']"
+								},
+								"sink": {
+									"name": "createdAt_$date",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['updatedAt']['$date']"
+								},
+								"sink": {
+									"name": "updatedAt_$date",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Mongo_TrackingRedirects",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Utbildnigar_Redirects",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "DataFromTracking"
+		},
+		"annotations": []
+	}
+}
