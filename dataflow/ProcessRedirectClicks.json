@@ -23,13 +23,17 @@
 			],
 			"transformations": [
 				{
-					"name": "aggregate1"
+					"name": "AggredateByCourseNameAndCountClicks"
 				},
 				{
-					"name": "filter1"
+					"name": "FilterReaktionsUIDs",
+					"description": "Remove Lukasz and Frida uids"
 				},
 				{
-					"name": "sort1"
+					"name": "SortByCountDescening"
+				},
+				{
+					"name": "AggerdateByDay"
 				}
 			],
 			"scriptLines": [
@@ -50,12 +54,16 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> CSVUtbildningar",
-				"filter1 aggregate(groupBy(redirect_name),",
+				"FilterReaktionsUIDs aggregate(groupBy(redirect_name,",
+				"          url),",
 				"     clicks = count(redirect_name),",
-				"     partitionBy('hash', 1)) ~> aggregate1",
-				"CSVUtbildningar filter(!in([1118405, 50884],uid)) ~> filter1",
-				"aggregate1 sort(desc(clicks, true)) ~> sort1",
-				"sort1 sink(allowSchemaDrift: true,",
+				"     partitionBy('hash', 1)) ~> AggredateByCourseNameAndCountClicks",
+				"CSVUtbildningar filter(!in([1118405, 50884],uid),",
+				"     partitionBy('hash', 1)) ~> FilterReaktionsUIDs",
+				"AggredateByCourseNameAndCountClicks sort(desc(clicks, true),",
+				"     partitionBy('hash', 1)) ~> SortByCountDescening",
+				"FilterReaktionsUIDs aggregate(partitionBy('hash', 1)) ~> AggerdateByDay",
+				"SortByCountDescening sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'tracking',",
