@@ -133,7 +133,7 @@
 								},
 								"sink": {
 									"name": "createdAt_$date",
-									"type": "Int32"
+									"type": "Int64"
 								}
 							},
 							{
@@ -142,7 +142,7 @@
 								},
 								"sink": {
 									"name": "updatedAt_$date",
-									"type": "Int32"
+									"type": "Int64"
 								}
 							}
 						]
