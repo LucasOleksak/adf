@@ -1,0 +1,77 @@
+{
+	"name": "ProcessRedirectClicks",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Utbildnigar_Redirects",
+						"type": "DatasetReference"
+					},
+					"name": "CSVUtbildningar"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SinkToCSV"
+				}
+			],
+			"transformations": [
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "sort1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          uid as integer,",
+				"          uuid as string,",
+				"          ip as string,",
+				"          web_client as string,",
+				"          domain_id as short,",
+				"          url_without_params as string,",
+				"          url as string,",
+				"          redirect_id as short,",
+				"          redirect_name as string,",
+				"          referrer_url as string,",
+				"          {createdAt_$date} as long,",
+				"          {updatedAt_$date} as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CSVUtbildningar",
+				"filter1 aggregate(groupBy(redirect_name),",
+				"     clicks = count(redirect_name),",
+				"     partitionBy('hash', 1)) ~> aggregate1",
+				"CSVUtbildningar filter(!in([1118405, 50884],uid)) ~> filter1",
+				"aggregate1 sort(desc(clicks, true)) ~> sort1",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'tracking',",
+				"     folderPath: 'redirects',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['utbildningar_clicks_agg'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SinkToCSV"
+			]
+		}
+	}
+}
