@@ -67,7 +67,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:['utbildningar_clicks_agg'],",
+				"     partitionFileNames:['utbildningar_clicks_agg.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
