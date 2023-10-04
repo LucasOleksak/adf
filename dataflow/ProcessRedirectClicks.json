@@ -31,9 +31,6 @@
 				},
 				{
 					"name": "SortByCountDescening"
-				},
-				{
-					"name": "AggerdateByDay"
 				}
 			],
 			"scriptLines": [
@@ -54,15 +51,13 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> CSVUtbildningar",
-				"FilterReaktionsUIDs aggregate(groupBy(redirect_name,",
-				"          url),",
+				"FilterReaktionsUIDs aggregate(groupBy(redirect_name),",
 				"     clicks = count(redirect_name),",
 				"     partitionBy('hash', 1)) ~> AggredateByCourseNameAndCountClicks",
 				"CSVUtbildningar filter(!in([1118405, 50884],uid),",
 				"     partitionBy('hash', 1)) ~> FilterReaktionsUIDs",
 				"AggredateByCourseNameAndCountClicks sort(desc(clicks, true),",
 				"     partitionBy('hash', 1)) ~> SortByCountDescening",
-				"FilterReaktionsUIDs aggregate(partitionBy('hash', 1)) ~> AggerdateByDay",
 				"SortByCountDescening sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
