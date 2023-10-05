@@ -204,7 +204,7 @@
 						"referenceName": "ProcessRedirectClicks",
 						"type": "DataFlowReference",
 						"parameters": {
-							"filename": {
+							"filename1": {
 								"value": "'@{variables('filename')}'",
 								"type": "Expression"
 							}
