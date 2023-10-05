@@ -6,7 +6,14 @@
 				"name": "CopyDataFromRedirects",
 				"description": "Copy redirect from courses redirects",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set pattern",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -14,12 +21,24 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "redirects"
+					},
+					{
+						"name": "Destination",
+						"value": "tracking/redirects/courses_rediects.csv"
+					}
+				],
 				"typeProperties": {
 					"source": {
 						"type": "CosmosDbMongoDbApiSource",
 						"batchSize": 100,
-						"filter": "{ domain_id: 11, url_without_params : { $regex: '/utbildning/redirect/' }}"
+						"filter": {
+							"value": "{ \n\t\t\"domain_id\": @{variables('domain_id')}, \n\t\t\"url_without_params\" : {\n\t\t\t $regex: \"@{variables('set_pattern')}\" }}\n\n",
+							"type": "Expression"
+						}
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -191,8 +210,51 @@
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "Set pattern",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set domain id",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "set_pattern",
+					"value": "'/utbildning/redirect/'"
+				}
+			},
+			{
+				"name": "Set domain id",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "domain_id",
+					"value": "11"
+				}
 			}
 		],
+		"variables": {
+			"set_pattern": {
+				"type": "String"
+			},
+			"domain_id": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "DataFromTracking"
 		},
