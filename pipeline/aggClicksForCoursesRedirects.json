@@ -289,7 +289,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Validation1",
+						"activity": "ValidateRedirectsBlobOnStorage",
 						"dependencyConditions": [
 							"Completed"
 						]
@@ -309,7 +309,7 @@
 				}
 			},
 			{
-				"name": "Validation1",
+				"name": "ValidateRedirectsBlobOnStorage",
 				"type": "Validation",
 				"dependsOn": [],
 				"userProperties": [],
