@@ -10,7 +10,11 @@
 		},
 		"annotations": [],
 		"type": "AzurePostgreSqlTable",
-		"schema": []
+		"schema": [],
+		"typeProperties": {
+			"schema": "public",
+			"table": "contact_email"
+		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }
