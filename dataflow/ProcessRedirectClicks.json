@@ -35,7 +35,7 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     filename as string ($filename)",
+				"     filename1 as string",
 				"}",
 				"source(output(",
 				"          uid as integer,",
@@ -70,13 +70,12 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:[($filename)],",
+				"     partitionFileNames:[($filename1)],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 1,",
 				"     partitionBy('hash', 1)) ~> SinkToCSV"
 			]
 		}
