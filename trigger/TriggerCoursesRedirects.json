@@ -1,0 +1,24 @@
+{
+	"name": "TriggerCoursesRedirects",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "aggClicksForCoursesRedirects",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2023-10-05T14:10:00",
+				"timeZone": "W. Europe Standard Time"
+			}
+		}
+	}
+}
