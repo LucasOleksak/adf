@@ -245,6 +245,31 @@
 					"variableName": "domain_id",
 					"value": "11"
 				}
+			},
+			{
+				"name": "PingLogicApp",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "AggClicksForCourses",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod2-18.swedencentral.logic.azure.com:443/workflows/d1dc9525b458498590d62cdcb61839c0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CqkODBsoXEFAEIinCN2FugoMURvgqP-Rz7qsfNc5XvI",
+					"method": "POST",
+					"body": "{ filename : \"\" }"
+				}
 			}
 		],
 		"variables": {
