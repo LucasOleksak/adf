@@ -169,7 +169,7 @@
 			"name": "BCF"
 		},
 		"annotations": [],
-		"lastPublishTime": "2022-10-27T13:27:47Z"
+		"lastPublishTime": "2023-10-05T11:28:59Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

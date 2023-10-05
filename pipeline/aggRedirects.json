@@ -323,7 +323,7 @@
 			"name": "DataFromTracking"
 		},
 		"annotations": [],
-		"lastPublishTime": "2022-10-28T13:38:59Z"
+		"lastPublishTime": "2023-10-05T11:28:59Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

@@ -49,7 +49,10 @@
 					"source": {
 						"type": "CosmosDbMongoDbApiSource",
 						"batchSize": 500,
-						"filter": "{\"createdAt\":{$gt: ISODate(\"@{adddays(utcnow(),-14)}\")}}"
+						"filter": {
+							"value": "{\"createdAt\":{$gt: ISODate(\"@{adddays(utcnow(),-14)}\")}}",
+							"type": "Expression"
+						}
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -169,7 +172,7 @@
 			"name": "DataFromTracking"
 		},
 		"annotations": [],
-		"lastPublishTime": "2022-10-25T20:13:04Z"
+		"lastPublishTime": "2023-10-05T11:28:59Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }
