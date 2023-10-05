@@ -235,7 +235,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "set_pattern",
-					"value": "'/utbildning/redirect/'"
+					"value": "/utbildning/redirect/"
 				}
 			},
 			{
