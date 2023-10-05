@@ -2940,7 +2940,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TriggerTrackingPixels')]",
+			"name": "[concat(parameters('factoryName'), '/TriggerCoursesRedirects')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2949,7 +2949,7 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "aggPixels",
+							"referenceName": "aggClicksForCoursesRedirects",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
@@ -2960,13 +2960,13 @@
 					"recurrence": {
 						"frequency": "Day",
 						"interval": 1,
-						"startTime": "2023-10-03T14:18:00",
+						"startTime": "2023-10-05T14:10:00",
 						"timeZone": "W. Europe Standard Time"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/aggPixels')]"
+				"[concat(variables('factoryId'), '/pipelines/aggClicksForCoursesRedirects')]"
 			]
 		}
 	]
