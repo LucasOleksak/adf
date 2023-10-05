@@ -15,10 +15,6 @@
 					"name": "DataFromTracking"
 				},
 				{
-					"dataset": {
-						"referenceName": "ReaktionCoreEmail",
-						"type": "DatasetReference"
-					},
 					"name": "ReaktionEmails"
 				},
 				{
@@ -29,10 +25,6 @@
 					"name": "HRNyttAllContacts"
 				},
 				{
-					"dataset": {
-						"referenceName": "ReaktionCore_Subscriptions",
-						"type": "DatasetReference"
-					},
 					"name": "Subscriptions"
 				}
 			],
@@ -124,9 +116,7 @@
 				"          remove_from_adressgruppen_date as date",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> ReaktionEmails",
+				"     validateSchema: false) ~> ReaktionEmails",
 				"source(output(",
 				"          Epost as string,",
 				"          FirstName as string,",
@@ -148,9 +138,7 @@
 				"          updated_at as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> Subscriptions",
+				"     validateSchema: false) ~> Subscriptions",
 				"DataFromTracking select(mapColumn(",
 				"          uid = {_col0_},",
 				"          uuid = {_col1_},",
