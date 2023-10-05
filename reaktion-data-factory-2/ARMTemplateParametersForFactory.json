@@ -55,21 +55,6 @@
 		},
 		"MongoDB_Tracking_properties_typeProperties_database": {
 			"value": "tracking-prod"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_startDate": {
-			"value": "2022-11-09"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_domain_id": {
-			"value": "107"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_project_name": {
-			"value": "charma"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_dest_path": {
-			"value": "charma/stats"
-		},
-		"TriggerBCF_properties_BCF_stats_parameters_startDate": {
-			"value": "2022-10-25"
 		}
 	}
 }

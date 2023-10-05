@@ -74,26 +74,6 @@
 		"MongoDB_Tracking_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "tracking-prod"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_startDate": {
-			"type": "string",
-			"defaultValue": "2022-11-09"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_domain_id": {
-			"type": "string",
-			"defaultValue": "107"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_project_name": {
-			"type": "string",
-			"defaultValue": "charma"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_dest_path": {
-			"type": "string",
-			"defaultValue": "charma/stats"
-		},
-		"TriggerBCF_properties_BCF_stats_parameters_startDate": {
-			"type": "string",
-			"defaultValue": "2022-10-25"
 		}
 	},
 	"variables": {
@@ -5489,41 +5469,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CharmaCampaign_9_October')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Charma",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"startDate": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_startDate')]",
-							"domain_id": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_domain_id')]",
-							"project_name": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_project_name')]",
-							"dest_path": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_dest_path')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2022-11-10T03:23:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Charma')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/TriggerAggRedirects')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -5551,39 +5496,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/aggRedirects')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TriggerBCF')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Creates stats for BCF simple pixel",
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "BCF_stats",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"startDate": "[parameters('TriggerBCF_properties_BCF_stats_parameters_startDate')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2022-10-28T03:36:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/BCF_stats')]"
 			]
 		},
 		{

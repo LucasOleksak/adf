@@ -75,26 +75,6 @@
 			"type": "string",
 			"defaultValue": "tracking-prod"
 		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_startDate": {
-			"type": "string",
-			"defaultValue": "2022-11-09"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_domain_id": {
-			"type": "string",
-			"defaultValue": "107"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_project_name": {
-			"type": "string",
-			"defaultValue": "charma"
-		},
-		"CharmaCampaign_9_October_properties_Charma_parameters_dest_path": {
-			"type": "string",
-			"defaultValue": "charma/stats"
-		},
-		"TriggerBCF_properties_BCF_stats_parameters_startDate": {
-			"type": "string",
-			"defaultValue": "2022-10-25"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -230,21 +210,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"CharmaCampaign_9_October_properties_Charma_parameters_startDate": {
-						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_startDate')]"
-					},
-					"CharmaCampaign_9_October_properties_Charma_parameters_domain_id": {
-						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_domain_id')]"
-					},
-					"CharmaCampaign_9_October_properties_Charma_parameters_project_name": {
-						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_project_name')]"
-					},
-					"CharmaCampaign_9_October_properties_Charma_parameters_dest_path": {
-						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_dest_path')]"
-					},
-					"TriggerBCF_properties_BCF_stats_parameters_startDate": {
-						"value": "[parameters('TriggerBCF_properties_BCF_stats_parameters_startDate')]"
 					}
 				}
 			},
