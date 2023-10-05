@@ -1,0 +1,2973 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "reaktion-data-factory-2"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_startDate": {
+			"type": "string",
+			"defaultValue": "2022-11-09"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_domain_id": {
+			"type": "string",
+			"defaultValue": "107"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_project_name": {
+			"type": "string",
+			"defaultValue": "charma"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_dest_path": {
+			"type": "string",
+			"defaultValue": "charma/stats"
+		},
+		"TriggerBCF_properties_BCF_stats_parameters_startDate": {
+			"type": "string",
+			"defaultValue": "2022-10-25"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/SystembolagetAdresses')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference"
+							},
+							"name": "SystembolagetAdresses"
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "WineCalculations"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SinkToCSV"
+						}
+					],
+					"transformations": [
+						{
+							"name": "GetIDofShopFromStoreColumn"
+						},
+						{
+							"name": "JoinWineWithSystembolagetAdresses"
+						},
+						{
+							"name": "SortOnWeight"
+						},
+						{
+							"name": "SelectColumnsWeNeed"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     item as string ('CSM_Chardonnay_75cl'),",
+						"     workspace as string ('validwines')",
+						"}",
+						"source(output(",
+						"          ID as string,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as string,",
+						"          Lng as string,",
+						"          Range as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SystembolagetAdresses",
+						"source(output(",
+						"          Store as string,",
+						"          {Store group} as string,",
+						"          Profile as string,",
+						"          Shop_Segment_Diff as double,",
+						"          Trend as double,",
+						"          Precent_of_whole_volume as double,",
+						"          Weight as double",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'validwines',",
+						"     folderPath: 'reports/latest',",
+						"     fileName: (concat($item, '.csv')),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> WineCalculations",
+						"WineCalculations derive(ID = regexExtract(Store, '(\\\\d+)')) ~> GetIDofShopFromStoreColumn",
+						"SystembolagetAdresses, GetIDofShopFromStoreColumn join(SystembolagetAdresses@ID == GetIDofShopFromStoreColumn@ID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> JoinWineWithSystembolagetAdresses",
+						"JoinWineWithSystembolagetAdresses sort(asc(Weight, true),",
+						"     partitionBy('hash', 1)) ~> SortOnWeight",
+						"SortOnWeight select(mapColumn(",
+						"          Butiksnamn,",
+						"          Adress,",
+						"          Postnummer,",
+						"          Ort,",
+						"          Lat,",
+						"          Lng,",
+						"          Range,",
+						"          Store,",
+						"          {Store group},",
+						"          Profile,",
+						"          Shop_Segment_Diff,",
+						"          Trend,",
+						"          Precent_of_whole_volume,",
+						"          Weight",
+						"     ),",
+						"     partitionBy('hash', 1),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumnsWeNeed",
+						"SelectColumnsWeNeed sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'validwines',",
+						"     folderPath: 'reports/latest',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:[(concat($item, 'full', '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> SinkToCSV"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BCF')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataFromBCF",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{ \n    domain_id: @{pipeline().parameters.domain_id}\n    createdAt : { $gte : ISODate('@{pipeline().parameters.startDate}') }\n}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": "charma.csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['tags'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['categories'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"type": "Int16",
+											"ordinal": 7
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_Tracking_Trackings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "EDR_CSV_Source",
+								"type": "DatasetReference",
+								"parameters": {
+									"project_folder": "bcf/sources",
+									"source_file": "bcf.csv"
+								}
+							}
+						]
+					},
+					{
+						"name": "BCF",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CopyDataFromBCF",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "EDR_BasicFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"getDataFromCSVSource": {
+										"project_folder": "bcf",
+										"source_file": "sources/bcf.csv"
+									},
+									"saveToRedirectsCSV": {
+										"dest_path": "bcf/stats"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"startDate": {
+						"type": "string",
+						"defaultValue": "2022-11-09"
+					},
+					"domain_id": {
+						"type": "string",
+						"defaultValue": "51"
+					},
+					"project_name": {
+						"type": "string",
+						"defaultValue": "bcf"
+					},
+					"dest_path": {
+						"type": "string",
+						"defaultValue": "bcf/stats"
+					}
+				},
+				"folder": {
+					"name": "EDR"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-11-09T15:33:50Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BCF_stats')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CP_SimpleTracking_For_BCF",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{ domain : \"barncancerfonden.se\" ,\ncreatedAt: { $gte : ISODate(\"@{pipeline().parameters.startDate}\") } }",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['uuid']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['page_title']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 7
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 8
+										}
+									}
+								],
+								"collectionReference": ""
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_TrackingSimpleTracking",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSV_BCF_uid",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "DF_BCF_Pixel",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CP_SimpleTracking_For_BCF",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_BCF_uid",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"BCFCopiedData": {},
+									"Emails": {},
+									"aggVisitsByPageTitle": {},
+									"toCSV": {},
+									"sink2": {},
+									"sink3": {},
+									"sink4": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"startDate": {
+						"type": "string",
+						"defaultValue": "2022-10-25"
+					}
+				},
+				"folder": {
+					"name": "BCF"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-27T13:27:47Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Charma')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataFromCharma",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{ \n    domain_id: @{pipeline().parameters.domain_id}\n    createdAt : { $gte : ISODate('@{pipeline().parameters.startDate}') }\n}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": "charma.csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['tags'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['categories'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"type": "Int16",
+											"ordinal": 7
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_Tracking_Trackings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "EDR_CSV_Source",
+								"type": "DatasetReference",
+								"parameters": {
+									"project_folder": "charma/sources",
+									"source_file": "charma.csv"
+								}
+							}
+						]
+					},
+					{
+						"name": "Charma",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CopyDataFromCharma",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "EDR_BasicFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"getDataFromCSVSource": {},
+									"saveToRedirectsCSV": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"startDate": {
+						"type": "string",
+						"defaultValue": "2022-11-09"
+					},
+					"domain_id": {
+						"type": "string",
+						"defaultValue": "107"
+					},
+					"project_name": {
+						"type": "string",
+						"defaultValue": "charma"
+					},
+					"dest_path": {
+						"type": "string",
+						"defaultValue": "charma/stats"
+					}
+				},
+				"folder": {
+					"name": "EDR"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-11-09T15:33:50Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CommonStats')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "HRNytt_Banners",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "HRNytt_Banners",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"BannersClicks": {},
+									"source1": {},
+									"saveCurrentMonthStats": {},
+									"sink1": {},
+									"saveCurrentMonthAggByPage": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"monthAgo": {
+						"type": "int",
+						"defaultValue": -30
+					},
+					"yearAgo": {
+						"type": "int",
+						"defaultValue": -365
+					},
+					"monthsAgo_3": {
+						"type": "string",
+						"defaultValue": "-90"
+					},
+					"monthsAgo_6": {
+						"type": "string",
+						"defaultValue": "-180"
+					}
+				},
+				"folder": {
+					"name": "HRNytt"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-11-08T15:00:44Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mind')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataFromMind",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{ \n    domain_id: @{pipeline().parameters.domain_id}\n    createdAt : { $gte : ISODate('@{pipeline().parameters.startDate}') }\n}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": "charma.csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['tags'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['categories'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"type": "Int16",
+											"ordinal": 7
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_Tracking_Trackings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "EDR_CSV_Source",
+								"type": "DatasetReference",
+								"parameters": {
+									"project_folder": "mind/sources",
+									"source_file": "mind.csv"
+								}
+							}
+						]
+					},
+					{
+						"name": "Mind",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CopyDataFromMind",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "EDR_BasicFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"getDataFromCSVSource": {
+										"project_folder": "mind",
+										"source_file": "sources/mind.csv"
+									},
+									"saveToRedirectsCSV": {
+										"dest_path": "mind/stats"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"startDate": {
+						"type": "string",
+						"defaultValue": "2022-11-09"
+					},
+					"domain_id": {
+						"type": "string",
+						"defaultValue": "109"
+					},
+					"project_name": {
+						"type": "string",
+						"defaultValue": "mind"
+					},
+					"dest_path": {
+						"type": "string",
+						"defaultValue": "mind/stats"
+					}
+				},
+				"folder": {
+					"name": "EDR"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-11-09T15:33:50Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ValidWines_Pipeline_Add_GetMetadata_Flow')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Loop_Over_Excel_Files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('file_items')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "FindTendency",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": "calculateTendency",
+										"method": "POST",
+										"headers": {},
+										"body": {
+											"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AF_WineSalesTendency",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "DataFlow",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [
+										{
+											"activity": "FindTendency",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "SortAndAnalyzeTrend_copy1",
+											"type": "DataFlowReference",
+											"parameters": {
+												"item": {
+													"value": "'@{item()}'",
+													"type": "Expression"
+												},
+												"workspace": {
+													"value": "'@{variables('workspace')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"TrendCSVFile": {},
+												"SystembolagetStore": {},
+												"SaveToCSV": {},
+												"SaveSegments": {}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								},
+								{
+									"name": "CalculateSegments",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [
+										{
+											"activity": "DataFlow",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": "calculateSegments",
+										"method": "POST",
+										"headers": {},
+										"body": {
+											"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AF_WineSalesTendency",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "SendInfo_Done",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "SendInfo_Error",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
+							"method": "POST",
+							"headers": {},
+							"body": "Å"
+						}
+					},
+					{
+						"name": "GetAllSourceFilesInAttachmentsDir",
+						"type": "GetMetadata",
+						"dependsOn": [
+							{
+								"activity": "SetWorkspaceName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "AttachemntsWorkspace",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "SetWorkspaceName",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "workspace",
+							"value": "validwines"
+						}
+					},
+					{
+						"name": "AppendFilesName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetAllSourceFilesInAttachmentsDir').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "AppendFilename",
+									"type": "AppendVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "file_items",
+										"value": {
+											"value": "@split(item().name, '.')[0]",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"files": {
+						"type": "Array"
+					},
+					"workspace": {
+						"type": "String"
+					},
+					"file_items": {
+						"type": "Array"
+					}
+				},
+				"folder": {
+					"name": "Wines"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Wine_Pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Define container name in 'workspace' \nReport is stored in 'reports/latest/{wine_name.csv} ",
+				"activities": [
+					{
+						"name": "Loop_Over_Excel_Files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [
+							{
+								"name": "workspace",
+								"value": "validwines"
+							}
+						],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('file_items')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CalculateWeightFactor",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": "WineAdsCalculator",
+										"method": "POST",
+										"headers": {},
+										"body": {
+											"value": "{ \"wine_name\" : \"@{item()}\", \"workspace\" : \"@{variables('workspace')}\" }",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AF_WineSalesTendency",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "AddSystembolagetAdresses",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [
+										{
+											"activity": "CalculateWeightFactor",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "SystembolagetAdresses",
+											"type": "DataFlowReference",
+											"parameters": {
+												"item": {
+													"value": "'@{item()}'",
+													"type": "Expression"
+												},
+												"workspace": {
+													"value": "'@{variables('workspace')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"SystembolagetAdresses": {},
+												"WineCalculations": {},
+												"SinkToCSV": {}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "SendInfo_Done",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "SendInfo_Error",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
+							"method": "POST",
+							"headers": {},
+							"body": "Å"
+						}
+					},
+					{
+						"name": "GetAllSourceFilesInAttachmentsDir",
+						"type": "GetMetadata",
+						"dependsOn": [
+							{
+								"activity": "SetWorkspaceName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "AttachemntsWorkspace",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "SetWorkspaceName",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "workspace",
+							"value": "validwines"
+						}
+					},
+					{
+						"name": "AppendFilesName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetAllSourceFilesInAttachmentsDir').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "AppendFilename",
+									"type": "AppendVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "file_items",
+										"value": {
+											"value": "@split(item().name, '.')[0]",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"files": {
+						"type": "Array"
+					},
+					"workspace": {
+						"type": "String"
+					},
+					"file_items": {
+						"type": "Array"
+					}
+				},
+				"folder": {
+					"name": "Wines"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/SystembolagetAdresses')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Wine_Pipeline_No_AZ_function')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Define container name in 'workspace' \nReport is stored in 'reports/latest/{wine_name.csv} ",
+				"activities": [
+					{
+						"name": "Loop_Over_Excel_Files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [
+							{
+								"name": "workspace",
+								"value": "validwines"
+							}
+						],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('file_items')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "AddSystembolagetAdresses",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "SystembolagetAdresses",
+											"type": "DataFlowReference",
+											"parameters": {
+												"item": {
+													"value": "'@{item()}'",
+													"type": "Expression"
+												},
+												"workspace": {
+													"value": "'@{variables('workspace')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"SystembolagetAdresses": {},
+												"WineCalculations": {},
+												"SinkToCSV": {}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "SendInfo_Done",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "SendInfo_Error",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
+							"method": "POST",
+							"headers": {},
+							"body": "Å"
+						}
+					},
+					{
+						"name": "GetAllSourceFilesInAttachmentsDir",
+						"type": "GetMetadata",
+						"dependsOn": [
+							{
+								"activity": "SetWorkspaceName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "AttachemntsWorkspace",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "SetWorkspaceName",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "workspace",
+							"value": "validwines"
+						}
+					},
+					{
+						"name": "AppendFilesName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetAllSourceFilesInAttachmentsDir').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "AppendFilename",
+									"type": "AppendVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "file_items",
+										"value": {
+											"value": "@split(item().name, '.')[0]",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"files": {
+						"type": "Array"
+					},
+					"workspace": {
+						"type": "String"
+					},
+					"file_items": {
+						"type": "Array"
+					}
+				},
+				"folder": {
+					"name": "Wines"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/SystembolagetAdresses')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/aggClicksForCoursesRedirects')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataFromRedirects",
+						"description": "Copy redirect from courses redirects",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set pattern",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "redirects"
+							},
+							{
+								"name": "Destination",
+								"value": "tracking/redirects/courses_rediects.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{ \n\t\t\"domain_id\": @{variables('domain_id')}, \n\t\t\"url_without_params\" : {\n\t\t\t $regex: \"@{variables('set_pattern')}\" }}\n\n",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"name": "uid",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['uuid']"
+										},
+										"sink": {
+											"name": "uuid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['ip']"
+										},
+										"sink": {
+											"name": "ip",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['web_client']"
+										},
+										"sink": {
+											"name": "web_client",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"name": "domain_id",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"path": "$['url_without_params']"
+										},
+										"sink": {
+											"name": "url_without_params",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"name": "url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['redirect_id']"
+										},
+										"sink": {
+											"name": "redirect_id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['redirect_name']"
+										},
+										"sink": {
+											"name": "redirect_name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"name": "referrer_url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"name": "createdAt_$date",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"name": "updatedAt_$date",
+											"type": "Int64"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_TrackingRedirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Utbildnigar_Redirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "AggClicksForCourses",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CopyDataFromRedirects",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "ProcessRedirectClicks",
+								"type": "DataFlowReference",
+								"parameters": {
+									"filename1": {
+										"value": "'@{variables('filename')}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"CSVUtbildningar": {},
+									"SinkToCSV": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Set pattern",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set domain id",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "set_pattern",
+							"value": "/utbildning/redirect/"
+						}
+					},
+					{
+						"name": "Set domain id",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set filename",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "domain_id",
+							"value": "11"
+						}
+					},
+					{
+						"name": "PingLogicApp",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "AggClicksForCourses",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod2-18.swedencentral.logic.azure.com:443/workflows/d1dc9525b458498590d62cdcb61839c0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CqkODBsoXEFAEIinCN2FugoMURvgqP-Rz7qsfNc5XvI",
+							"method": "POST",
+							"headers": {},
+							"body": "{ filename : \"\" }"
+						}
+					},
+					{
+						"name": "Set filename",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ValidateRedirectsBlobOnStorage",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "filename",
+							"value": {
+								"value": "@concat('redirects-utbildningar-', utcnow() ,'.csv')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ValidateRedirectsBlobOnStorage",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Utbildnigar_Redirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"set_pattern": {
+						"type": "String"
+					},
+					"domain_id": {
+						"type": "String"
+					},
+					"filename": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "DataFromTracking"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/aggPixels')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AnalyzePixels",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy pixels",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AggPixels",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"mongoPixels": {},
+									"aggAll": {},
+									"uid": {},
+									"aggUuid": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Copy pixels",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 500,
+								"filter": {
+									"value": "{\"createdAt\":{$gt: ISODate(\"@{adddays(utcnow(),-14)}\")}}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['uuid']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['web_client']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['page_title']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 7
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 8
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 9
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_TrackingPixels",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationCSVPixels",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "DataFromTracking"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-25T20:13:04Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/aggRedirects')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CP_RedirectsToDataLake",
+						"description": "",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "CP_ReaktionHerokuEmailsToCSV",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "redirects"
+							},
+							{
+								"name": "Destination",
+								"value": "tracking/redirects/sources/redirects.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{\"createdAt\":{$gt: ISODate(\"@{adddays(utcnow(),-14)}\")}}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false,
+							"dataIntegrationUnits": 2,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['tags'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['category'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['uuid']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['ip']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['url_without_params']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 7
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 8
+										}
+									},
+									{
+										"source": {
+											"path": "$['redirect_id']"
+										},
+										"sink": {
+											"type": "Int16",
+											"ordinal": 9
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 10
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 11
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 12
+										}
+									},
+									{
+										"source": {
+											"path": "$['redirect_name']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 13
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_TrackingRedirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DatasetRedirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "DF_AggRedirects",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CP_RedirectsToDataLake",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AggRedirects",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"RedirectsLast7Days": {},
+									"ReaktionHerokuEmails": {},
+									"saveToDataLakeRedirectsFromLast7Days": {},
+									"saveRedirectAggByName": {},
+									"RedirectsWithEmail": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "CP_ReaktionHerokuEmailsToCSV",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "PostgreSqlSource"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32"
+										},
+										"sink": {
+											"type": "String",
+											"physicalType": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"name": "email",
+											"type": "String"
+										},
+										"sink": {
+											"type": "String",
+											"physicalType": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"name": "remove_from_adressgruppen",
+											"type": "Boolean"
+										},
+										"sink": {
+											"type": "String",
+											"physicalType": "String",
+											"ordinal": 3
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ReaktionCore_Heroku",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSV_ReaktionHeroku_Emails",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"redirectDaysWindow": {
+						"type": "int",
+						"defaultValue": 14
+					}
+				},
+				"variables": {
+					"redirectDaysWindow": {
+						"type": "Integer",
+						"defaultValue": 14
+					}
+				},
+				"folder": {
+					"name": "DataFromTracking"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-28T13:38:59Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CharmaCampaign_9_October')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Charma",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"startDate": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_startDate')]",
+							"domain_id": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_domain_id')]",
+							"project_name": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_project_name')]",
+							"dest_path": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_dest_path')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-11-10T03:23:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Charma')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TriggerAggRedirects')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "aggRedirects",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-10-26T01:02:00",
+						"timeZone": "W. Europe Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/aggRedirects')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TriggerBCF')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Creates stats for BCF simple pixel",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "BCF_stats",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"startDate": "[parameters('TriggerBCF_properties_BCF_stats_parameters_startDate')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-10-28T03:36:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/BCF_stats')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TriggerTrackingPixels')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "aggPixels",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2023-10-03T14:18:00",
+						"timeZone": "W. Europe Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/aggPixels')]"
+			]
+		}
+	]
+}

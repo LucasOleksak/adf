@@ -1,0 +1,256 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "reaktion-data-factory-2"
+		},
+		"AF_AddToEDRStats_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AF_AddToEDRStats'"
+		},
+		"AF_WineSalesTendency_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AF_WineSalesTendency'"
+		},
+		"DataLake_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'DataLake'"
+		},
+		"EDRPlatform_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'EDRPlatform'"
+		},
+		"HRNyttDatabase_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HRNyttDatabase'"
+		},
+		"HRNytt_Stage_Azure_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HRNytt_Stage_Azure'"
+		},
+		"MongoDB_Tracking_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'MongoDB_Tracking'"
+		},
+		"ReaktionCore_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ReaktionCore'"
+		},
+		"ReaktionCore_Heroku_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ReaktionCore_Heroku'"
+		},
+		"Storage_DataFactory_Reaktion_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Storage_DataFactory_Reaktion'"
+		},
+		"Unregister_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Unregister'"
+		},
+		"ValidWinesPostgres_LinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ValidWinesPostgres_LinkedService'"
+		},
+		"AF_AddToEDRStats_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://edr-platform-stats.azurewebsites.net"
+		},
+		"AF_WineSalesTendency_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://wines.azurewebsites.net"
+		},
+		"DataLake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datalakereaktion.dfs.core.windows.net/"
+		},
+		"EDRPlatform_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://edrplatform.dfs.core.windows.net/"
+		},
+		"MongoDB_Tracking_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "tracking-prod"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_startDate": {
+			"type": "string",
+			"defaultValue": "2022-11-09"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_domain_id": {
+			"type": "string",
+			"defaultValue": "107"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_project_name": {
+			"type": "string",
+			"defaultValue": "charma"
+		},
+		"CharmaCampaign_9_October_properties_Charma_parameters_dest_path": {
+			"type": "string",
+			"defaultValue": "charma/stats"
+		},
+		"TriggerBCF_properties_BCF_stats_parameters_startDate": {
+			"type": "string",
+			"defaultValue": "2022-10-25"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "reaktion-data-factory-2_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AF_AddToEDRStats_functionKey": {
+						"value": "[parameters('AF_AddToEDRStats_functionKey')]"
+					},
+					"AF_WineSalesTendency_functionKey": {
+						"value": "[parameters('AF_WineSalesTendency_functionKey')]"
+					},
+					"DataLake_accountKey": {
+						"value": "[parameters('DataLake_accountKey')]"
+					},
+					"EDRPlatform_accountKey": {
+						"value": "[parameters('EDRPlatform_accountKey')]"
+					},
+					"HRNyttDatabase_connectionString": {
+						"value": "[parameters('HRNyttDatabase_connectionString')]"
+					},
+					"HRNytt_Stage_Azure_connectionString": {
+						"value": "[parameters('HRNytt_Stage_Azure_connectionString')]"
+					},
+					"MongoDB_Tracking_connectionString": {
+						"value": "[parameters('MongoDB_Tracking_connectionString')]"
+					},
+					"ReaktionCore_connectionString": {
+						"value": "[parameters('ReaktionCore_connectionString')]"
+					},
+					"ReaktionCore_Heroku_connectionString": {
+						"value": "[parameters('ReaktionCore_Heroku_connectionString')]"
+					},
+					"Storage_DataFactory_Reaktion_connectionString": {
+						"value": "[parameters('Storage_DataFactory_Reaktion_connectionString')]"
+					},
+					"Unregister_connectionString": {
+						"value": "[parameters('Unregister_connectionString')]"
+					},
+					"ValidWinesPostgres_LinkedService_connectionString": {
+						"value": "[parameters('ValidWinesPostgres_LinkedService_connectionString')]"
+					},
+					"AF_AddToEDRStats_properties_typeProperties_functionAppUrl": {
+						"value": "[parameters('AF_AddToEDRStats_properties_typeProperties_functionAppUrl')]"
+					},
+					"AF_WineSalesTendency_properties_typeProperties_functionAppUrl": {
+						"value": "[parameters('AF_WineSalesTendency_properties_typeProperties_functionAppUrl')]"
+					},
+					"DataLake_properties_typeProperties_url": {
+						"value": "[parameters('DataLake_properties_typeProperties_url')]"
+					},
+					"EDRPlatform_properties_typeProperties_url": {
+						"value": "[parameters('EDRPlatform_properties_typeProperties_url')]"
+					},
+					"MongoDB_Tracking_properties_typeProperties_database": {
+						"value": "[parameters('MongoDB_Tracking_properties_typeProperties_database')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "reaktion-data-factory-2_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "reaktion-data-factory-2_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "reaktion-data-factory-2_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"CharmaCampaign_9_October_properties_Charma_parameters_startDate": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_startDate')]"
+					},
+					"CharmaCampaign_9_October_properties_Charma_parameters_domain_id": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_domain_id')]"
+					},
+					"CharmaCampaign_9_October_properties_Charma_parameters_project_name": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_project_name')]"
+					},
+					"CharmaCampaign_9_October_properties_Charma_parameters_dest_path": {
+						"value": "[parameters('CharmaCampaign_9_October_properties_Charma_parameters_dest_path')]"
+					},
+					"TriggerBCF_properties_BCF_stats_parameters_startDate": {
+						"value": "[parameters('TriggerBCF_properties_BCF_stats_parameters_startDate')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_2')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,2819 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "reaktion-data-factory-2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Mongo_TrackingRedirects')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDB_Tracking",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Mongo_Tracking"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "redirects"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mongo_TrackingSimpleTracking')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDB_Tracking",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Mongo_Tracking"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "simple_trackings"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mongo_Tracking_Anonymous_Trackings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDB_Tracking",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Mongo_Tracking"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "anonymous_trackings"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mongo_Tracking_Trackings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDB_Tracking",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Mongo_Tracking"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "trackings"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ReaktionCore_Heroku')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ReaktionCore_Heroku",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Reaktion_Heroku"
+				},
+				"annotations": [],
+				"type": "PostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "public",
+					"table": "emails"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SystembolagetStores')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Wines"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "stores_with_geo.csv",
+						"folderPath": "stores",
+						"fileSystem": "wines"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ID",
+						"type": "String"
+					},
+					{
+						"name": "Butiksnamn",
+						"type": "String"
+					},
+					{
+						"name": "Adress",
+						"type": "String"
+					},
+					{
+						"name": "Postnummer",
+						"type": "String"
+					},
+					{
+						"name": "Ort",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TrackingsParquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "tracking.parquet",
+						"fileSystem": "tracking"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "id",
+						"type": "INT32"
+					},
+					{
+						"name": "email",
+						"type": "UTF8"
+					},
+					{
+						"name": "remove_from_adressgruppen",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Utbildnigar_Redirects')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "courses_rediects.csv",
+						"folderPath": "redirects",
+						"fileSystem": "tracking"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ANT0017-anticimex",
+						"type": "String"
+					},
+					{
+						"name": "1",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ValidWinePostgres')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ValidWinesPostgres_LinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Wines"
+				},
+				"annotations": [],
+				"type": "AzurePostgreSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "wine_name",
+						"type": "text",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "date",
+						"type": "date",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "tendency",
+						"type": "double precision",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "monthly_change",
+						"type": "double precision",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "big_factor",
+						"type": "double precision",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "store_id",
+						"type": "bigint",
+						"precision": 0,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "public",
+					"table": "wines_tendency_snapshoot"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WineExcel')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "dudet2.xlsx",
+						"fileSystem": "wines"
+					},
+					"sheetIndex": 0
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Kandidata_Redirects')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LoopOverRedirects",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set_Blacklist_Of_UIDs",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('redirect_ids')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CopyDataForEveryRedirectToCSV",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "CosmosDbMongoDbApiSource",
+											"batchSize": 100,
+											"filter": {
+												"value": "{ \"redirect_name\" : \"@{item()}\" } ",
+												"type": "Expression"
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"path": "$['uid']"
+													},
+													"sink": {
+														"type": "Int64",
+														"ordinal": 1
+													}
+												},
+												{
+													"source": {
+														"path": "$['uuid']"
+													},
+													"sink": {
+														"type": "String",
+														"ordinal": 2
+													}
+												},
+												{
+													"source": {
+														"path": "$['url_without_params']"
+													},
+													"sink": {
+														"type": "String",
+														"ordinal": 3
+													}
+												},
+												{
+													"source": {
+														"path": "$['redirect_id']"
+													},
+													"sink": {
+														"type": "String",
+														"ordinal": 4
+													}
+												},
+												{
+													"source": {
+														"path": "$['redirect_name']"
+													},
+													"sink": {
+														"type": "String",
+														"ordinal": 5
+													}
+												},
+												{
+													"source": {
+														"path": "$['createdAt']['$date']"
+													},
+													"sink": {
+														"type": "Int64",
+														"ordinal": 6
+													}
+												}
+											]
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "Mongo_TrackingRedirects",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Kandidata",
+											"type": "DatasetReference",
+											"parameters": {
+												"redirect_name": "@item()"
+											}
+										}
+									]
+								},
+								{
+									"name": "AddStatsToAzureTable",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [
+										{
+											"activity": "fileName",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": "create_stats",
+										"method": "POST",
+										"headers": {},
+										"body": {
+											"value": "{ \"fileName\" : \"@{variables('fileName')}\", \"partitionKey\" : \"@{variables('campaign_uid')}\", \"customerName\" : \"kandidata\"  }",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AF_AddToEDRStats",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "fileName",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "CopyDataForEveryRedirectToCSV",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "fileName",
+										"value": {
+											"value": "@concat(item(), '-',utcNow('yyyy-MM-dd'), '.csv')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Set_Kandidata_Redirect_Names",
+						"description": "Redirects name",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set_SiteID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "redirect_ids",
+							"value": [
+								"kandidata-banner-jan-23"
+							]
+						}
+					},
+					{
+						"name": "Set_Blacklist_Of_UIDs",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set_Kandidata_Redirect_Names",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "ruid",
+							"value": [
+								287962,
+								77602,
+								77233,
+								278328,
+								4,
+								1,
+								315594,
+								315769,
+								278594,
+								77229,
+								77212,
+								287409,
+								287410,
+								287411,
+								287412,
+								287408,
+								287479,
+								287457,
+								287463,
+								287464,
+								287474,
+								287477,
+								287478,
+								287481,
+								287482,
+								287483,
+								298466,
+								422164,
+								50884,
+								1038400
+							]
+						}
+					},
+					{
+						"name": "Set_CampaignUID",
+						"description": "UID used to create landing paging in EDR Platform",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "campaign_uid",
+							"value": "38aa18bf-827f-4d5d-8cac-62cc39e0bee3"
+						}
+					},
+					{
+						"name": "Set_SiteID",
+						"description": "SiteID - 1 for HRNytt",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set_CampaignUID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "site_id",
+							"value": "1"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"redirect_ids": {
+						"type": "Array"
+					},
+					"ruid": {
+						"type": "Array"
+					},
+					"campaign_uid": {
+						"type": "String"
+					},
+					"site_id": {
+						"type": "String"
+					},
+					"fileName": {
+						"type": "String"
+					},
+					"currentDate": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "HRNytt"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingRedirects')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/aggStatistics')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyTrackings",
+						"description": "",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{ domain_id : 11, createdAt: { $gte: ISODate('2022-09-01') } }",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['tags'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['categories'][0]"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['client']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 7
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"type": "Int16",
+											"ordinal": 8
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 9
+										}
+									},
+									{
+										"source": {
+											"path": "$['url_without_params']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 10
+										}
+									},
+									{
+										"source": {
+											"path": "$['ip']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 11
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_Tracking_Trackings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSV_trackings_copied",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"domain_id": {
+						"type": "int",
+						"defaultValue": 11
+					}
+				},
+				"folder": {
+					"name": "DataFromTracking"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-28T14:41:13Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Mongo_Tracking_Trackings')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AggPixels')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DestinationCSVPixels",
+								"type": "DatasetReference"
+							},
+							"name": "mongoPixels"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "aggAll"
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "uid"
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "aggUuid"
+						}
+					],
+					"transformations": [
+						{
+							"name": "createDateColumn"
+						},
+						{
+							"name": "split1"
+						},
+						{
+							"name": "aggregate2"
+						},
+						{
+							"name": "aggByDateAndPageTitle"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          uid as integer,",
+						"          uuid as string,",
+						"          url as string,",
+						"          referral as string,",
+						"          client as string,",
+						"          page_title as string,",
+						"          domain as integer,",
+						"          created as string,",
+						"          updated as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> mongoPixels",
+						"mongoPixels derive(date = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm'),",
+						"          time = toTimestamp(toLong(toString(created)),'hh:mm:ss', 'Europe/Stockholm')) ~> createDateColumn",
+						"createDateColumn split(isNull(uid) && !isNull(uuid),",
+						"     isNull(uuid) && !isNull(uid),",
+						"     disjoint: true) ~> split1@(hasNotUID, hasUID)",
+						"split1@hasNotUID aggregate(groupBy(uuid,",
+						"          page_title,",
+						"          date),",
+						"     page = count(page_title)) ~> aggregate2",
+						"createDateColumn aggregate(groupBy(page_title),",
+						"     title = count(page_title)) ~> aggByDateAndPageTitle",
+						"aggByDateAndPageTitle sort(desc(title, true)) ~> sort1",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'pixels',",
+						"     folderPath: 'all',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:[(concat('PixelTrackingExtract_', toString(currentUTC('UTC')),'.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> aggAll",
+						"split1@hasUID sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'pixels',",
+						"     folderPath: 'uid',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['agg_with_uid.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> uid",
+						"aggregate2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'pixels',",
+						"     folderPath: 'uuid',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['uuid'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> aggUuid"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AggRedirects')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DatasetRedirects",
+								"type": "DatasetReference"
+							},
+							"name": "RedirectsLast7Days"
+						},
+						{
+							"dataset": {
+								"referenceName": "CSV_ReaktionHeroku_Emails",
+								"type": "DatasetReference"
+							},
+							"name": "ReaktionHerokuEmails"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "saveToDataLakeRedirectsFromLast7Days"
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "saveRedirectAggByName"
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "RedirectsWithEmail"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CreateDateColumnFromTimestamp"
+						},
+						{
+							"name": "AggByDateAndRedirectName"
+						},
+						{
+							"name": "SortByDays"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "sortByName"
+						},
+						{
+							"name": "aggregate2"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "sort1"
+						},
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          tag as integer,",
+						"          category as string,",
+						"          uid as integer,",
+						"          uuid as string,",
+						"          ip as string,",
+						"          domain_id as string,",
+						"          url_without_params as string,",
+						"          url as string,",
+						"          redirect_id as short,",
+						"          referrer_url as string,",
+						"          created as long,",
+						"          updated as long,",
+						"          redirect_name as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> RedirectsLast7Days",
+						"source(output(",
+						"          id as integer,",
+						"          email as string,",
+						"          unregister as boolean",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     partitionBy('hash', 1)) ~> ReaktionHerokuEmails",
+						"aggregate2 derive(day = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm')) ~> CreateDateColumnFromTimestamp",
+						"CreateDateColumnFromTimestamp aggregate(groupBy(day,",
+						"          redirect_name),",
+						"     visits = count(redirect_name)) ~> AggByDateAndRedirectName",
+						"AggByDateAndRedirectName sort(asc(day, true),",
+						"     partitionBy('hash', 1)) ~> SortByDays",
+						"CreateDateColumnFromTimestamp aggregate(groupBy(redirect_name),",
+						"     visits = count(redirect_name)) ~> aggregate1",
+						"aggregate1 sort(asc(redirect_name, true),",
+						"     partitionBy('hash', 1)) ~> sortByName",
+						"filter1 aggregate(groupBy(uid,",
+						"          redirect_name),",
+						"     created = max(created),",
+						"     partitionBy('hash', 1)) ~> aggregate2",
+						"RedirectsLast7Days filter(!isNull(uid)) ~> filter1",
+						"aggregate2 derive(day = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm'),",
+						"     partitionBy('hash', 1)) ~> derivedColumn1",
+						"derivedColumn1, ReaktionHerokuEmails join(uid == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> join1",
+						"select1 sort(asc(redirect_name, true),",
+						"     partitionBy('hash', 1)) ~> sort1",
+						"join1 select(mapColumn(",
+						"          uid,",
+						"          redirect_name,",
+						"          day,",
+						"          email,",
+						"          unregister",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"SortByDays sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'tracking',",
+						"     folderPath: 'redirects/computed',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['redirectsLast7days.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> saveToDataLakeRedirectsFromLast7Days",
+						"sortByName sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'tracking',",
+						"     folderPath: 'redirects/computed',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['redirectAggByName.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> saveRedirectAggByName",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'tracking',",
+						"     folderPath: 'redirects/computed',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['redirectsWithEmails.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> RedirectsWithEmail"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_BCF_uid')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CSV_BCF_uid",
+								"type": "DatasetReference"
+							},
+							"name": "BCFCopiedData"
+						},
+						{
+							"dataset": {
+								"referenceName": "CSV_ReaktionHeroku_Emails",
+								"type": "DatasetReference"
+							},
+							"name": "Emails"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CSV_BCF_agg_visits_by_page_title",
+								"type": "DatasetReference"
+							},
+							"name": "aggVisitsByPageTitle"
+						},
+						{
+							"dataset": {
+								"referenceName": "CSV_BCF_agg_vists_by_page_and_date",
+								"type": "DatasetReference"
+							},
+							"name": "toCSV"
+						},
+						{
+							"dataset": {
+								"referenceName": "CSV_BCF_agg_visits_by_uid",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "CSV_visits_by_uuid",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						},
+						{
+							"dataset": {
+								"referenceName": "CSV_MostActive_Agg_By_Page_And_Visits",
+								"type": "DatasetReference"
+							},
+							"name": "sink4"
+						}
+					],
+					"transformations": [
+						{
+							"name": "selectOnlyColumnsWeNees"
+						},
+						{
+							"name": "AggregateNonUID"
+						},
+						{
+							"name": "AggreagteMostActiveUID"
+						},
+						{
+							"name": "CreateDateColumn"
+						},
+						{
+							"name": "AggByPageAndDay"
+						},
+						{
+							"name": "AggByPage"
+						},
+						{
+							"name": "SortByNumber"
+						},
+						{
+							"name": "FilterNotNullUID"
+						},
+						{
+							"name": "ByNumberOfVisits"
+						},
+						{
+							"name": "SortByVisitsDESC2"
+						},
+						{
+							"name": "FilterOnlyUUIDRecords"
+						},
+						{
+							"name": "SortByRankingDESC"
+						},
+						{
+							"name": "JoinWithEmails"
+						},
+						{
+							"name": "AggByUidAndPage"
+						},
+						{
+							"name": "SortByVisitsDESC"
+						},
+						{
+							"name": "JoinWithEmailsTable"
+						},
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          uuid as string,",
+						"          uid as integer,",
+						"          url as string,",
+						"          referrer_url as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          created as long,",
+						"          updated as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> BCFCopiedData",
+						"source(output(",
+						"          id as integer,",
+						"          email as string,",
+						"          is_active as boolean",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Emails",
+						"CreateDateColumn select(mapColumn(",
+						"          uuid,",
+						"          uid,",
+						"          referrer_url,",
+						"          page_title,",
+						"          created,",
+						"          updated,",
+						"          date",
+						"     ),",
+						"     partitionBy('hash', 1),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> selectOnlyColumnsWeNees",
+						"FilterOnlyUUIDRecords aggregate(groupBy(page_title),",
+						"     ranking = count(page_title)) ~> AggregateNonUID",
+						"FilterNotNullUID aggregate(groupBy(uid),",
+						"     visits = count(uid),",
+						"     partitionBy('hash', 1)) ~> AggreagteMostActiveUID",
+						"BCFCopiedData derive(date = toDate(toLong(toString(created)),'yyyy-MM-dd', 'Europe/Stockholm')) ~> CreateDateColumn",
+						"selectOnlyColumnsWeNees aggregate(groupBy(page_title,",
+						"          date),",
+						"     visits = count(page_title)) ~> AggByPageAndDay",
+						"selectOnlyColumnsWeNees aggregate(groupBy(page_title),",
+						"     visits = count(page_title),",
+						"     partitionBy('hash', 1)) ~> AggByPage",
+						"AggByPage sort(desc(visits, true)) ~> SortByNumber",
+						"selectOnlyColumnsWeNees filter(!isNull(uid)) ~> FilterNotNullUID",
+						"AggreagteMostActiveUID filter(visits > 0) ~> ByNumberOfVisits",
+						"ByNumberOfVisits sort(desc(visits, true),",
+						"     partitionBy('hash', 1)) ~> SortByVisitsDESC2",
+						"selectOnlyColumnsWeNees filter(!isNull(uuid) && isNull(uid),",
+						"     partitionBy('hash', 1)) ~> FilterOnlyUUIDRecords",
+						"AggregateNonUID sort(desc(ranking, true)) ~> SortByRankingDESC",
+						"SortByVisitsDESC2, Emails join(uid == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> JoinWithEmails",
+						"FilterNotNullUID aggregate(groupBy(page_title,",
+						"          uid),",
+						"     visits = count(page_title)) ~> AggByUidAndPage",
+						"AggByUidAndPage sort(desc(visits, true),",
+						"     partitionBy('hash', 1)) ~> SortByVisitsDESC",
+						"SortByVisitsDESC, Emails join(uid == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> JoinWithEmailsTable",
+						"JoinWithEmailsTable select(mapColumn(",
+						"          page_title,",
+						"          uid,",
+						"          visits,",
+						"          id,",
+						"          email,",
+						"          is_active",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectColumns",
+						"AggByPageAndDay sort(desc(date, true),",
+						"     desc(visits, true)) ~> sort1",
+						"SortByNumber sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['agg_visits_by_page_name.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          page = page_title,",
+						"          visits",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> aggVisitsByPageTitle",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['visits_by_page_and_date.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     quoteAll: true,",
+						"     mapColumn(",
+						"          page = page_title,",
+						"          date,",
+						"          visits",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> toCSV",
+						"JoinWithEmails sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['most_active_uses.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          uid,",
+						"          visits,",
+						"          id,",
+						"          email,",
+						"          is_active",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sink2",
+						"SortByRankingDESC sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['agg_visits_by_uuid.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          page = page_title,",
+						"          ranking",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sink3",
+						"SelectColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string",
+						"     ),",
+						"     partitionFileNames:['most_active_agg_by_page_name.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          page_title,",
+						"          uid,",
+						"          visits,",
+						"          id,",
+						"          email,",
+						"          is_active",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sink4"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EDR_BasicFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "EDR"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "EDR_CSV_Source",
+								"type": "DatasetReference"
+							},
+							"name": "getDataFromCSVSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "EDR_CSV_Redirects",
+								"type": "DatasetReference"
+							},
+							"name": "saveToRedirectsCSV"
+						}
+					],
+					"transformations": [
+						{
+							"name": "aggByTag"
+						},
+						{
+							"name": "sortByVisitsDesc"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          tag as string,",
+						"          category as string,",
+						"          created as string,",
+						"          updated as string,",
+						"          uid as string,",
+						"          url as string,",
+						"          domain_id as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> getDataFromCSVSource",
+						"getDataFromCSVSource aggregate(groupBy(tag),",
+						"     visits = count(tag),",
+						"     partitionBy('hash', 1)) ~> aggByTag",
+						"aggByTag sort(desc(visits, true)) ~> sortByVisitsDesc",
+						"sortByVisitsDesc sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['redirects.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          tag,",
+						"          visits",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> saveToRedirectsCSV"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HRNytt_Banners')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "HRNytt"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Stage_Banners_Clicks",
+								"type": "DatasetReference"
+							},
+							"name": "BannersClicks"
+						},
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Stage_Banners",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Banners_Current_Month",
+								"type": "DatasetReference"
+							},
+							"name": "saveCurrentMonthStats"
+						},
+						{
+							"dataset": {
+								"referenceName": "HRNytt_banners_last_3_months",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Agg_By_Page",
+								"type": "DatasetReference"
+							},
+							"name": "saveCurrentMonthAggByPage"
+						}
+					],
+					"transformations": [
+						{
+							"name": "aggByDateCurrentMonth"
+						},
+						{
+							"name": "sortByBannerIDandDateCurrentMonth"
+						},
+						{
+							"name": "aMonthAgo"
+						},
+						{
+							"name": "ThreeMonthsAgo"
+						},
+						{
+							"name": "currentMonth"
+						},
+						{
+							"name": "aggByBannerIDandDate2"
+						},
+						{
+							"name": "sort1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "aggByPagesCurrentMonth"
+						},
+						{
+							"name": "sortByMostClicked"
+						},
+						{
+							"name": "joinWithBannersTable"
+						},
+						{
+							"name": "sort2"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     firstDayOfMonth as date (subDays(currentDate(),dayOfMonth(currentDate())))",
+						"}",
+						"source(output(",
+						"          id as integer,",
+						"          url as string,",
+						"          full_url as string,",
+						"          date as date,",
+						"          created as timestamp,",
+						"          banner_id as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> BannersClicks",
+						"source(output(",
+						"          id as integer,",
+						"          published as timestamp,",
+						"          image as string,",
+						"          position as string,",
+						"          created as timestamp,",
+						"          updated as timestamp,",
+						"          code as string,",
+						"          order as integer,",
+						"          title as string,",
+						"          image_url as string,",
+						"          code_mobile as string,",
+						"          valid_until as timestamp,",
+						"          clicks as integer,",
+						"          impressions as integer,",
+						"          mobile_image as string,",
+						"          small_mobile_image as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     partitionBy('hash', 1)) ~> source1",
+						"currentMonth aggregate(groupBy(banner_id,",
+						"          date),",
+						"     cliks = count(banner_id),",
+						"     partitionBy('hash', 1)) ~> aggByDateCurrentMonth",
+						"aggByDateCurrentMonth sort(desc(banner_id, true),",
+						"     desc(date, true),",
+						"     partitionBy('hash', 1)) ~> sortByBannerIDandDateCurrentMonth",
+						"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 1))) ~> aMonthAgo",
+						"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 3))) ~> ThreeMonthsAgo",
+						"BannersClicks filter(date <= lastDayOfMonth((currentDate('Europe/Stockholm'))) && date > subDays(currentDate(), dayOfMonth(currentDate()))) ~> currentMonth",
+						"ThreeMonthsAgo aggregate(groupBy(banner_id,",
+						"          date),",
+						"     clicks = count(banner_id),",
+						"     partitionBy('hash', 1)) ~> aggByBannerIDandDate2",
+						"aggByBannerIDandDate2 sort(desc(banner_id, true),",
+						"     desc(date, true),",
+						"     partitionBy('hash', 1)) ~> sort1",
+						"source1 select(mapColumn(",
+						"          id,",
+						"          published,",
+						"          position,",
+						"          title,",
+						"          valid_until,",
+						"          impressions",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"sortByBannerIDandDateCurrentMonth, select1 join(banner_id == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> join1",
+						"currentMonth aggregate(groupBy(url,",
+						"          banner_id),",
+						"     clicks = count(banner_id),",
+						"     partitionBy('hash', 1)) ~> aggByPagesCurrentMonth",
+						"aggByPagesCurrentMonth sort(desc(clicks, true),",
+						"     partitionBy('hash', 1)) ~> sortByMostClicked",
+						"sortByMostClicked, select1 join(banner_id == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinWithBannersTable",
+						"joinWithBannersTable sort(desc(clicks, true),",
+						"     partitionBy('hash', 1)) ~> sort2",
+						"join1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:[(concat('banners-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          date,",
+						"          cliks,",
+						"          title",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> saveCurrentMonthStats",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string",
+						"     ),",
+						"     partitionFileNames:[(concat('banners-last-3-months','.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"sort2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string",
+						"     ),",
+						"     partitionFileNames:[(concat('banners-by-page-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     header: (['url']),",
+						"     mapColumn(",
+						"          url,",
+						"          clicks,",
+						"          position,",
+						"          title",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> saveCurrentMonthAggByPage"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessRedirectClicks')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Utbildnigar_Redirects",
+								"type": "DatasetReference"
+							},
+							"name": "CSVUtbildningar"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SinkToCSV"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AggredateByCourseNameAndCountClicks"
+						},
+						{
+							"name": "FilterReaktionsUIDs",
+							"description": "Remove Lukasz and Frida uids"
+						},
+						{
+							"name": "SortByCountDescening"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     filename1 as string",
+						"}",
+						"source(output(",
+						"          uid as integer,",
+						"          uuid as string,",
+						"          ip as string,",
+						"          web_client as string,",
+						"          domain_id as short,",
+						"          url_without_params as string,",
+						"          url as string,",
+						"          redirect_id as short,",
+						"          redirect_name as string,",
+						"          referrer_url as string,",
+						"          {createdAt_$date} as long,",
+						"          {updatedAt_$date} as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> CSVUtbildningar",
+						"FilterReaktionsUIDs aggregate(groupBy(redirect_name),",
+						"     clicks = count(redirect_name),",
+						"     partitionBy('hash', 1)) ~> AggredateByCourseNameAndCountClicks",
+						"CSVUtbildningar filter(!in([1118405, 50884],uid),",
+						"     partitionBy('hash', 1)) ~> FilterReaktionsUIDs",
+						"AggredateByCourseNameAndCountClicks sort(desc(clicks, true),",
+						"     partitionBy('hash', 1)) ~> SortByCountDescening",
+						"SortByCountDescening sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'tracking',",
+						"     folderPath: 'redirects',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:[($filename1)],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SinkToCSV"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Utbildnigar_Redirects')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SortAndAnalyzeTrend')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Wines"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "TrendCSVFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference"
+							},
+							"name": "SystembolagetStores"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Sink",
+							"rejectedDataLinkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink13333"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SortTrends"
+						},
+						{
+							"name": "JoinStoresWithSortedTrends"
+						},
+						{
+							"name": "RemoveSomeField"
+						},
+						{
+							"name": "SortFromWorseTrendToBest"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "sort1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "surrogateKey1"
+						},
+						{
+							"name": "derivedColumn3"
+						},
+						{
+							"name": "cast1"
+						},
+						{
+							"name": "sort2"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     item as string ('Dopff'),",
+						"     workspace as string ('validwines')",
+						"}",
+						"source(output(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Trend as double '000,000,000.000',",
+						"          Diff_4_weeks as double '000,000,000.000',",
+						"          Median as double '000,000,000.000',",
+						"          Variance as double '000,000,000.000'",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"trends/\", $item)),",
+						"     fileName: (concat($item, \"-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\")),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionBy('hash', 1)) ~> TrendCSVFile",
+						"source(output(",
+						"          ID as short,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as short",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SystembolagetStores",
+						"derivedColumn3 sort(asc(Trend, true),",
+						"     partitionBy('hash', 1)) ~> SortTrends",
+						"SortTrends, SystembolagetStores join(TrendCSVFile@ID == SystembolagetStores@ID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> JoinStoresWithSortedTrends",
+						"JoinStoresWithSortedTrends select(mapColumn(",
+						"          ID = TrendCSVFile@ID,",
+						"          Wine,",
+						"          Trend,",
+						"          Diff_4_weeks,",
+						"          Median,",
+						"          Butiksnamn,",
+						"          Adress,",
+						"          Postnummer,",
+						"          Ort,",
+						"          Lat,",
+						"          Lng,",
+						"          Range",
+						"     ),",
+						"     partitionBy('hash', 1),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> RemoveSomeField",
+						"RemoveSomeField sort(asc(Diff_4_weeks, true),",
+						"     partitionBy('hash', 1)) ~> SortFromWorseTrendToBest",
+						"SortFromWorseTrendToBest derive(TrendFactor = toFloat(Diff_4_weeks)*toFloat(Trend),",
+						"     partitionBy('hash', 1)) ~> derivedColumn1",
+						"derivedColumn1 sort(desc(TrendFactor, true),",
+						"     partitionBy('hash', 1)) ~> sort1",
+						"sort1 derive(current_date = currentDate(),",
+						"          trendString = toString(TrendFactor),",
+						"     partitionBy('hash', 1)) ~> derivedColumn2",
+						"derivedColumn2 keyGenerate(output(newID as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L) ~> surrogateKey1",
+						"TrendCSVFile derive(TrendFactor = toFloat(Trend)*toFloat(Diff_4_weeks)) ~> derivedColumn3",
+						"sort2 cast(output(",
+						"          ID as string,",
+						"          Wine as string,",
+						"          Trend as string,",
+						"          Diff_4_weeks as string,",
+						"          Median as string,",
+						"          Variance as string,",
+						"          TrendFactor as string",
+						"     ),",
+						"     errors: false) ~> cast1",
+						"derivedColumn3 sort(asc(TrendFactor, true),",
+						"     partitionBy('hash', 1)) ~> sort2",
+						"sort1 sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Trend as string,",
+						"          Diff_4_weeks as string,",
+						"          Median as string,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as string,",
+						"          factor as string",
+						"     ),",
+						"     format: 'delimited',",
+						"     fileSystem: 'validwines',",
+						"     folderPath: 'reports',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:['report.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     quoteAll: true,",
+						"     mapColumn(",
+						"          ID,",
+						"          Wine,",
+						"          Butiksnamn,",
+						"          Adress,",
+						"          Postnummer,",
+						"          Ort,",
+						"          Lat,",
+						"          Lng,",
+						"          Range,",
+						"          factor = TrendFactor",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> Sink",
+						"cast1 sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as short,",
+						"          factor as double",
+						"     ),",
+						"     format: 'delimited',",
+						"     fileSystem: 'validwines',",
+						"     folderPath: 'reports',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['report1.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> sink13333"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SystembolagetStores')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SortAndAnalyzeTrend_copy1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Wines"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "TrendCSVFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference"
+							},
+							"name": "SystembolagetStore"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SaveToCSV"
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SaveSegments"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CastEverythingToString"
+						},
+						{
+							"name": "CountTrendXDiff"
+						},
+						{
+							"name": "SortByCountFactor"
+						},
+						{
+							"name": "JoinWithSystembolaget"
+						},
+						{
+							"name": "RemoveDoubleIDs"
+						},
+						{
+							"name": "RemoveDoubles"
+						},
+						{
+							"name": "OnlyNegativeTrendsAndDiff"
+						},
+						{
+							"name": "SortByCountDesc"
+						},
+						{
+							"name": "AggByAVG"
+						},
+						{
+							"name": "rank1"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     item as string ('Dopff'),",
+						"     workspace as string ('validwines')",
+						"}",
+						"source(output(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Trend as double,",
+						"          Diff_4_weeks as double,",
+						"          Median as double,",
+						"          Variance as double,",
+						"          Segment as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"trends/\", $item)),",
+						"     fileName: (concat($item, \"-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\")),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionBy('hash', 1)) ~> TrendCSVFile",
+						"source(output(",
+						"          ID as short,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as short",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     partitionBy('hash', 1)) ~> SystembolagetStore",
+						"SortByCountFactor cast(output(",
+						"          ID as string,",
+						"          Wine as string,",
+						"          Trend as string,",
+						"          Diff_4_weeks as string,",
+						"          Median as string,",
+						"          Variance as string,",
+						"          countFactor as string",
+						"     ),",
+						"     errors: false) ~> CastEverythingToString",
+						"OnlyNegativeTrendsAndDiff derive(countFactor = round(Trend*Diff_4_weeks,2,2),",
+						"     partitionBy('hash', 1)) ~> CountTrendXDiff",
+						"CountTrendXDiff sort(desc(countFactor, true),",
+						"     partitionBy('hash', 1)) ~> SortByCountFactor",
+						"TrendCSVFile, SystembolagetStore join(TrendCSVFile@ID == SystembolagetStore@ID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> JoinWithSystembolaget",
+						"JoinWithSystembolaget select(mapColumn(",
+						"          ID = TrendCSVFile@ID,",
+						"          Wine,",
+						"          Trend,",
+						"          Diff_4_weeks,",
+						"          Median,",
+						"          Variance,",
+						"          Segment,",
+						"          Butiksnamn,",
+						"          Adress,",
+						"          Postnummer,",
+						"          Ort,",
+						"          Lat,",
+						"          Lng,",
+						"          Range",
+						"     ),",
+						"     partitionBy('hash', 1),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> RemoveDoubleIDs",
+						"CastEverythingToString aggregate(groupBy(ID),",
+						"     each(match(name!='ID'), $$ = first($$)),",
+						"     partitionBy('hash', 1)) ~> RemoveDoubles",
+						"RemoveDoubleIDs filter(Trend < 0 && Diff_4_weeks < 0) ~> OnlyNegativeTrendsAndDiff",
+						"RemoveDoubles sort(desc(countFactor, true),",
+						"     partitionBy('hash', 1)) ~> SortByCountDesc",
+						"RemoveDoubleIDs aggregate(groupBy(Segment),",
+						"     average = round(avg(Median),2,2),",
+						"          no_of_stores = count(Segment),",
+						"     partitionBy('hash', 1)) ~> AggByAVG",
+						"AggByAVG rank(desc(average, true),",
+						"     output(rank as long),",
+						"     dense: true,",
+						"     partitionBy('hash', 1)) ~> rank1",
+						"SortByCountDesc sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"reports/\", $item)),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:[(concat($item, \"-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\"))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveToCSV",
+						"rank1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as string,",
+						"          Wine as string,",
+						"          Trend as double,",
+						"          Diff_4_weeks as double,",
+						"          Median as double,",
+						"          Variance as double,",
+						"          Segment as string,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as double,",
+						"          countFactor as double",
+						"     ),",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"reports/\", $item)),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:[(concat($item, \"-segments-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\"))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveSegments"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SystembolagetStores')]"
+			]
+		}
+	]
+}
