@@ -202,7 +202,13 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "ProcessRedirectClicks",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"filename": {
+								"value": "'@{variables('filename')}'",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -235,7 +241,14 @@
 			{
 				"name": "Set domain id",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set filename",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"policy": {
 					"secureOutput": false,
 					"secureInput": false
@@ -270,6 +283,23 @@
 					"method": "POST",
 					"body": "{ filename : \"\" }"
 				}
+			},
+			{
+				"name": "Set filename",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "filename",
+					"value": {
+						"value": "@concat('redirects-utbildningar','.csv')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {
@@ -277,6 +307,9 @@
 				"type": "String"
 			},
 			"domain_id": {
+				"type": "String"
+			},
+			"filename": {
 				"type": "String"
 			}
 		},
