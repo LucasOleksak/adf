@@ -70,12 +70,13 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:['utbildningar_clicks_agg.csv'],",
+				"     partitionFileNames:[($filename)],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
 				"     partitionBy('hash', 1)) ~> SinkToCSV"
 			]
 		}
