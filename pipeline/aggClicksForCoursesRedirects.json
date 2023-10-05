@@ -287,7 +287,14 @@
 			{
 				"name": "Set filename",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Validation1",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"policy": {
 					"secureOutput": false,
 					"secureInput": false
@@ -296,9 +303,23 @@
 				"typeProperties": {
 					"variableName": "filename",
 					"value": {
-						"value": "@concat('redirects-utbildningar','.csv')",
+						"value": "@concat('redirects-utbildningar-', utcnow() ,'.csv')",
 						"type": "Expression"
 					}
+				}
+			},
+			{
+				"name": "Validation1",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Utbildnigar_Redirects",
+						"type": "DatasetReference"
+					},
+					"timeout": "0.12:00:00",
+					"sleep": 10
 				}
 			}
 		],
