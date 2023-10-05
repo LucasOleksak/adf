@@ -149,20 +149,6 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"dataflow": {
-									"referenceName": "Kandidata",
-									"type": "DataFlowReference",
-									"parameters": {
-										"redirect_name": {
-											"value": "'@{item()}'",
-											"type": "Expression"
-										},
-										"ruid": {
-											"value": "@variables('ruid')",
-											"type": "Expression"
-										}
-									}
-								},
 								"compute": {
 									"coreCount": 8,
 									"computeType": "General"
@@ -213,6 +199,10 @@
 									]
 								}
 							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "fileName",
@@ -237,6 +227,10 @@
 						]
 					}
 				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "redirect_ids",
@@ -256,6 +250,10 @@
 						]
 					}
 				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "ruid",
@@ -298,6 +296,10 @@
 				"description": "UID used to create landing paging in EDR Platform",
 				"type": "SetVariable",
 				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "campaign_uid",
@@ -316,6 +318,10 @@
 						]
 					}
 				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "site_id",
