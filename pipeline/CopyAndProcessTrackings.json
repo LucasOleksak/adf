@@ -43,7 +43,7 @@
 									"path": "$['createdAt']['$date']"
 								},
 								"sink": {
-									"name": "createdAt_$date",
+									"name": "createdAt",
 									"type": "Int64"
 								}
 							},
@@ -52,7 +52,7 @@
 									"path": "$['updatedAt']['$date']"
 								},
 								"sink": {
-									"name": "updatedAt_$date",
+									"name": "updatedAt",
 									"type": "Int64"
 								}
 							},
