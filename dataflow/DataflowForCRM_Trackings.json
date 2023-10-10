@@ -34,7 +34,7 @@
 				"source(output(",
 				"          {createdAt_$date} as string,",
 				"          {updatedAt_$date} as string,",
-				"          uid as string,",
+				"          uid as integer,",
 				"          url as string,",
 				"          client as string,",
 				"          domain_id as string,",
