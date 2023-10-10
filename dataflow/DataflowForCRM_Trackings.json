@@ -83,7 +83,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:[(concat($domain_id, '-ready-to-import', '.csv'))],",
+				"     partitionFileNames:[(concat($sitename, '-ready-to-import', '.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
