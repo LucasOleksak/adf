@@ -1,0 +1,65 @@
+{
+	"name": "Trackings",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "copy.csv",
+				"folderPath": "copy",
+				"fileSystem": "tracking"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Hälsa",
+				"type": "String"
+			},
+			{
+				"name": "Tips",
+				"type": "String"
+			},
+			{
+				"name": "16620059340742",
+				"type": "String"
+			},
+			{
+				"name": "16620059340743",
+				"type": "String"
+			},
+			{
+				"name": "211432",
+				"type": "String"
+			},
+			{
+				"name": "https://hrnytt.se/tips/5-tips-for-att-fa-semesterkanslan-att-halla-hela-hosten/?utm_source=nyhetsbrev&utm_medium=email&utm_campaign=HRN0073GG&uid=MjExNDMy",
+				"type": "String"
+			},
+			{
+				"name": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+				"type": "String"
+			},
+			{
+				"name": "11",
+				"type": "String"
+			},
+			{
+				"name": "Prop_8",
+				"type": "String"
+			},
+			{
+				"name": "https://hrnytt.se/tips/5-tips-for-att-fa-semesterkanslan-att-halla-hela-hosten/",
+				"type": "String"
+			}
+		]
+	}
+}
