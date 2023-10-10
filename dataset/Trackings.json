@@ -5,13 +5,21 @@
 			"referenceName": "DataLake",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"site": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "copy.csv",
-				"folderPath": "copy",
+				"fileName": {
+					"value": "@concat('raw-data-',dataset().site, '.csv')",
+					"type": "Expression"
+				},
+				"folderPath": "crm",
 				"fileSystem": "tracking"
 			},
 			"columnDelimiter": ",",
@@ -19,39 +27,6 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "createdAt_$date",
-				"type": "String"
-			},
-			{
-				"name": "updatedAt_$date",
-				"type": "String"
-			},
-			{
-				"name": "uid",
-				"type": "String"
-			},
-			{
-				"name": "url",
-				"type": "String"
-			},
-			{
-				"name": "client",
-				"type": "String"
-			},
-			{
-				"name": "domain_id",
-				"type": "String"
-			},
-			{
-				"name": "referrer_url",
-				"type": "String"
-			},
-			{
-				"name": "url_without_params",
-				"type": "String"
-			}
-		]
+		"schema": []
 	}
 }

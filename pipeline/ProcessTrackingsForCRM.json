@@ -123,7 +123,13 @@
 				"outputs": [
 					{
 						"referenceName": "Trackings",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"site": {
+								"value": "@pipeline().parameters.site",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			},
@@ -151,13 +157,21 @@
 						"referenceName": "DataflowForCRM_Trackings",
 						"type": "DataFlowReference",
 						"parameters": {
-							"domain_id": {
+							"did": {
 								"value": "'@{pipeline().parameters.domain_id}'",
 								"type": "Expression"
 							},
 							"sitename": {
 								"value": "'@{pipeline().parameters.site}'",
 								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"source1": {
+								"site": {
+									"value": "@pipeline().parameters.site",
+									"type": "Expression"
+								}
 							}
 						}
 					},
