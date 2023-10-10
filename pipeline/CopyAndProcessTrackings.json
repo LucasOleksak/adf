@@ -31,11 +31,7 @@
 						},
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": {
-								"value": "@concat('sink-',pipeline().parameters.site, '.csv')",
-								"type": "Expression"
-							}
+							"quoteAllText": true
 						}
 					},
 					"enableStaging": false,
