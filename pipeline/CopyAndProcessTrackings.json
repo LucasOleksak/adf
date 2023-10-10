@@ -147,7 +147,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "ProcessTrackingForCRM",
+						"referenceName": "dataflow1",
 						"type": "DataFlowReference"
 					},
 					"compute": {
