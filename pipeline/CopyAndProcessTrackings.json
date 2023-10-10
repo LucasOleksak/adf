@@ -1,0 +1,153 @@
+{
+	"name": "CopyAndProcessTrackings",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyDataFromMongoDB",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbMongoDbApiSource",
+						"batchSize": 100,
+						"filter": {
+							"value": "{   domain_id : @{pipeline().parameters.domain_id}, \n    createdAt : {\n        $gte : ISODate('@{addDays(utcNow(), \n                        pipeline().parameters.days)}') \n    }\n}",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "FlattenHierarchy"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": {
+								"value": "@concat('sink-',pipeline().parameters.site, '.csv')",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['createdAt']['$date']"
+								},
+								"sink": {
+									"name": "createdAt_$date",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "$['updatedAt']['$date']"
+								},
+								"sink": {
+									"name": "updatedAt_$date",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "$['uid']"
+								},
+								"sink": {
+									"name": "uid",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['url']"
+								},
+								"sink": {
+									"name": "url",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['client']"
+								},
+								"sink": {
+									"name": "client",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['domain_id']"
+								},
+								"sink": {
+									"name": "domain_id",
+									"type": "Int16"
+								}
+							},
+							{
+								"source": {
+									"path": "$['referrer_url']"
+								},
+								"sink": {
+									"name": "referrer_url",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['url_without_params']"
+								},
+								"sink": {
+									"name": "url_without_params",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Mongo_Tracking_Trackings",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Trackings",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"domain_id": {
+				"type": "int",
+				"defaultValue": 8
+			},
+			"days": {
+				"type": "int",
+				"defaultValue": -2
+			},
+			"site": {
+				"type": "string",
+				"defaultValue": "reaktion"
+			}
+		},
+		"folder": {
+			"name": "CRM"
+		},
+		"annotations": []
+	}
+}
