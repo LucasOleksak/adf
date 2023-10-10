@@ -1,5 +1,5 @@
 {
-	"name": "CopyAndProcessTrackings",
+	"name": "ProcessTrackingsForCRM",
 	"properties": {
 		"activities": [
 			{
@@ -31,7 +31,8 @@
 						},
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true
+							"quoteAllText": true,
+							"fileExtension": ".txt"
 						}
 					},
 					"enableStaging": false,
@@ -127,7 +128,7 @@
 				]
 			},
 			{
-				"name": "Data flow1",
+				"name": "ProcessTrackingsForCRM",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -147,8 +148,18 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow1",
-						"type": "DataFlowReference"
+						"referenceName": "DataflowForCRM_Trackings",
+						"type": "DataFlowReference",
+						"parameters": {
+							"domain_id": {
+								"value": "'@{pipeline().parameters.domain_id}'",
+								"type": "Expression"
+							},
+							"sitename": {
+								"value": "'@{pipeline().parameters.site}'",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,

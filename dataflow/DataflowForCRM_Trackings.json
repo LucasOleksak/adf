@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "DataflowForCRM_Trackings",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -27,6 +27,10 @@
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     domain_id as string,",
+				"     sitename as string",
+				"}",
 				"source(output(",
 				"          {createdAt_$date} as string,",
 				"          {updatedAt_$date} as string,",
@@ -51,7 +55,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: false,",
-				"     partitionFileNames:['huj.csv'],",
+				"     partitionFileNames:[(concat($domain_id, '-ready-to-import', '.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
