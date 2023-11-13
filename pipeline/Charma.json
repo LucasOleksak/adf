@@ -143,7 +143,16 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "EDR_BasicFlow",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"getDataFromCSVSource": {
+								"project_folder": "charma/sources",
+								"source_file": "charma.csv"
+							},
+							"saveToRedirectsCSV": {
+								"dest_path": "charma/stats"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
