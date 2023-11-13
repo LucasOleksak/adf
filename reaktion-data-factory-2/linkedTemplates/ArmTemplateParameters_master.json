@@ -26,6 +26,9 @@
 		"MongoDB_Tracking_connectionString": {
 			"value": ""
 		},
+		"MongoDB_Tracking_account": {
+			"value": ""
+		},
 		"ReaktionCore_connectionString": {
 			"value": ""
 		},

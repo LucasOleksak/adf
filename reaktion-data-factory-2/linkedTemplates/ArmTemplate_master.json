@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MongoDB_Tracking'"
 		},
+		"MongoDB_Tracking_account": {
+			"type": "secureString",
+			"metadata": "Secure string for 'account' of 'MongoDB_Tracking'"
+		},
 		"ReaktionCore_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ReaktionCore'"
@@ -122,6 +126,9 @@
 					},
 					"MongoDB_Tracking_connectionString": {
 						"value": "[parameters('MongoDB_Tracking_connectionString')]"
+					},
+					"MongoDB_Tracking_account": {
+						"value": "[parameters('MongoDB_Tracking_account')]"
 					},
 					"ReaktionCore_connectionString": {
 						"value": "[parameters('ReaktionCore_connectionString')]"

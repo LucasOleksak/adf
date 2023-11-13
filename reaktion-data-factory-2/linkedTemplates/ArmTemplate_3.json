@@ -13,6 +13,474 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/SortAndAnalyzeTrend')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Wines"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "TrendCSVFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference"
+							},
+							"name": "SystembolagetStores"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Sink",
+							"rejectedDataLinkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink13333"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SortTrends"
+						},
+						{
+							"name": "JoinStoresWithSortedTrends"
+						},
+						{
+							"name": "RemoveSomeField"
+						},
+						{
+							"name": "SortFromWorseTrendToBest"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "sort1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "surrogateKey1"
+						},
+						{
+							"name": "derivedColumn3"
+						},
+						{
+							"name": "cast1"
+						},
+						{
+							"name": "sort2"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     item as string ('Dopff'),",
+						"     workspace as string ('validwines')",
+						"}",
+						"source(output(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Trend as double '000,000,000.000',",
+						"          Diff_4_weeks as double '000,000,000.000',",
+						"          Median as double '000,000,000.000',",
+						"          Variance as double '000,000,000.000'",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"trends/\", $item)),",
+						"     fileName: (concat($item, \"-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\")),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionBy('hash', 1)) ~> TrendCSVFile",
+						"source(output(",
+						"          ID as short,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as short",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SystembolagetStores",
+						"derivedColumn3 sort(asc(Trend, true),",
+						"     partitionBy('hash', 1)) ~> SortTrends",
+						"SortTrends, SystembolagetStores join(TrendCSVFile@ID == SystembolagetStores@ID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> JoinStoresWithSortedTrends",
+						"JoinStoresWithSortedTrends select(mapColumn(",
+						"          ID = TrendCSVFile@ID,",
+						"          Wine,",
+						"          Trend,",
+						"          Diff_4_weeks,",
+						"          Median,",
+						"          Butiksnamn,",
+						"          Adress,",
+						"          Postnummer,",
+						"          Ort,",
+						"          Lat,",
+						"          Lng,",
+						"          Range",
+						"     ),",
+						"     partitionBy('hash', 1),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> RemoveSomeField",
+						"RemoveSomeField sort(asc(Diff_4_weeks, true),",
+						"     partitionBy('hash', 1)) ~> SortFromWorseTrendToBest",
+						"SortFromWorseTrendToBest derive(TrendFactor = toFloat(Diff_4_weeks)*toFloat(Trend),",
+						"     partitionBy('hash', 1)) ~> derivedColumn1",
+						"derivedColumn1 sort(desc(TrendFactor, true),",
+						"     partitionBy('hash', 1)) ~> sort1",
+						"sort1 derive(current_date = currentDate(),",
+						"          trendString = toString(TrendFactor),",
+						"     partitionBy('hash', 1)) ~> derivedColumn2",
+						"derivedColumn2 keyGenerate(output(newID as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L) ~> surrogateKey1",
+						"TrendCSVFile derive(TrendFactor = toFloat(Trend)*toFloat(Diff_4_weeks)) ~> derivedColumn3",
+						"sort2 cast(output(",
+						"          ID as string,",
+						"          Wine as string,",
+						"          Trend as string,",
+						"          Diff_4_weeks as string,",
+						"          Median as string,",
+						"          Variance as string,",
+						"          TrendFactor as string",
+						"     ),",
+						"     errors: false) ~> cast1",
+						"derivedColumn3 sort(asc(TrendFactor, true),",
+						"     partitionBy('hash', 1)) ~> sort2",
+						"sort1 sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Trend as string,",
+						"          Diff_4_weeks as string,",
+						"          Median as string,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as string,",
+						"          factor as string",
+						"     ),",
+						"     format: 'delimited',",
+						"     fileSystem: 'validwines',",
+						"     folderPath: 'reports',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:['report.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     quoteAll: true,",
+						"     mapColumn(",
+						"          ID,",
+						"          Wine,",
+						"          Butiksnamn,",
+						"          Adress,",
+						"          Postnummer,",
+						"          Ort,",
+						"          Lat,",
+						"          Lng,",
+						"          Range,",
+						"          factor = TrendFactor",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> Sink",
+						"cast1 sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as short,",
+						"          factor as double",
+						"     ),",
+						"     format: 'delimited',",
+						"     fileSystem: 'validwines',",
+						"     folderPath: 'reports',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['report1.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> sink13333"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SortAndAnalyzeTrend_copy1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "Wines"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "TrendCSVFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference"
+							},
+							"name": "SystembolagetStore"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SaveToCSV"
+						},
+						{
+							"linkedService": {
+								"referenceName": "DataLake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SaveSegments"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CastEverythingToString"
+						},
+						{
+							"name": "CountTrendXDiff"
+						},
+						{
+							"name": "SortByCountFactor"
+						},
+						{
+							"name": "JoinWithSystembolaget"
+						},
+						{
+							"name": "RemoveDoubleIDs"
+						},
+						{
+							"name": "RemoveDoubles"
+						},
+						{
+							"name": "OnlyNegativeTrendsAndDiff"
+						},
+						{
+							"name": "SortByCountDesc"
+						},
+						{
+							"name": "AggByAVG"
+						},
+						{
+							"name": "rank1"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     item as string ('Dopff'),",
+						"     workspace as string ('validwines')",
+						"}",
+						"source(output(",
+						"          ID as short,",
+						"          Wine as string,",
+						"          Trend as double,",
+						"          Diff_4_weeks as double,",
+						"          Median as double,",
+						"          Variance as double,",
+						"          Segment as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"trends/\", $item)),",
+						"     fileName: (concat($item, \"-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\")),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionBy('hash', 1)) ~> TrendCSVFile",
+						"source(output(",
+						"          ID as short,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as short",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     partitionBy('hash', 1)) ~> SystembolagetStore",
+						"SortByCountFactor cast(output(",
+						"          ID as string,",
+						"          Wine as string,",
+						"          Trend as string,",
+						"          Diff_4_weeks as string,",
+						"          Median as string,",
+						"          Variance as string,",
+						"          countFactor as string",
+						"     ),",
+						"     errors: false) ~> CastEverythingToString",
+						"OnlyNegativeTrendsAndDiff derive(countFactor = round(Trend*Diff_4_weeks,2,2),",
+						"     partitionBy('hash', 1)) ~> CountTrendXDiff",
+						"CountTrendXDiff sort(desc(countFactor, true),",
+						"     partitionBy('hash', 1)) ~> SortByCountFactor",
+						"TrendCSVFile, SystembolagetStore join(TrendCSVFile@ID == SystembolagetStore@ID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> JoinWithSystembolaget",
+						"JoinWithSystembolaget select(mapColumn(",
+						"          ID = TrendCSVFile@ID,",
+						"          Wine,",
+						"          Trend,",
+						"          Diff_4_weeks,",
+						"          Median,",
+						"          Variance,",
+						"          Segment,",
+						"          Butiksnamn,",
+						"          Adress,",
+						"          Postnummer,",
+						"          Ort,",
+						"          Lat,",
+						"          Lng,",
+						"          Range",
+						"     ),",
+						"     partitionBy('hash', 1),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> RemoveDoubleIDs",
+						"CastEverythingToString aggregate(groupBy(ID),",
+						"     each(match(name!='ID'), $$ = first($$)),",
+						"     partitionBy('hash', 1)) ~> RemoveDoubles",
+						"RemoveDoubleIDs filter(Trend < 0 && Diff_4_weeks < 0) ~> OnlyNegativeTrendsAndDiff",
+						"RemoveDoubles sort(desc(countFactor, true),",
+						"     partitionBy('hash', 1)) ~> SortByCountDesc",
+						"RemoveDoubleIDs aggregate(groupBy(Segment),",
+						"     average = round(avg(Median),2,2),",
+						"          no_of_stores = count(Segment),",
+						"     partitionBy('hash', 1)) ~> AggByAVG",
+						"AggByAVG rank(desc(average, true),",
+						"     output(rank as long),",
+						"     dense: true,",
+						"     partitionBy('hash', 1)) ~> rank1",
+						"SortByCountDesc sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"reports/\", $item)),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:[(concat($item, \"-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\"))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveToCSV",
+						"rank1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as string,",
+						"          Wine as string,",
+						"          Trend as double,",
+						"          Diff_4_weeks as double,",
+						"          Median as double,",
+						"          Variance as double,",
+						"          Segment as string,",
+						"          Butiksnamn as string,",
+						"          Adress as string,",
+						"          Postnummer as string,",
+						"          Ort as string,",
+						"          Lat as double,",
+						"          Lng as double,",
+						"          Range as double,",
+						"          countFactor as double",
+						"     ),",
+						"     format: 'delimited',",
+						"     fileSystem: ($workspace),",
+						"     folderPath: (concat(\"reports/\", $item)),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:[(concat($item, \"-segments-\", toString(currentDate(\"yyyy-mm-dd\")), \".csv\"))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveSegments"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SystembolagetAdresses')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -689,8 +1157,13 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"getDataFromCSVSource": {},
-									"saveToRedirectsCSV": {}
+									"getDataFromCSVSource": {
+										"project_folder": "charma/sources",
+										"source_file": "charma.csv"
+									},
+									"saveToRedirectsCSV": {
+										"dest_path": "charma/stats"
+									}
 								}
 							},
 							"staging": {},
@@ -995,6 +1468,220 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2022-11-09T15:33:50Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessTrackingsForCRM')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataFromMongoDB",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{   domain_id : @{pipeline().parameters.domain_id}, \n    createdAt : {\n        $gte : ISODate('@{addDays(utcNow(), \n                        pipeline().parameters.days)}') \n    }\n}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"name": "createdAt",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"name": "updatedAt",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"name": "uid",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"name": "url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['client']"
+										},
+										"sink": {
+											"name": "client",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"name": "domain_id",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"name": "referrer_url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['url_without_params']"
+										},
+										"sink": {
+											"name": "url_without_params",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_Tracking_Trackings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Trackings",
+								"type": "DatasetReference",
+								"parameters": {
+									"site": {
+										"value": "@pipeline().parameters.site",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "ProcessTrackingsForCRM",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CopyDataFromMongoDB",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DataflowForCRM_Trackings",
+								"type": "DataFlowReference",
+								"parameters": {
+									"did": {
+										"value": "'@{pipeline().parameters.domain_id}'",
+										"type": "Expression"
+									},
+									"sitename": {
+										"value": "'@{pipeline().parameters.site}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"source1": {
+										"site": {
+											"value": "@pipeline().parameters.site",
+											"type": "Expression"
+										}
+									},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"domain_id": {
+						"type": "int",
+						"defaultValue": 8
+					},
+					"days": {
+						"type": "int",
+						"defaultValue": -2
+					},
+					"site": {
+						"type": "string",
+						"defaultValue": "reaktion"
+					}
+				},
+				"folder": {
+					"name": "CRM"
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -1333,7 +2020,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/SortAndAnalyzeTrend_copy1')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Wine_Pipeline')]",
@@ -2843,8 +3532,7 @@
 						"frequency": "Day",
 						"interval": 1,
 						"startTime": "2023-10-04T21:02:00",
-						"timeZone": "W. Europe Standard Time",
-						"schedule": {}
+						"timeZone": "W. Europe Standard Time"
 					}
 				}
 			},

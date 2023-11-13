@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MongoDB_Tracking'"
 		},
+		"MongoDB_Tracking_account": {
+			"type": "secureString",
+			"metadata": "Secure string for 'account' of 'MongoDB_Tracking'"
+		},
 		"ReaktionCore_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ReaktionCore'"
@@ -186,6 +190,10 @@
 				"type": "CosmosDbMongoDbApi",
 				"typeProperties": {
 					"connectionString": "[parameters('MongoDB_Tracking_connectionString')]",
+					"account": {
+						"type": "SecureString",
+						"value": "[parameters('MongoDB_Tracking_account')]"
+					},
 					"database": "[parameters('MongoDB_Tracking_properties_typeProperties_database')]",
 					"isServerVersionAbove32": true
 				}
