@@ -1,0 +1,32 @@
+{
+	"name": "Trackings1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CRM Charma",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"site": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('raw-data-',dataset().site, '.csv')",
+					"type": "Expression"
+				},
+				"folderPath": "crm",
+				"fileSystem": "tracking"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
