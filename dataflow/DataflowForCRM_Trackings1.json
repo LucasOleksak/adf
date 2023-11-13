@@ -9,7 +9,7 @@
 						"referenceName": "CharmaCRMRawData",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "CharmaRawDataCSV"
 				}
 			],
 			"sinks": [
@@ -18,7 +18,7 @@
 						"referenceName": "CRM Charma",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink1"
+					"name": "CharmaDataToImport"
 				}
 			],
 			"transformations": [
@@ -28,13 +28,13 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     did as string (\"8\"),",
-				"     sitename as string (\"reaktion\")",
+				"     did as string (\"107\"),",
+				"     sitename as string (\"charma\")",
 				"}",
 				"source(output(",
 				"          createdAt as string,",
 				"          updatedAt as string,",
-				"          uid as string,",
+				"          uid as integer,",
 				"          url as string,",
 				"          client as string,",
 				"          domain_id as string,",
@@ -44,8 +44,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     partitionBy('hash', 1)) ~> source1",
-				"source1 filter(!in([",
+				"     partitionBy('hash', 1)) ~> CharmaRawDataCSV",
+				"CharmaRawDataCSV filter(!in([",
 				"    287962,",
 				"    77602,",
 				"    77233,",
@@ -92,7 +92,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> CharmaDataToImport"
 			]
 		}
 	}
