@@ -17,9 +17,9 @@
 			],
 			"sinks": [
 				{
-					"dataset": {
-						"referenceName": "EDR_CSV_Redirects",
-						"type": "DatasetReference"
+					"linkedService": {
+						"referenceName": "CRM Charma",
+						"type": "LinkedServiceReference"
 					},
 					"name": "saveToRedirectsCSV"
 				}
@@ -51,17 +51,19 @@
 				"aggByTag sort(desc(visits, true)) ~> sortByVisitsDesc",
 				"sortByVisitsDesc sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:['redirects.csv'],",
+				"     format: 'delimited',",
+				"     fileSystem: 'charmacrm',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['charma_crm.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     mapColumn(",
-				"          tag,",
-				"          visits",
-				"     ),",
 				"     partitionBy('hash', 1)) ~> saveToRedirectsCSV"
 			]
 		}
