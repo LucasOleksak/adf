@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Trackings1",
+						"referenceName": "CharmaCRMRawData",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -31,7 +31,17 @@
 				"     did as string (\"8\"),",
 				"     sitename as string (\"reaktion\")",
 				"}",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          createdAt as string,",
+				"          updatedAt as string,",
+				"          uid as string,",
+				"          url as string,",
+				"          client as string,",
+				"          domain_id as string,",
+				"          referrer_url as string,",
+				"          url_without_params as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> source1",
