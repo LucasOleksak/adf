@@ -148,9 +148,6 @@
 							"getDataFromCSVSource": {
 								"project_folder": "charma/sources",
 								"source_file": "charma.csv"
-							},
-							"saveToRedirectsCSV": {
-								"dest_path": "charma/stats"
 							}
 						}
 					},
