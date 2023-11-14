@@ -209,7 +209,7 @@
 			},
 			"days": {
 				"type": "int",
-				"defaultValue": -2
+				"defaultValue": -1
 			},
 			"site": {
 				"type": "string",
