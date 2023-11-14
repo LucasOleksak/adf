@@ -19,7 +19,7 @@
 						"type": "CosmosDbMongoDbApiSource",
 						"batchSize": 100,
 						"filter": {
-							"value": "{   domain_id : @{pipeline().parameters.domain_id}, \n    createdAt : {\n        $gte : ISODate('@{addDays(utcNow(), \n                        pipeline().parameters.days)}'),\n        $lt : ISODate('@{addDays(utcNow(),0)}') \n    }\n}",
+							"value": "{   domain_id : @{pipeline().parameters.domain_id}, \n    createdAt : {\n        $gte : ISODate('@{formatDateTime(addDays(utcNow(), \n                        pipeline().parameters.days), 'yyyy-MM-dd')}'),\n        $lt : ISODate('@{formatDateTime(utcNow(),'yyyy-MM-dd')}') \n    }\n}",
 							"type": "Expression"
 						}
 					},
