@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Trackings",
+						"referenceName": "CharmaCRMRawData",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -29,15 +29,16 @@
 			"scriptLines": [
 				"parameters{",
 				"     did as string (\"8\"),",
-				"     sitename as string (\"reaktion\")",
+				"     sitename as string (\"reaktion\"),",
+				"     datatype as string (\"trackings\")",
 				"}",
 				"source(output(",
-				"          createdAt as long,",
-				"          updatedAt as long,",
-				"          uid as integer,",
+				"          createdAt as string,",
+				"          updatedAt as string,",
+				"          uid as string,",
 				"          url as string,",
 				"          client as string,",
-				"          domain_id as short,",
+				"          domain_id as string,",
 				"          referrer_url as string,",
 				"          url_without_params as string",
 				"     ),",
