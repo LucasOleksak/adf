@@ -81,7 +81,7 @@
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'tracking',",
-				"     folderPath: 'crm',",
+				"     folderPath: 'redirects',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
