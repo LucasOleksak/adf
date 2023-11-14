@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "CopyDataFromMongoDB",
+				"name": "Copy_Redirects_From_MongoDB",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -165,11 +165,11 @@
 				]
 			},
 			{
-				"name": "ProcessTrackingsForCRM",
+				"name": "Process_Redirects_For_CRM",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "CopyDataFromMongoDB",
+						"activity": "Copy_Redirects_From_MongoDB",
 						"dependencyConditions": [
 							"Succeeded"
 						]
