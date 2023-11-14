@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "raw-data-reaktion.csv",
-				"folderPath": "crm",
+				"fileName": "raw-data-charma.csv",
+				"folderPath": "redirects",
 				"fileSystem": "tracking"
 			},
 			"columnDelimiter": ",",
