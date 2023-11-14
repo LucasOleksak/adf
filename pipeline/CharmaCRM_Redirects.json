@@ -63,7 +63,7 @@
 								},
 								"sink": {
 									"name": "uid",
-									"type": "Int16"
+									"type": "Int64"
 								}
 							},
 							{
