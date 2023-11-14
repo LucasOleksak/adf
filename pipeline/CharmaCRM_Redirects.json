@@ -186,7 +186,7 @@
 			},
 			"site": {
 				"type": "string",
-				"defaultValue": "reaktion"
+				"defaultValue": "charma"
 			}
 		},
 		"folder": {
