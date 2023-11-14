@@ -1,5 +1,5 @@
 {
-	"name": "Mongo_Tracking_Trackings1",
+	"name": "Mongo_Tracking_Trackings_Collection",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "MongoDB_Tracking",

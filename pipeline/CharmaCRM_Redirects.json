@@ -116,7 +116,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Mongo_Tracking_Trackings1",
+						"referenceName": "Mongo_Tracking_Trackings_Collection",
 						"type": "DatasetReference"
 					}
 				],
