@@ -6,6 +6,18 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "reaktion-data-factory-2"
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
+			"type": "int",
+			"defaultValue": 107
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_days": {
+			"type": "int",
+			"defaultValue": -1
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
+			"type": "string",
+			"defaultValue": "charma"
 		}
 	},
 	"variables": {
@@ -411,6 +423,38 @@
 						"frequency": "Day",
 						"interval": 1,
 						"startTime": "2023-10-05T14:10:00",
+						"timeZone": "W. Europe Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trigger_CRM_Charma_Redirects')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CharmaCRM_Redirects",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"domain_id": "[parameters('Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id')]",
+							"days": "[parameters('Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_days')]",
+							"site": "[parameters('Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2023-11-14T14:00:00",
 						"timeZone": "W. Europe Standard Time"
 					}
 				}
