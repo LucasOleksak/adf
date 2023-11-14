@@ -88,7 +88,7 @@
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: false,",
+				"     columnNamesAsHeader: true,",
 				"     partitionFileNames:[(concat($sitename, '-ready-to-import', '.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
