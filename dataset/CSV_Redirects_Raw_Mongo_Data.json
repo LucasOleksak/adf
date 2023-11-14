@@ -1,5 +1,5 @@
 {
-	"name": "Trackings1",
+	"name": "CSV_Redirects_Raw_Mongo_Data",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CRM Charma",
@@ -7,6 +7,9 @@
 		},
 		"parameters": {
 			"site": {
+				"type": "string"
+			},
+			"datatype": {
 				"type": "string"
 			}
 		},
@@ -19,7 +22,10 @@
 					"value": "@concat('raw-data-',dataset().site, '.csv')",
 					"type": "Expression"
 				},
-				"folderPath": "redirects",
+				"folderPath": {
+					"value": "@dataset().datatype",
+					"type": "Expression"
+				},
 				"fileSystem": "tracking"
 			},
 			"columnDelimiter": ",",
