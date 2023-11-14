@@ -41,20 +41,20 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "$['createdAt']['$date']"
+									"path": "$['tags'][0]"
 								},
 								"sink": {
-									"name": "createdAt",
-									"type": "Int64"
+									"name": "items",
+									"type": "String"
 								}
 							},
 							{
 								"source": {
-									"path": "$['updatedAt']['$date']"
+									"path": "$['category']"
 								},
 								"sink": {
-									"name": "updatedAt",
-									"type": "Int64"
+									"name": "category",
+									"type": "String"
 								}
 							},
 							{
@@ -63,24 +63,24 @@
 								},
 								"sink": {
 									"name": "uid",
-									"type": "Int64"
+									"type": "Int16"
 								}
 							},
 							{
 								"source": {
-									"path": "$['url']"
+									"path": "$['uuid']"
 								},
 								"sink": {
-									"name": "url",
+									"name": "uuid",
 									"type": "String"
 								}
 							},
 							{
 								"source": {
-									"path": "$['client']"
+									"path": "$['ip']"
 								},
 								"sink": {
-									"name": "client",
+									"name": "ip",
 									"type": "String"
 								}
 							},
@@ -95,6 +95,24 @@
 							},
 							{
 								"source": {
+									"path": "$['url']"
+								},
+								"sink": {
+									"name": "url",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['redirect_name']"
+								},
+								"sink": {
+									"name": "redirect_name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
 									"path": "$['referrer_url']"
 								},
 								"sink": {
@@ -104,11 +122,20 @@
 							},
 							{
 								"source": {
-									"path": "$['url_without_params']"
+									"path": "$['createdAt']['$date']"
 								},
 								"sink": {
-									"name": "url_without_params",
-									"type": "String"
+									"name": "createdAt_$date",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "$['updatedAt']['$date']"
+								},
+								"sink": {
+									"name": "updatedAt_$date",
+									"type": "Int64"
 								}
 							}
 						]
