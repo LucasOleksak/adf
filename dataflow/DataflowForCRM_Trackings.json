@@ -35,7 +35,7 @@
 				"source(output(",
 				"          createdAt as string,",
 				"          updatedAt as string,",
-				"          uid as string,",
+				"          uid as integer,",
 				"          url as string,",
 				"          client as string,",
 				"          domain_id as string,",
