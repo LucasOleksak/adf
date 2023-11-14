@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'functionKey' of 'AF_WineSalesTendency'"
 		},
+		"CRM Charma_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'CRM Charma'"
+		},
 		"DataLake_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'DataLake'"
@@ -67,6 +71,10 @@
 			"type": "string",
 			"defaultValue": "https://wines.azurewebsites.net"
 		},
+		"CRM Charma_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://charmacrm.dfs.core.windows.net/"
+		},
 		"DataLake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://datalakereaktion.dfs.core.windows.net/"
@@ -112,6 +120,9 @@
 					"AF_WineSalesTendency_functionKey": {
 						"value": "[parameters('AF_WineSalesTendency_functionKey')]"
 					},
+					"CRM Charma_accountKey": {
+						"value": "[parameters('CRM Charma_accountKey')]"
+					},
 					"DataLake_accountKey": {
 						"value": "[parameters('DataLake_accountKey')]"
 					},
@@ -150,6 +161,9 @@
 					},
 					"AF_WineSalesTendency_properties_typeProperties_functionAppUrl": {
 						"value": "[parameters('AF_WineSalesTendency_properties_typeProperties_functionAppUrl')]"
+					},
+					"CRM Charma_properties_typeProperties_url": {
+						"value": "[parameters('CRM Charma_properties_typeProperties_url')]"
 					},
 					"DataLake_properties_typeProperties_url": {
 						"value": "[parameters('DataLake_properties_typeProperties_url')]"
@@ -222,6 +236,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_2')]"
+			]
+		},
+		{
+			"name": "reaktion-data-factory-2_ArmTemplate_4",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_3')]"
 			]
 		}
 	]

@@ -13,6 +13,72 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Kandidata_HRN0178_Leeds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "kandidata_pixel_hrn0178.csv",
+						"folderPath": "stats/kandidata",
+						"fileSystem": "hrnytt"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mongo_TrackingPixels')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDB_Tracking",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Mongo_Tracking"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "pixels"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Mongo_TrackingRedirects')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -77,6 +143,27 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Mongo_Tracking_Trackings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDB_Tracking",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Mongo_Tracking"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "trackings"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mongo_Tracking_Trackings_Collection')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -193,6 +280,41 @@
 							"type": "Expression"
 						},
 						"folderPath": "crm",
+						"fileSystem": "tracking"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trackings1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CRM Charma",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"site": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat('raw-data-',dataset().site, '.csv')",
+							"type": "Expression"
+						},
+						"folderPath": "redirects",
 						"fileSystem": "tracking"
 					},
 					"columnDelimiter": ",",
@@ -1987,500 +2109,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataflowForCRM_Trackings')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "Trackings",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "DataLake",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "filter1"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     did as string (\"8\"),",
-						"     sitename as string (\"reaktion\")",
-						"}",
-						"source(output(",
-						"          createdAt as long,",
-						"          updatedAt as long,",
-						"          uid as integer,",
-						"          url as string,",
-						"          client as string,",
-						"          domain_id as short,",
-						"          referrer_url as string,",
-						"          url_without_params as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     partitionBy('hash', 1)) ~> source1",
-						"source1 filter(!in([",
-						"    287962,",
-						"    77602,",
-						"    77233,",
-						"    278328,",
-						"    4,",
-						"    1,",
-						"    315594,",
-						"    315769,",
-						"    278594,",
-						"    77229,",
-						"    77212,",
-						"    287409,",
-						"    287410,",
-						"    287411,",
-						"    287412,",
-						"    287408,",
-						"    287479,",
-						"    287457,",
-						"    287463,",
-						"    287464,",
-						"    287474,",
-						"    287477,",
-						"    287478,",
-						"    287481,",
-						"    287482,",
-						"    287483,",
-						"    298466,",
-						"    422164,",
-						"    1118405",
-						"     ], uid),",
-						"     partitionBy('hash', 1)) ~> filter1",
-						"filter1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'tracking',",
-						"     folderPath: 'crm',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: false,",
-						"     partitionFileNames:[(concat($sitename, '-ready-to-import', '.csv'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Trackings')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EDR_BasicFlow')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "EDR"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "EDR_CSV_Source",
-								"type": "DatasetReference"
-							},
-							"name": "getDataFromCSVSource"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "EDR_CSV_Redirects",
-								"type": "DatasetReference"
-							},
-							"name": "saveToRedirectsCSV"
-						}
-					],
-					"transformations": [
-						{
-							"name": "aggByTag"
-						},
-						{
-							"name": "sortByVisitsDesc"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          tag as string,",
-						"          category as string,",
-						"          created as string,",
-						"          updated as string,",
-						"          uid as string,",
-						"          url as string,",
-						"          domain_id as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> getDataFromCSVSource",
-						"getDataFromCSVSource aggregate(groupBy(tag),",
-						"     visits = count(tag),",
-						"     partitionBy('hash', 1)) ~> aggByTag",
-						"aggByTag sort(desc(visits, true)) ~> sortByVisitsDesc",
-						"sortByVisitsDesc sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['redirects.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     saveOrder: 1,",
-						"     mapColumn(",
-						"          tag,",
-						"          visits",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> saveToRedirectsCSV"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/HRNytt_Banners')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "HRNytt"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "HRNytt_Stage_Banners_Clicks",
-								"type": "DatasetReference"
-							},
-							"name": "BannersClicks"
-						},
-						{
-							"dataset": {
-								"referenceName": "HRNytt_Stage_Banners",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "HRNytt_Banners_Current_Month",
-								"type": "DatasetReference"
-							},
-							"name": "saveCurrentMonthStats"
-						},
-						{
-							"dataset": {
-								"referenceName": "HRNytt_banners_last_3_months",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "HRNytt_Agg_By_Page",
-								"type": "DatasetReference"
-							},
-							"name": "saveCurrentMonthAggByPage"
-						}
-					],
-					"transformations": [
-						{
-							"name": "aggByDateCurrentMonth"
-						},
-						{
-							"name": "sortByBannerIDandDateCurrentMonth"
-						},
-						{
-							"name": "aMonthAgo"
-						},
-						{
-							"name": "ThreeMonthsAgo"
-						},
-						{
-							"name": "currentMonth"
-						},
-						{
-							"name": "aggByBannerIDandDate2"
-						},
-						{
-							"name": "sort1"
-						},
-						{
-							"name": "select1"
-						},
-						{
-							"name": "join1"
-						},
-						{
-							"name": "aggByPagesCurrentMonth"
-						},
-						{
-							"name": "sortByMostClicked"
-						},
-						{
-							"name": "joinWithBannersTable"
-						},
-						{
-							"name": "sort2"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     firstDayOfMonth as date (subDays(currentDate(),dayOfMonth(currentDate())))",
-						"}",
-						"source(output(",
-						"          id as integer,",
-						"          url as string,",
-						"          full_url as string,",
-						"          date as date,",
-						"          created as timestamp,",
-						"          banner_id as integer",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> BannersClicks",
-						"source(output(",
-						"          id as integer,",
-						"          published as timestamp,",
-						"          image as string,",
-						"          position as string,",
-						"          created as timestamp,",
-						"          updated as timestamp,",
-						"          code as string,",
-						"          order as integer,",
-						"          title as string,",
-						"          image_url as string,",
-						"          code_mobile as string,",
-						"          valid_until as timestamp,",
-						"          clicks as integer,",
-						"          impressions as integer,",
-						"          mobile_image as string,",
-						"          small_mobile_image as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     partitionBy('hash', 1)) ~> source1",
-						"currentMonth aggregate(groupBy(banner_id,",
-						"          date),",
-						"     cliks = count(banner_id),",
-						"     partitionBy('hash', 1)) ~> aggByDateCurrentMonth",
-						"aggByDateCurrentMonth sort(desc(banner_id, true),",
-						"     desc(date, true),",
-						"     partitionBy('hash', 1)) ~> sortByBannerIDandDateCurrentMonth",
-						"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 1))) ~> aMonthAgo",
-						"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 3))) ~> ThreeMonthsAgo",
-						"BannersClicks filter(date <= lastDayOfMonth((currentDate('Europe/Stockholm'))) && date > subDays(currentDate(), dayOfMonth(currentDate()))) ~> currentMonth",
-						"ThreeMonthsAgo aggregate(groupBy(banner_id,",
-						"          date),",
-						"     clicks = count(banner_id),",
-						"     partitionBy('hash', 1)) ~> aggByBannerIDandDate2",
-						"aggByBannerIDandDate2 sort(desc(banner_id, true),",
-						"     desc(date, true),",
-						"     partitionBy('hash', 1)) ~> sort1",
-						"source1 select(mapColumn(",
-						"          id,",
-						"          published,",
-						"          position,",
-						"          title,",
-						"          valid_until,",
-						"          impressions",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
-						"sortByBannerIDandDateCurrentMonth, select1 join(banner_id == id,",
-						"     joinType:'inner',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     partitionBy('hash', 1),",
-						"     broadcast: 'auto')~> join1",
-						"currentMonth aggregate(groupBy(url,",
-						"          banner_id),",
-						"     clicks = count(banner_id),",
-						"     partitionBy('hash', 1)) ~> aggByPagesCurrentMonth",
-						"aggByPagesCurrentMonth sort(desc(clicks, true),",
-						"     partitionBy('hash', 1)) ~> sortByMostClicked",
-						"sortByMostClicked, select1 join(banner_id == id,",
-						"     joinType:'inner',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> joinWithBannersTable",
-						"joinWithBannersTable sort(desc(clicks, true),",
-						"     partitionBy('hash', 1)) ~> sort2",
-						"join1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:[(concat('banners-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     saveOrder: 1,",
-						"     mapColumn(",
-						"          date,",
-						"          cliks,",
-						"          title",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> saveCurrentMonthStats",
-						"sort1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string,",
-						"          Column_2 as string,",
-						"          Column_3 as string",
-						"     ),",
-						"     partitionFileNames:[(concat('banners-last-3-months','.csv'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1",
-						"sort2 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string,",
-						"          Column_2 as string,",
-						"          Column_3 as string",
-						"     ),",
-						"     partitionFileNames:[(concat('banners-by-page-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     header: (['url']),",
-						"     mapColumn(",
-						"          url,",
-						"          clicks,",
-						"          position,",
-						"          title",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> saveCurrentMonthAggByPage"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessRedirectClicks')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "Utbildnigar_Redirects",
-								"type": "DatasetReference"
-							},
-							"name": "CSVUtbildningar"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "DataLake",
-								"type": "LinkedServiceReference"
-							},
-							"name": "SinkToCSV"
-						}
-					],
-					"transformations": [
-						{
-							"name": "AggredateByCourseNameAndCountClicks"
-						},
-						{
-							"name": "FilterReaktionsUIDs",
-							"description": "Remove Lukasz and Frida uids"
-						},
-						{
-							"name": "SortByCountDescening"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     filename1 as string",
-						"}",
-						"source(output(",
-						"          uid as integer,",
-						"          uuid as string,",
-						"          ip as string,",
-						"          web_client as string,",
-						"          domain_id as short,",
-						"          url_without_params as string,",
-						"          url as string,",
-						"          redirect_id as short,",
-						"          redirect_name as string,",
-						"          referrer_url as string,",
-						"          {createdAt_$date} as long,",
-						"          {updatedAt_$date} as long",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> CSVUtbildningar",
-						"FilterReaktionsUIDs aggregate(groupBy(redirect_name),",
-						"     clicks = count(redirect_name),",
-						"     partitionBy('hash', 1)) ~> AggredateByCourseNameAndCountClicks",
-						"CSVUtbildningar filter(!in([1118405, 50884],uid),",
-						"     partitionBy('hash', 1)) ~> FilterReaktionsUIDs",
-						"AggredateByCourseNameAndCountClicks sort(desc(clicks, true),",
-						"     partitionBy('hash', 1)) ~> SortByCountDescening",
-						"SortByCountDescening sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'tracking',",
-						"     folderPath: 'redirects',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: false,",
-						"     partitionFileNames:[($filename1)],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SinkToCSV"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Utbildnigar_Redirects')]"
-			]
 		}
 	]
 }

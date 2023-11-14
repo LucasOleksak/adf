@@ -11,6 +11,9 @@
 		"AF_WineSalesTendency_functionKey": {
 			"value": ""
 		},
+		"CRM Charma_accountKey": {
+			"value": ""
+		},
 		"DataLake_accountKey": {
 			"value": ""
 		},
@@ -49,6 +52,9 @@
 		},
 		"AF_WineSalesTendency_properties_typeProperties_functionAppUrl": {
 			"value": "https://wines.azurewebsites.net"
+		},
+		"CRM Charma_properties_typeProperties_url": {
+			"value": "https://charmacrm.dfs.core.windows.net/"
 		},
 		"DataLake_properties_typeProperties_url": {
 			"value": "https://datalakereaktion.dfs.core.windows.net/"

@@ -13,6 +13,41 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/CSV_MostActive_Agg_By_Page_And_Visits')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BCF"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "computed",
+						"fileSystem": "bcf"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CSV_ReaktionHeroku_Emails')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -191,6 +226,66 @@
 					"quoteChar": "\""
 				},
 				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CharmaCRMRawData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CRM Charma",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "raw-data-charma.csv",
+						"folderPath": "redirects",
+						"fileSystem": "tracking"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "createdAt",
+						"type": "String"
+					},
+					{
+						"name": "updatedAt",
+						"type": "String"
+					},
+					{
+						"name": "uid",
+						"type": "String"
+					},
+					{
+						"name": "url",
+						"type": "String"
+					},
+					{
+						"name": "client",
+						"type": "String"
+					},
+					{
+						"name": "domain_id",
+						"type": "String"
+					},
+					{
+						"name": "referrer_url",
+						"type": "String"
+					},
+					{
+						"name": "url_without_params",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": []
 		},
@@ -799,72 +894,6 @@
 						"type": "String"
 					}
 				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Kandidata_HRN0178_Leeds')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "kandidata_pixel_hrn0178.csv",
-						"folderPath": "stats/kandidata",
-						"fileSystem": "hrnytt"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Mongo_TrackingPixels')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MongoDB_Tracking",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Mongo_Tracking"
-				},
-				"annotations": [],
-				"type": "CosmosDbMongoDbApiCollection",
-				"schema": [],
-				"typeProperties": {
-					"collection": "pixels"
-				}
 			},
 			"dependsOn": []
 		}

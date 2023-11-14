@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'functionKey' of 'AF_WineSalesTendency'"
 		},
+		"CRM Charma_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'CRM Charma'"
+		},
 		"DataLake_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'DataLake'"
@@ -67,6 +71,10 @@
 			"type": "string",
 			"defaultValue": "https://wines.azurewebsites.net"
 		},
+		"CRM Charma_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://charmacrm.dfs.core.windows.net/"
+		},
 		"DataLake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://datalakereaktion.dfs.core.windows.net/"
@@ -116,6 +124,23 @@
 						"value": "[parameters('AF_WineSalesTendency_functionKey')]"
 					},
 					"authentication": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CRM Charma')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('CRM Charma_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('CRM Charma_accountKey')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -472,43 +497,6 @@
 					"quoteChar": "\""
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CSV_MostActive_Agg_By_Page_And_Visits')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "BCF"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "computed",
-						"fileSystem": "bcf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
