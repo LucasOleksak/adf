@@ -19,7 +19,7 @@
 					"value": "@concat('raw-data-',dataset().site, '.csv')",
 					"type": "Expression"
 				},
-				"folderPath": "crm",
+				"folderPath": "redirects",
 				"fileSystem": "tracking"
 			},
 			"columnDelimiter": ",",
