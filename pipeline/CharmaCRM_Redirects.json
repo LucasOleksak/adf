@@ -195,7 +195,8 @@
 							"sitename": {
 								"value": "'@{pipeline().parameters.site}'",
 								"type": "Expression"
-							}
+							},
+							"datatype": "\"redirects\""
 						},
 						"datasetParameters": {
 							"CharmaRawDataCSV": {
@@ -206,20 +207,6 @@
 								"site": {
 									"value": "@pipeline().parameters.site",
 									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceParameters": {
-							"CharmaRawDataCSV": {
-								"schemaLinkedService": {
-									"datatype": {
-										"value": "@pipeline().parameters.datatype",
-										"type": "Expression"
-									},
-									"site": {
-										"value": "@pipeline().parameters.site",
-										"type": "Expression"
-									}
 								}
 							}
 						}
