@@ -1,0 +1,30 @@
+{
+	"name": "Trigger_CRM_Charma_Trackings",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "ProcessTrackingsForCRM",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"domain_id": 107,
+					"days": -999,
+					"site": "charma",
+					"datatype": "trackings"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2023-11-16T04:05:00",
+				"timeZone": "W. Europe Standard Time"
+			}
+		}
+	}
+}
