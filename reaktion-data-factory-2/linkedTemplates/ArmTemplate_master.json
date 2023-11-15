@@ -99,6 +99,22 @@
 			"type": "string",
 			"defaultValue": "charma"
 		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id": {
+			"type": "int",
+			"defaultValue": 107
+		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days": {
+			"type": "int",
+			"defaultValue": -999
+		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site": {
+			"type": "string",
+			"defaultValue": "charma"
+		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype": {
+			"type": "string",
+			"defaultValue": "trackings"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -272,6 +288,18 @@
 					},
 					"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
 						"value": "[parameters('Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site')]"
+					},
+					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id": {
+						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id')]"
+					},
+					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days": {
+						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days')]"
+					},
+					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site": {
+						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site')]"
+					},
+					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype": {
+						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype')]"
 					}
 				}
 			},

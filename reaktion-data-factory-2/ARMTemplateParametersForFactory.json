@@ -73,6 +73,18 @@
 		},
 		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
 			"value": "charma"
+		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id": {
+			"value": 107
+		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days": {
+			"value": -999
+		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site": {
+			"value": "charma"
+		},
+		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype": {
+			"value": "trackings"
 		}
 	}
 }

@@ -13,6 +13,60 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Kandidata')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"redirect_name": {
+						"type": "string",
+						"defaultValue": "@item()"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat(dataset().redirect_name, '.csv')",
+							"type": "Expression"
+						},
+						"folderPath": "stats/kandidata",
+						"fileSystem": "hrnytt"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Kandidata_HRN0178_Leeds')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -280,41 +334,6 @@
 							"type": "Expression"
 						},
 						"folderPath": "crm",
-						"fileSystem": "tracking"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Trackings1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CRM Charma",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"site": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@concat('raw-data-',dataset().site, '.csv')",
-							"type": "Expression"
-						},
-						"folderPath": "redirects",
 						"fileSystem": "tracking"
 					},
 					"columnDelimiter": ",",
@@ -1313,7 +1332,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingRedirects')]"
+				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingRedirects')]",
+				"[concat(variables('factoryId'), '/datasets/Kandidata')]"
 			]
 		},
 		{
