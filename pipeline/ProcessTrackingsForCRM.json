@@ -164,10 +164,15 @@
 							"sitename": {
 								"value": "'@{pipeline().parameters.site}'",
 								"type": "Expression"
-							}
+							},
+							"datatype": "\"trackings\""
 						},
 						"datasetParameters": {
-							"source1": {
+							"GetTrackingRawData": {
+								"datatype": {
+									"value": "@pipeline().parameters.datatype",
+									"type": "Expression"
+								},
 								"site": {
 									"value": "@pipeline().parameters.site",
 									"type": "Expression"
@@ -195,6 +200,10 @@
 			"site": {
 				"type": "string",
 				"defaultValue": "reaktion"
+			},
+			"datatype": {
+				"type": "string",
+				"defaultValue": "tracking"
 			}
 		},
 		"folder": {
