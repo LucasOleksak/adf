@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"linkedService": {
-						"referenceName": "DataLake",
+						"referenceName": "CRM Charma",
 						"type": "LinkedServiceReference"
 					},
 					"name": "SaveForCRMPage"
@@ -82,7 +82,7 @@
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'tracking',",
-				"     folderPath: 'crm',",
+				"     folderPath: 'trackings',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
