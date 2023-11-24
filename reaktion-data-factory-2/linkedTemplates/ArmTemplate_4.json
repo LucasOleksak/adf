@@ -697,8 +697,7 @@
 						"frequency": "Day",
 						"interval": 1,
 						"startTime": "2023-11-16T04:05:00",
-						"timeZone": "W. Europe Standard Time",
-						"schedule": {}
+						"timeZone": "W. Europe Standard Time"
 					}
 				}
 			},

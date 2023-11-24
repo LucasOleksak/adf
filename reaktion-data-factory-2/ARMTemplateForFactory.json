@@ -2004,8 +2004,7 @@
 										}
 									},
 									"SaveForCRMPage": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -6520,6 +6519,41 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Trigger_CRM_Charma_Trackings')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "ProcessTrackingsForCRM",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"domain_id": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id')]",
+							"days": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days')]",
+							"site": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site')]",
+							"datatype": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2023-11-16T04:05:00",
+						"timeZone": "W. Europe Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ProcessTrackingsForCRM')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AggPixels')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -7167,7 +7201,7 @@
 					"sinks": [
 						{
 							"linkedService": {
-								"referenceName": "DataLake",
+								"referenceName": "CRM Charma",
 								"type": "LinkedServiceReference"
 							},
 							"name": "SaveForCRMPage"
@@ -7234,7 +7268,7 @@
 						"     validateSchema: false,",
 						"     format: 'delimited',",
 						"     fileSystem: 'tracking',",
-						"     folderPath: 'crm',",
+						"     folderPath: 'trackings',",
 						"     columnDelimiter: ',',",
 						"     escapeChar: '\\\\',",
 						"     quoteChar: '\\\"',",
@@ -7251,7 +7285,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CharmaCRMRawData')]",
-				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
+				"[concat(variables('factoryId'), '/linkedServices/CRM Charma')]"
 			]
 		},
 		{
@@ -8375,42 +8409,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SystembolagetStores')]",
 				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Trigger_CRM_Charma_Trackings')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "ProcessTrackingsForCRM",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"domain_id": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id')]",
-							"days": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days')]",
-							"site": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site')]",
-							"datatype": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2023-11-16T04:05:00",
-						"timeZone": "W. Europe Standard Time",
-						"schedule": {}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ProcessTrackingsForCRM')]"
 			]
 		}
 	]
