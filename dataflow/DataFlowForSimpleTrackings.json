@@ -34,7 +34,7 @@
 				"     site as string (\"charma.io\")",
 				"}",
 				"source(output(",
-				"          uid as string,",
+				"          uid as integer,",
 				"          uuid as string,",
 				"          url as string,",
 				"          referrer_url as string,",
