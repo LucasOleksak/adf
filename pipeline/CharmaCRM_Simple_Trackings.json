@@ -173,7 +173,7 @@
 									"type": "Expression"
 								}
 							},
-							"sink1": {
+							"SaveToReadyCSV": {
 								"datatype": {
 									"value": "@pipeline().parameters.datatype",
 									"type": "Expression"
