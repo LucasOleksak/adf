@@ -87,6 +87,26 @@
 			"type": "string",
 			"defaultValue": "tracking-prod"
 		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
+			"type": "string",
+			"defaultValue": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days": {
+			"type": "int",
+			"defaultValue": -2
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site": {
+			"type": "string",
+			"defaultValue": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype": {
+			"type": "string",
+			"defaultValue": "simple_trackings"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
+			"type": "int",
+			"defaultValue": -1
+		},
 		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
 			"type": "int",
 			"defaultValue": 107
@@ -279,6 +299,21 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
+						"value": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id')]"
+					},
+					"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days": {
+						"value": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days')]"
+					},
+					"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site": {
+						"value": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site')]"
+					},
+					"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype": {
+						"value": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype')]"
+					},
+					"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
+						"value": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to')]"
 					},
 					"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
 						"value": "[parameters('Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id')]"

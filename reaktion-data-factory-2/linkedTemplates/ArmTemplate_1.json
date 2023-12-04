@@ -285,6 +285,9 @@
 					},
 					"site": {
 						"type": "string"
+					},
+					"days": {
+						"type": "int"
 					}
 				},
 				"annotations": [],
@@ -293,7 +296,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": {
-							"value": "@concat('raw-data-',dataset().site, '.csv')",
+							"value": "@concat('raw-data-',  \n        dataset().site,\n        '-', \n        formatDateTime(addDays(utcNow(), dataset().days),'yyyy-MM-dd'),\n        '.csv')",
 							"type": "Expression"
 						},
 						"folderPath": {
@@ -309,15 +312,11 @@
 				},
 				"schema": [
 					{
-						"name": "createdAt",
-						"type": "String"
-					},
-					{
-						"name": "updatedAt",
-						"type": "String"
-					},
-					{
 						"name": "uid",
+						"type": "String"
+					},
+					{
+						"name": "uuid",
 						"type": "String"
 					},
 					{
@@ -325,19 +324,23 @@
 						"type": "String"
 					},
 					{
-						"name": "client",
-						"type": "String"
-					},
-					{
-						"name": "domain_id",
-						"type": "String"
-					},
-					{
 						"name": "referrer_url",
 						"type": "String"
 					},
 					{
-						"name": "url_without_params",
+						"name": "web_client",
+						"type": "String"
+					},
+					{
+						"name": "page_title",
+						"type": "String"
+					},
+					{
+						"name": "domain",
+						"type": "String"
+					},
+					{
+						"name": "__v",
 						"type": "String"
 					}
 				]

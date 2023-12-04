@@ -7,6 +7,26 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "reaktion-data-factory-2"
 		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
+			"type": "string",
+			"defaultValue": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days": {
+			"type": "int",
+			"defaultValue": -2
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site": {
+			"type": "string",
+			"defaultValue": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype": {
+			"type": "string",
+			"defaultValue": "simple_trackings"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
+			"type": "int",
+			"defaultValue": -1
+		},
 		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
 			"type": "int",
 			"defaultValue": 107
@@ -40,6 +60,639 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Wine_Pipeline_No_AZ_function')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Define container name in 'workspace' \nReport is stored in 'reports/latest/{wine_name.csv} ",
+				"activities": [
+					{
+						"name": "Loop_Over_Excel_Files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [
+							{
+								"name": "workspace",
+								"value": "validwines"
+							}
+						],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('file_items')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "AddSystembolagetAdresses",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "SystembolagetAdresses",
+											"type": "DataFlowReference",
+											"parameters": {
+												"item": {
+													"value": "'@{item()}'",
+													"type": "Expression"
+												},
+												"workspace": {
+													"value": "'@{variables('workspace')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"SystembolagetAdresses": {},
+												"WineCalculations": {},
+												"SinkToCSV": {}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "SendInfo_Done",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "SendInfo_Error",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Over_Excel_Files",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "AppendFilesName",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
+							"method": "POST",
+							"headers": {},
+							"body": "Å"
+						}
+					},
+					{
+						"name": "GetAllSourceFilesInAttachmentsDir",
+						"type": "GetMetadata",
+						"dependsOn": [
+							{
+								"activity": "SetWorkspaceName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "AttachemntsWorkspace",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "SetWorkspaceName",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "workspace",
+							"value": "validwines"
+						}
+					},
+					{
+						"name": "AppendFilesName",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetAllSourceFilesInAttachmentsDir",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetAllSourceFilesInAttachmentsDir').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "AppendFilename",
+									"type": "AppendVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "file_items",
+										"value": {
+											"value": "@split(item().name, '.')[0]",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "SystembolagetStores",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"files": {
+						"type": "Array"
+					},
+					"workspace": {
+						"type": "String"
+					},
+					"file_items": {
+						"type": "Array"
+					}
+				},
+				"folder": {
+					"name": "Wines"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/aggClicksForCoursesRedirects')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataFromRedirects",
+						"description": "Copy redirect from courses redirects",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set pattern",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "redirects"
+							},
+							{
+								"name": "Destination",
+								"value": "tracking/redirects/courses_rediects.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{ \n\t\t\"domain_id\": @{variables('domain_id')}, \n\t\t\"url_without_params\" : {\n\t\t\t $regex: \"@{variables('set_pattern')}\" }}\n\n",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"name": "uid",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['uuid']"
+										},
+										"sink": {
+											"name": "uuid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['ip']"
+										},
+										"sink": {
+											"name": "ip",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['web_client']"
+										},
+										"sink": {
+											"name": "web_client",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"name": "domain_id",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"path": "$['url_without_params']"
+										},
+										"sink": {
+											"name": "url_without_params",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"name": "url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['redirect_id']"
+										},
+										"sink": {
+											"name": "redirect_id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['redirect_name']"
+										},
+										"sink": {
+											"name": "redirect_name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"name": "referrer_url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"name": "createdAt_$date",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"name": "updatedAt_$date",
+											"type": "Int64"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_TrackingRedirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Utbildnigar_Redirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "AggClicksForCourses",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CopyDataFromRedirects",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "ProcessRedirectClicks",
+								"type": "DataFlowReference",
+								"parameters": {
+									"filename1": {
+										"value": "'@{variables('filename')}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"CSVUtbildningar": {},
+									"SinkToCSV": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Set pattern",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set domain id",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "set_pattern",
+							"value": "/utbildning/redirect/"
+						}
+					},
+					{
+						"name": "Set domain id",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set filename",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "domain_id",
+							"value": "11"
+						}
+					},
+					{
+						"name": "PingLogicApp",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "AggClicksForCourses",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod2-18.swedencentral.logic.azure.com:443/workflows/d1dc9525b458498590d62cdcb61839c0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CqkODBsoXEFAEIinCN2FugoMURvgqP-Rz7qsfNc5XvI",
+							"method": "POST",
+							"headers": {},
+							"body": "{ filename : \"\" }"
+						}
+					},
+					{
+						"name": "Set filename",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ValidateRedirectsBlobOnStorage",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "filename",
+							"value": {
+								"value": "@concat('redirects-utbildningar-', utcnow() ,'.csv')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ValidateRedirectsBlobOnStorage",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Utbildnigar_Redirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"set_pattern": {
+						"type": "String"
+					},
+					"domain_id": {
+						"type": "String"
+					},
+					"filename": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "DataFromTracking"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/aggPixels')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -611,6 +1264,40 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/TriggerCharma_SimpleTracking')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CharmaCRM_Simple_Trackings",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"domain_id": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id')]",
+							"days": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days')]",
+							"site": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site')]",
+							"datatype": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype')]",
+							"days_to": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2023-12-04T15:02:00",
+						"timeZone": "W. Europe Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TriggerCoursesRedirects')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -636,7 +1323,9 @@
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/aggClicksForCoursesRedirects')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Trigger_CRM_Charma_Redirects')]",

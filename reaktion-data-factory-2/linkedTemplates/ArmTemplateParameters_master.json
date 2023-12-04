@@ -65,6 +65,21 @@
 		"MongoDB_Tracking_properties_typeProperties_database": {
 			"value": "tracking-prod"
 		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
+			"value": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days": {
+			"value": -2
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site": {
+			"value": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype": {
+			"value": "simple_trackings"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
+			"value": -1
+		},
 		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
 			"value": 107
 		},
