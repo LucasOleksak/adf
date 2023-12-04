@@ -116,6 +116,77 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "ProcessDataFromSimpleTrackings",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "CopySimpleTracking",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DataFlowForSimpleTrackings",
+						"type": "DataFlowReference",
+						"parameters": {
+							"sitename": {
+								"value": "'@{pipeline().parameters.site}'",
+								"type": "Expression"
+							},
+							"datatype": {
+								"value": "'@{pipeline().parameters.datatype}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"RawDataFromBlob": {
+								"datatype": {
+									"value": "@pipeline().parameters.datatype",
+									"type": "Expression"
+								},
+								"site": {
+									"value": "@pipeline().parameters.site",
+									"type": "Expression"
+								},
+								"days": {
+									"value": "@pipeline().parameters.days",
+									"type": "Expression"
+								}
+							},
+							"sink1": {
+								"datatype": {
+									"value": "@pipeline().parameters.datatype",
+									"type": "Expression"
+								},
+								"site": {
+									"value": "@pipeline().parameters.site",
+									"type": "Expression"
+								},
+								"days": {
+									"value": "@pipeline().parameters.days",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"parameters": {
