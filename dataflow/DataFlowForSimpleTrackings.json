@@ -26,6 +26,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "SaveToRanking"
+				},
+				{
+					"dataset": {
+						"referenceName": "CharmaCRMRawData",
+						"type": "DatasetReference"
+					},
+					"name": "SaveSortedAggregation"
 				}
 			],
 			"transformations": [
@@ -37,6 +44,9 @@
 				},
 				{
 					"name": "rank1"
+				},
+				{
+					"name": "sort1"
 				}
 			],
 			"scriptLines": [
@@ -92,6 +102,7 @@
 				"     uid = count()) ~> AggregateByPageTilte",
 				"AggregateByPageTilte rank(asc(uid, true),",
 				"     output(uid as long)) ~> rank1",
+				"AggregateByPageTilte sort(desc(uid, true)) ~> sort1",
 				"RemoveReaktionID sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -129,7 +140,26 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> SaveToRanking"
+				"     partitionBy('hash', 1)) ~> SaveToRanking",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          uid as string,",
+				"          uuid as string,",
+				"          url as string,",
+				"          referrer_url as string,",
+				"          web_client as string,",
+				"          page_title as string,",
+				"          domain as string,",
+				"          {__v} as string",
+				"     ),",
+				"     partitionFileNames:['concat(\\'aggreted_and_sorted\\', \\'-\\', toString(currentDate() + $days), \\'.csv\\')'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SaveSortedAggregation"
 			]
 		}
 	}
