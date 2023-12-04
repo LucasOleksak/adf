@@ -7,26 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "reaktion-data-factory-2"
 		},
-		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
-			"type": "string",
-			"defaultValue": "charma.io"
-		},
-		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days": {
-			"type": "int",
-			"defaultValue": -2
-		},
-		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site": {
-			"type": "string",
-			"defaultValue": "charma.io"
-		},
-		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype": {
-			"type": "string",
-			"defaultValue": "simple_trackings"
-		},
-		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
-			"type": "int",
-			"defaultValue": -1
-		},
 		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
 			"type": "int",
 			"defaultValue": 107
@@ -54,6 +34,26 @@
 		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype": {
 			"type": "string",
 			"defaultValue": "trackings"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
+			"type": "string",
+			"defaultValue": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days": {
+			"type": "int",
+			"defaultValue": -2
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site": {
+			"type": "string",
+			"defaultValue": "charma.io"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype": {
+			"type": "string",
+			"defaultValue": "simple_trackings"
+		},
+		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
+			"type": "int",
+			"defaultValue": -1
 		}
 	},
 	"variables": {
@@ -1264,40 +1264,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TriggerCharma_SimpleTracking')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CharmaCRM_Simple_Trackings",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"domain_id": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id')]",
-							"days": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days')]",
-							"site": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site')]",
-							"datatype": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype')]",
-							"days_to": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2023-12-04T15:02:00",
-						"timeZone": "W. Europe Standard Time"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/TriggerCoursesRedirects')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -1386,6 +1352,40 @@
 						"frequency": "Day",
 						"interval": 1,
 						"startTime": "2023-11-16T04:05:00",
+						"timeZone": "W. Europe Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TriggerCharma_SimpleTracking')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CharmaCRM_Simple_Trackings",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"domain_id": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id')]",
+							"days": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days')]",
+							"site": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site')]",
+							"datatype": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype')]",
+							"days_to": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2023-12-04T16:07:00",
 						"timeZone": "W. Europe Standard Time"
 					}
 				}
