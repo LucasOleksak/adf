@@ -19,7 +19,7 @@
 						"type": "CosmosDbMongoDbApiSource",
 						"batchSize": 100,
 						"filter": {
-							"value": "{   domain : '@{pipeline().parameters.domain_id}', \n    uid: { $ne: null },\n    createdAt : {\n        $gte : ISODate('@{formatDateTime(addDays(utcNow(), \n                        pipeline().parameters.days), 'yyyy-MM-dd')}'),\n        $lt : ISODate('@{formatDateTime(utcNow(),'yyyy-MM-dd')}') \n    }\n}",
+							"value": "{   domain : '@{pipeline().parameters.domain_id}', \n    uid: { $ne: null },\n    createdAt : {\n        $gte : ISODate('@{formatDateTime(addDays(utcNow(), \n                        pipeline().parameters.days), 'yyyy-MM-dd')}'),\n        $lt : ISODate('@{formatDateTime(addDays(utcNow(), \n                        pipeline().parameters.days_to),'yyyy-MM-dd')}') \n    }\n}",
 							"type": "Expression"
 						}
 					},
@@ -34,7 +34,61 @@
 							"fileExtension": ".txt"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['uid']"
+								},
+								"sink": {
+									"name": "uid"
+								}
+							},
+							{
+								"source": {
+									"path": "$['url']"
+								},
+								"sink": {
+									"name": "url"
+								}
+							},
+							{
+								"source": {
+									"path": "$['referrer_url']"
+								},
+								"sink": {
+									"name": "referrer_url"
+								}
+							},
+							{
+								"source": {
+									"path": "$['page_title']"
+								},
+								"sink": {
+									"name": "page_title"
+								}
+							},
+							{
+								"source": {
+									"path": "$['domain']"
+								},
+								"sink": {
+									"name": "domain"
+								}
+							},
+							{
+								"source": {
+									"path": "$['createdAt']['$date']"
+								},
+								"sink": {
+									"name": "createdAt_$date",
+									"type": "Int64"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -47,8 +101,18 @@
 						"referenceName": "CharmaCRMRawData",
 						"type": "DatasetReference",
 						"parameters": {
-							"datatype": "simple_trackings",
-							"site": "charma"
+							"datatype": {
+								"value": "@pipeline().parameters.datatype",
+								"type": "Expression"
+							},
+							"site": {
+								"value": "@pipeline().parameters.site",
+								"type": "Expression"
+							},
+							"days": {
+								"value": "@pipeline().parameters.days",
+								"type": "Expression"
+							}
 						}
 					}
 				]
@@ -66,6 +130,14 @@
 			"site": {
 				"type": "string",
 				"defaultValue": "charma.io"
+			},
+			"datatype": {
+				"type": "string",
+				"defaultValue": "simple_trackings"
+			},
+			"days_to": {
+				"type": "int",
+				"defaultValue": -4
 			}
 		},
 		"folder": {
