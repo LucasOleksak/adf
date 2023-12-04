@@ -1,0 +1,31 @@
+{
+	"name": "TriggerCharma_SimpleTracking",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "CharmaCRM_Simple_Trackings",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"domain_id": "charma.io",
+					"days": -2,
+					"site": "charma.io",
+					"datatype": "simple_trackings",
+					"days_to": -1
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2023-12-04T15:02:00",
+				"timeZone": "W. Europe Standard Time"
+			}
+		}
+	}
+}
