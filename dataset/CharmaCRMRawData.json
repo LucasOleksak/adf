@@ -11,6 +11,9 @@
 			},
 			"site": {
 				"type": "string"
+			},
+			"days": {
+				"type": "int"
 			}
 		},
 		"annotations": [],
@@ -19,7 +22,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('raw-data-',dataset().site, formatDateTime(utcNow(),'yyyy-MM-dd'), '.csv')",
+					"value": "@concat('raw-data-',dataset().site,formatDateTime(addDays(utcNow(), dataset().days), 'yyyy-MM-dd'), '.csv')",
 					"type": "Expression"
 				},
 				"folderPath": {
