@@ -148,6 +148,14 @@
 							"datatype": {
 								"value": "'@{pipeline().parameters.datatype}'",
 								"type": "Expression"
+							},
+							"days": {
+								"value": "@pipeline().parameters.days",
+								"type": "Expression"
+							},
+							"site": {
+								"value": "'@{pipeline().parameters.site}'",
+								"type": "Expression"
 							}
 						},
 						"datasetParameters": {
