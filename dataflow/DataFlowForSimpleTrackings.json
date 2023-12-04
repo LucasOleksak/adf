@@ -19,6 +19,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "SaveToReadyCSV"
+				},
+				{
+					"dataset": {
+						"referenceName": "CharmaCRMRawData",
+						"type": "DatasetReference"
+					},
+					"name": "SaveToRanking"
 				}
 			],
 			"transformations": [
@@ -103,7 +110,26 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> SaveToReadyCSV"
+				"     partitionBy('hash', 1)) ~> SaveToReadyCSV",
+				"rank1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          uid as string,",
+				"          uuid as string,",
+				"          url as string,",
+				"          referrer_url as string,",
+				"          web_client as string,",
+				"          page_title as string,",
+				"          domain as string,",
+				"          {__v} as string",
+				"     ),",
+				"     partitionFileNames:[(concat('ranking', '-', toString(currentDate() + $days), '.csv'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SaveToRanking"
 			]
 		}
 	}
