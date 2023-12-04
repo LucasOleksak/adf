@@ -22,7 +22,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('raw-data-', '-', dataset().site,formatDateTime(addDays(utcNow(), dataset().days),'yyyy-MM-dd'),'.csv')",
+					"value": "@concat('raw-data-',  \n        dataset().site,\n        '-', \n        formatDateTime(addDays(utcNow(), dataset().days),'yyyy-MM-dd'),\n        '.csv')",
 					"type": "Expression"
 				},
 				"folderPath": {
