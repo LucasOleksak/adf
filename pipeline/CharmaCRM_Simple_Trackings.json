@@ -1,0 +1,76 @@
+{
+	"name": "CharmaCRM_Simple_Trackings",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopySimpleTracking",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbMongoDbApiSource",
+						"batchSize": 100,
+						"filter": {
+							"value": "{   domain : '@{pipeline().parameters.domain_id}', \n    createdAt : {\n        $gte : ISODate('@{formatDateTime(addDays(utcNow(), \n                        pipeline().parameters.days), 'yyyy-MM-dd')}'),\n        $lt : ISODate('@{formatDateTime(utcNow(),'yyyy-MM-dd')}') \n    }\n}",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Mongo_TrackingSimpleTracking",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CharmaCRMRawData",
+						"type": "DatasetReference",
+						"parameters": {
+							"datatype": "simple_trackings",
+							"site": "charma"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"domain_id": {
+				"type": "string",
+				"defaultValue": "charma.io"
+			},
+			"days": {
+				"type": "int",
+				"defaultValue": -5
+			},
+			"site": {
+				"type": "string",
+				"defaultValue": "charma.io"
+			}
+		},
+		"folder": {
+			"name": "CRM/Charma"
+		},
+		"annotations": []
+	}
+}
