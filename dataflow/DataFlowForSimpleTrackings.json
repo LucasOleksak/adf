@@ -89,7 +89,7 @@
 				"          domain as string,",
 				"          {__v} as string",
 				"     ),",
-				"     partitionFileNames:[(concat('simple_trackings', '-', toString(currentDate() - $days), '.csv'))],",
+				"     partitionFileNames:[(concat('simple_trackings', '-', toString(currentDate() + $days), '.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
