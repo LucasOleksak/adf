@@ -24,6 +24,12 @@
 			"transformations": [
 				{
 					"name": "RemoveReaktionID"
+				},
+				{
+					"name": "AggregateByPageTilte"
+				},
+				{
+					"name": "rank1"
 				}
 			],
 			"scriptLines": [
@@ -75,6 +81,10 @@
 				"    422164,",
 				"    1118405",
 				"     ], uid)) ~> RemoveReaktionID",
+				"RemoveReaktionID aggregate(groupBy(page_title),",
+				"     uid = count()) ~> AggregateByPageTilte",
+				"AggregateByPageTilte rank(asc(uid, true),",
+				"     output(uid as long)) ~> rank1",
 				"RemoveReaktionID sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
