@@ -176,6 +176,10 @@
 								"site": {
 									"value": "@pipeline().parameters.site",
 									"type": "Expression"
+								},
+								"days": {
+									"value": "@pipeline().parameters.days",
+									"type": "Expression"
 								}
 							}
 						}
