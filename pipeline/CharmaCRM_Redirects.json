@@ -207,6 +207,10 @@
 								"site": {
 									"value": "@pipeline().parameters.site",
 									"type": "Expression"
+								},
+								"days": {
+									"value": "@pipeline().parameters.days",
+									"type": "Expression"
 								}
 							}
 						}
@@ -216,34 +220,6 @@
 						"computeType": "General"
 					},
 					"traceLevel": "Fine"
-				}
-			},
-			{
-				"name": "API_Request",
-				"description": "Process CSV file",
-				"type": "WebActivity",
-				"dependsOn": [
-					{
-						"activity": "Process_Redirects_For_CRM",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"url": "https://crm-charma.azurewebsites.net/api/import/redirects",
-					"method": "POST",
-					"headers": {
-						"Authorization": "Token 32a8bc8bc9292957da0db8b69fc4078f6c0121e2"
-					}
 				}
 			}
 		],
