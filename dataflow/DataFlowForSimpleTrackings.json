@@ -23,7 +23,7 @@
 			],
 			"transformations": [
 				{
-					"name": "filter1"
+					"name": "RemoveReaktionID"
 				}
 			],
 			"scriptLines": [
@@ -35,13 +35,11 @@
 				"}",
 				"source(output(",
 				"          uid as integer,",
-				"          uuid as string,",
 				"          url as string,",
 				"          referrer_url as string,",
-				"          web_client as string,",
 				"          page_title as string,",
 				"          domain as string,",
-				"          {__v} as string",
+				"          {createdAt_$date} as long",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -76,8 +74,8 @@
 				"    298466,",
 				"    422164,",
 				"    1118405",
-				"     ], uid)) ~> filter1",
-				"filter1 sink(allowSchemaDrift: true,",
+				"     ], uid)) ~> RemoveReaktionID",
+				"RemoveReaktionID sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          uid as string,",
