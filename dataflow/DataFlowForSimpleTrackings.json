@@ -1,0 +1,98 @@
+{
+	"name": "DataFlowForSimpleTrackings",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CharmaCRMRawData",
+						"type": "DatasetReference"
+					},
+					"name": "RawDataFromBlob"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CharmaCRMRawData",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     sitename as string (\"charma\"),",
+				"     datatype as string (\"simple_trackings\")",
+				"}",
+				"source(output(",
+				"          createdAt as string,",
+				"          updatedAt as string,",
+				"          uid as string,",
+				"          url as string,",
+				"          client as string,",
+				"          domain_id as string,",
+				"          referrer_url as string,",
+				"          url_without_params as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RawDataFromBlob",
+				"RawDataFromBlob filter(!in([",
+				"    287962,",
+				"    77602,",
+				"    77233,",
+				"    278328,",
+				"    4,",
+				"    1,",
+				"    315594,",
+				"    315769,",
+				"    278594,",
+				"    77229,",
+				"    77212,",
+				"    287409,",
+				"    287410,",
+				"    287411,",
+				"    287412,",
+				"    287408,",
+				"    287479,",
+				"    287457,",
+				"    287463,",
+				"    287464,",
+				"    287474,",
+				"    287477,",
+				"    287478,",
+				"    287481,",
+				"    287482,",
+				"    287483,",
+				"    298466,",
+				"    422164,",
+				"    1118405",
+				"     ], uid)) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          createdAt as string,",
+				"          updatedAt as string,",
+				"          uid as string,",
+				"          url as string,",
+				"          client as string,",
+				"          domain_id as string,",
+				"          referrer_url as string,",
+				"          url_without_params as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
