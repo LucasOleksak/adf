@@ -1,5 +1,5 @@
 {
-	"name": "RawData_SimpleTracking",
+	"name": "Charma_RawData_SimpleTracking",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CRM Charma",
