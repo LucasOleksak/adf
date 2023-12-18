@@ -149,7 +149,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CSV_Redirects_RawData_Redirects",
+						"referenceName": "Charma_RawData_Redirects",
 						"type": "DatasetReference",
 						"parameters": {
 							"site": {
@@ -192,11 +192,25 @@
 								"value": "'@{pipeline().parameters.domain_id}'",
 								"type": "Expression"
 							},
-							"sitename": {
+							"site": {
 								"value": "'@{pipeline().parameters.site}'",
 								"type": "Expression"
 							},
 							"datatype": "\"redirects\""
+						},
+						"datasetParameters": {
+							"CharmaRawDataCSV": {
+								"site": "charma",
+								"datatype": "redirects"
+							}
+						},
+						"linkedServiceParameters": {
+							"CharmaRawDataCSV": {
+								"schemaLinkedService": {
+									"site": "charma",
+									"datatype": "redirects"
+								}
+							}
 						}
 					},
 					"compute": {
