@@ -87,34 +87,6 @@
 			"type": "string",
 			"defaultValue": "tracking-prod"
 		},
-		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
-			"type": "int",
-			"defaultValue": 107
-		},
-		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_days": {
-			"type": "int",
-			"defaultValue": -1
-		},
-		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
-			"type": "string",
-			"defaultValue": "charma"
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id": {
-			"type": "int",
-			"defaultValue": 107
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days": {
-			"type": "int",
-			"defaultValue": -999
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site": {
-			"type": "string",
-			"defaultValue": "charma"
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype": {
-			"type": "string",
-			"defaultValue": "trackings"
-		},
 		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
 			"type": "string",
 			"defaultValue": "charma.io"
@@ -134,6 +106,18 @@
 		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
 			"type": "int",
 			"defaultValue": -1
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
+			"type": "int",
+			"defaultValue": 107
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_days": {
+			"type": "int",
+			"defaultValue": -1
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
+			"type": "string",
+			"defaultValue": "charma"
 		}
 	},
 	"variables": {
@@ -893,7 +877,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "CSV_Redirects_Raw_Mongo_Data",
+								"referenceName": "Charma_RawData_Redirects",
 								"type": "DatasetReference",
 								"parameters": {
 									"site": {
@@ -907,66 +891,6 @@
 								}
 							}
 						]
-					},
-					{
-						"name": "Process_Redirects_For_CRM",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Copy_Redirects_From_MongoDB",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DataflowForCRM_Trackings1",
-								"type": "DataFlowReference",
-								"parameters": {
-									"did": {
-										"value": "'@{pipeline().parameters.domain_id}'",
-										"type": "Expression"
-									},
-									"sitename": {
-										"value": "'@{pipeline().parameters.site}'",
-										"type": "Expression"
-									},
-									"datatype": "\"redirects\""
-								},
-								"datasetParameters": {
-									"CharmaRawDataCSV": {
-										"datatype": {
-											"value": "@pipeline().parameters.datatype",
-											"type": "Expression"
-										},
-										"site": {
-											"value": "@pipeline().parameters.site",
-											"type": "Expression"
-										},
-										"days": {
-											"value": "@pipeline().parameters.days",
-											"type": "Expression"
-										}
-									},
-									"CharmaDataToImport": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
 					}
 				],
 				"policy": {
@@ -997,8 +921,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingRedirects')]",
-				"[concat(variables('factoryId'), '/datasets/CSV_Redirects_Raw_Mongo_Data')]",
-				"[concat(variables('factoryId'), '/dataflows/DataflowForCRM_Trackings1')]"
+				"[concat(variables('factoryId'), '/datasets/Charma_RawData_Redirects')]"
 			]
 		},
 		{
@@ -1104,7 +1027,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "CharmaCRMRawData",
+								"referenceName": "Charma_RawData_SimpleTracking",
 								"type": "DatasetReference",
 								"parameters": {
 									"datatype": {
@@ -1192,6 +1115,34 @@
 											"value": "@pipeline().parameters.days",
 											"type": "Expression"
 										}
+									},
+									"SaveToRanking": {
+										"datatype": {
+											"value": "@pipeline().parameters.datatype",
+											"type": "Expression"
+										},
+										"site": {
+											"value": "@pipeline().parameters.site",
+											"type": "Expression"
+										},
+										"days": {
+											"value": "@pipeline().parameters.days",
+											"type": "Expression"
+										}
+									},
+									"SaveSortedAggregation": {
+										"datatype": {
+											"value": "@pipeline().parameters.datatype",
+											"type": "Expression"
+										},
+										"site": {
+											"value": "@pipeline().parameters.site",
+											"type": "Expression"
+										},
+										"days": {
+											"value": "@pipeline().parameters.days",
+											"type": "Expression"
+										}
 									}
 								}
 							},
@@ -1236,244 +1187,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingSimpleTracking')]",
-				"[concat(variables('factoryId'), '/datasets/CharmaCRMRawData')]",
+				"[concat(variables('factoryId'), '/datasets/Charma_RawData_SimpleTracking')]",
 				"[concat(variables('factoryId'), '/dataflows/DataFlowForSimpleTrackings')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CharmaCRM_Trackings')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_tracking_data_from_MongoDB",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "CosmosDbMongoDbApiSource",
-								"batchSize": 100,
-								"filter": {
-									"value": "{   domain_id : @{pipeline().parameters.domain_id}, \n    createdAt : {\n        $gte : ISODate('@{formatDateTime(addDays(utcNow(), \n                        pipeline().parameters.days), 'yyyy-MM-dd')}'),\n        $lt : ISODate('@{formatDateTime(utcNow(),'yyyy-MM-dd')}') \n    }\n}",
-									"type": "Expression"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "FlattenHierarchy"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['createdAt']['$date']"
-										},
-										"sink": {
-											"name": "createdAt",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "$['updatedAt']['$date']"
-										},
-										"sink": {
-											"name": "updatedAt",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "$['uid']"
-										},
-										"sink": {
-											"name": "uid",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "$['url']"
-										},
-										"sink": {
-											"name": "url",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "$['client']"
-										},
-										"sink": {
-											"name": "client",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "$['domain_id']"
-										},
-										"sink": {
-											"name": "domain_id",
-											"type": "Int16"
-										}
-									},
-									{
-										"source": {
-											"path": "$['referrer_url']"
-										},
-										"sink": {
-											"name": "referrer_url",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "$['url_without_params']"
-										},
-										"sink": {
-											"name": "url_without_params",
-											"type": "String"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Mongo_Tracking_Trackings",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "CharmaCRMRawData",
-								"type": "DatasetReference",
-								"parameters": {
-									"datatype": "trackings",
-									"site": "charma",
-									"days": {
-										"value": "@pipeline().parameters.days",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					},
-					{
-						"name": "ProcessTrackingsForCRM",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Copy_tracking_data_from_MongoDB",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DataflowForCRM_Trackings",
-								"type": "DataFlowReference",
-								"parameters": {
-									"did": {
-										"value": "'@{pipeline().parameters.domain_id}'",
-										"type": "Expression"
-									},
-									"sitename": {
-										"value": "'@{pipeline().parameters.site}'",
-										"type": "Expression"
-									},
-									"datatype": {
-										"value": "'@{pipeline().parameters.datatype}'",
-										"type": "Expression"
-									}
-								},
-								"datasetParameters": {
-									"GetTrackingRawData": {
-										"datatype": {
-											"value": "@pipeline().parameters.datatype",
-											"type": "Expression"
-										},
-										"site": {
-											"value": "@pipeline().parameters.site",
-											"type": "Expression"
-										},
-										"days": {
-											"value": "@pipeline().parameters.days",
-											"type": "Expression"
-										}
-									},
-									"SaveForCRMPage": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"domain_id": {
-						"type": "int",
-						"defaultValue": 107
-					},
-					"days": {
-						"type": "int",
-						"defaultValue": -99
-					},
-					"site": {
-						"type": "string",
-						"defaultValue": "charma"
-					},
-					"datatype": {
-						"type": "string",
-						"defaultValue": "trackings"
-					}
-				},
-				"folder": {
-					"name": "CRM/Charma"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Mongo_Tracking_Trackings')]",
-				"[concat(variables('factoryId'), '/datasets/CharmaCRMRawData')]",
-				"[concat(variables('factoryId'), '/dataflows/DataflowForCRM_Trackings')]"
 			]
 		},
 		{
@@ -2089,237 +1804,6 @@
 				"[concat(variables('factoryId'), '/datasets/Mongo_Tracking_Trackings')]",
 				"[concat(variables('factoryId'), '/datasets/EDR_CSV_Source')]",
 				"[concat(variables('factoryId'), '/dataflows/EDR_BasicFlow')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessTrackingsForCRM')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CopyDataFromMongoDB",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "CosmosDbMongoDbApiSource",
-								"batchSize": 100,
-								"filter": {
-									"value": "{   domain_id : @{pipeline().parameters.domain_id}, \n    createdAt : {\n        $gte : ISODate('@{addDays(utcNow(), \n                        pipeline().parameters.days)}') \n    }\n}",
-									"type": "Expression"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "FlattenHierarchy"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['createdAt']['$date']"
-										},
-										"sink": {
-											"name": "createdAt",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "$['updatedAt']['$date']"
-										},
-										"sink": {
-											"name": "updatedAt",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "$['uid']"
-										},
-										"sink": {
-											"name": "uid",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "$['url']"
-										},
-										"sink": {
-											"name": "url",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "$['client']"
-										},
-										"sink": {
-											"name": "client",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "$['domain_id']"
-										},
-										"sink": {
-											"name": "domain_id",
-											"type": "Int16"
-										}
-									},
-									{
-										"source": {
-											"path": "$['referrer_url']"
-										},
-										"sink": {
-											"name": "referrer_url",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "$['url_without_params']"
-										},
-										"sink": {
-											"name": "url_without_params",
-											"type": "String"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Mongo_Tracking_Trackings",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Trackings",
-								"type": "DatasetReference",
-								"parameters": {
-									"site": {
-										"value": "@pipeline().parameters.site",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					},
-					{
-						"name": "ProcessTrackingsForCRM",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "CopyDataFromMongoDB",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DataflowForCRM_Trackings",
-								"type": "DataFlowReference",
-								"parameters": {
-									"did": {
-										"value": "'@{pipeline().parameters.domain_id}'",
-										"type": "Expression"
-									},
-									"sitename": {
-										"value": "'@{pipeline().parameters.site}'",
-										"type": "Expression"
-									},
-									"datatype": "\"trackings\""
-								},
-								"datasetParameters": {
-									"GetTrackingRawData": {
-										"datatype": {
-											"value": "@pipeline().parameters.datatype",
-											"type": "Expression"
-										},
-										"site": {
-											"value": "@pipeline().parameters.site",
-											"type": "Expression"
-										},
-										"days": {
-											"value": "@pipeline().parameters.days",
-											"type": "Expression"
-										}
-									},
-									"SaveForCRMPage": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"domain_id": {
-						"type": "int",
-						"defaultValue": 8
-					},
-					"days": {
-						"type": "int",
-						"defaultValue": -2
-					},
-					"site": {
-						"type": "string",
-						"defaultValue": "reaktion"
-					},
-					"datatype": {
-						"type": "string",
-						"defaultValue": "tracking"
-					}
-				},
-				"folder": {
-					"name": "CRM"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Mongo_Tracking_Trackings')]",
-				"[concat(variables('factoryId'), '/datasets/Trackings')]",
-				"[concat(variables('factoryId'), '/dataflows/DataflowForCRM_Trackings')]"
 			]
 		},
 		{
@@ -4351,44 +3835,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AnonymousTrackingsPArquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "a_tracking.parquet",
-						"fileSystem": "tracking"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "id",
-						"type": "INT32"
-					},
-					{
-						"name": "email",
-						"type": "UTF8"
-					},
-					{
-						"name": "remove_from_adressgruppen",
-						"type": "BOOLEAN"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AttachemntsWorkspace')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -4641,49 +4087,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CSV_Redirects_Raw_Mongo_Data')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CRM Charma",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"site": {
-						"type": "string"
-					},
-					"datatype": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@concat('raw-data-',dataset().site, '.csv')",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().datatype",
-							"type": "Expression"
-						},
-						"fileSystem": "tracking"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CRM Charma')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/CSV_Trackings')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -4837,7 +4240,53 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CharmaCRMRawData')]",
+			"name": "[concat(parameters('factoryName'), '/Charma_RawData_Redirects')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CRM Charma",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"site": {
+						"type": "string"
+					},
+					"datatype": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Charma"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat('raw-data-',dataset().site, '.csv')",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().datatype",
+							"type": "Expression"
+						},
+						"fileSystem": "tracking"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CRM Charma')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Charma_RawData_SimpleTracking')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -4855,6 +4304,9 @@
 					"days": {
 						"type": "int"
 					}
+				},
+				"folder": {
+					"name": "Charma"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -5455,43 +4907,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/HRNytt_banners_last_3_months')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "stats/banners",
-						"fileSystem": "hrnytt"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Kandidata')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5847,44 +5262,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TrackingsParquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "tracking.parquet",
-						"fileSystem": "tracking"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "id",
-						"type": "INT32"
-					},
-					{
-						"name": "email",
-						"type": "UTF8"
-					},
-					{
-						"name": "remove_from_adressgruppen",
-						"type": "BOOLEAN"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Utbildnigar_Redirects')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5987,521 +5364,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ValidWinesPostgres_LinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/WineExcel')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Excel",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "dudet2.xlsx",
-						"fileSystem": "wines"
-					},
-					"sheetIndex": 0
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
 			]
 		},
 		{
@@ -6733,6 +5595,42 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/TriggerCharma_SimpleTracking')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CharmaCRM_Simple_Trackings",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"domain_id": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id')]",
+							"days": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days')]",
+							"site": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site')]",
+							"datatype": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype')]",
+							"days_to": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2023-12-04T16:07:00",
+						"timeZone": "W. Europe Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/CharmaCRM_Simple_Trackings')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TriggerCoursesRedirects')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -6794,41 +5692,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/CharmaCRM_Redirects')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Trigger_CRM_Charma_Trackings')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "ProcessTrackingsForCRM",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"domain_id": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id')]",
-							"days": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days')]",
-							"site": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site')]",
-							"datatype": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2023-11-16T04:05:00",
-						"timeZone": "W. Europe Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ProcessTrackingsForCRM')]"
 			]
 		},
 		{
@@ -7470,7 +6333,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CharmaCRMRawData",
+								"referenceName": "Charma_RawData_SimpleTracking",
 								"type": "DatasetReference"
 							},
 							"name": "RawDataFromBlob"
@@ -7479,15 +6342,38 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "CharmaCRMRawData",
+								"referenceName": "Charma_RawData_SimpleTracking",
 								"type": "DatasetReference"
 							},
 							"name": "SaveToReadyCSV"
+						},
+						{
+							"dataset": {
+								"referenceName": "Charma_RawData_SimpleTracking",
+								"type": "DatasetReference"
+							},
+							"name": "SaveToRanking"
+						},
+						{
+							"dataset": {
+								"referenceName": "Charma_RawData_SimpleTracking",
+								"type": "DatasetReference"
+							},
+							"name": "SaveSortedAggregation"
 						}
 					],
 					"transformations": [
 						{
 							"name": "RemoveReaktionID"
+						},
+						{
+							"name": "AggregateByPageTilte"
+						},
+						{
+							"name": "rank1"
+						},
+						{
+							"name": "sort1"
 						}
 					],
 					"scriptLines": [
@@ -7539,6 +6425,11 @@
 						"    422164,",
 						"    1118405",
 						"     ], uid)) ~> RemoveReaktionID",
+						"RemoveReaktionID aggregate(groupBy(page_title),",
+						"     uid = count()) ~> AggregateByPageTilte",
+						"AggregateByPageTilte rank(asc(uid, true),",
+						"     output(uid as long)) ~> rank1",
+						"AggregateByPageTilte sort(desc(uid, true)) ~> sort1",
 						"RemoveReaktionID sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -7557,227 +6448,50 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SaveToReadyCSV"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CharmaCRMRawData')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataflowForCRM_Trackings')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "CharmaCRMRawData",
-								"type": "DatasetReference"
-							},
-							"name": "GetTrackingRawData"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "CRM Charma",
-								"type": "LinkedServiceReference"
-							},
-							"name": "SaveForCRMPage"
-						}
-					],
-					"transformations": [
-						{
-							"name": "FilterRemoveReaktionUID"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     did as string (\"107\"),",
-						"     sitename as string (\"charma\"),",
-						"     datatype as string (\"trackings\")",
-						"}",
-						"source(output(",
-						"          createdAt as string,",
-						"          updatedAt as string,",
-						"          uid as integer,",
-						"          url as string,",
-						"          client as string,",
-						"          domain_id as string,",
-						"          referrer_url as string,",
-						"          url_without_params as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
+						"     partitionBy('hash', 1)) ~> SaveToReadyCSV",
+						"rank1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     partitionBy('hash', 1)) ~> GetTrackingRawData",
-						"GetTrackingRawData filter(!in([",
-						"    287962,",
-						"    77602,",
-						"    77233,",
-						"    278328,",
-						"    4,",
-						"    1,",
-						"    315594,",
-						"    315769,",
-						"    278594,",
-						"    77229,",
-						"    77212,",
-						"    287409,",
-						"    287410,",
-						"    287411,",
-						"    287412,",
-						"    287408,",
-						"    287479,",
-						"    287457,",
-						"    287463,",
-						"    287464,",
-						"    287474,",
-						"    287477,",
-						"    287478,",
-						"    287481,",
-						"    287482,",
-						"    287483,",
-						"    298466,",
-						"    422164,",
-						"    1118405",
-						"     ], uid),",
-						"     partitionBy('hash', 1)) ~> FilterRemoveReaktionUID",
-						"FilterRemoveReaktionUID sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'tracking',",
-						"     folderPath: 'trackings',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: false,",
-						"     partitionFileNames:[(concat($sitename, '-ready-to-import', '.csv'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SaveForCRMPage"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CharmaCRMRawData')]",
-				"[concat(variables('factoryId'), '/linkedServices/CRM Charma')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataflowForCRM_Trackings1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "CharmaCRMRawData",
-								"type": "DatasetReference"
-							},
-							"name": "CharmaRawDataCSV"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "CRM Charma",
-								"type": "LinkedServiceReference"
-							},
-							"name": "CharmaDataToImport"
-						}
-					],
-					"transformations": [
-						{
-							"name": "filter1"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     did as string (\"107\"),",
-						"     sitename as string (\"charma\"),",
-						"     datatype as string (\"redirects\")",
-						"}",
-						"source(output(",
-						"          items as string,",
-						"          category as string,",
-						"          uid as integer,",
+						"     input(",
+						"          uid as string,",
 						"          uuid as string,",
-						"          ip as string,",
-						"          domain_id as short,",
 						"          url as string,",
-						"          redirect_name as string,",
 						"          referrer_url as string,",
-						"          {createdAt_$date} as long,",
-						"          {updatedAt_$date} as long",
+						"          web_client as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          {__v} as string",
 						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     partitionBy('hash', 1)) ~> CharmaRawDataCSV",
-						"CharmaRawDataCSV filter(!in([",
-						"    287962,",
-						"    77602,",
-						"    77233,",
-						"    278328,",
-						"    4,",
-						"    1,",
-						"    315594,",
-						"    315769,",
-						"    278594,",
-						"    77229,",
-						"    77212,",
-						"    287409,",
-						"    287410,",
-						"    287411,",
-						"    287412,",
-						"    287408,",
-						"    287479,",
-						"    287457,",
-						"    287463,",
-						"    287464,",
-						"    287474,",
-						"    287477,",
-						"    287478,",
-						"    287481,",
-						"    287482,",
-						"    287483,",
-						"    298466,",
-						"    422164,",
-						"    1118405",
-						"     ], uid),",
-						"     partitionBy('hash', 1)) ~> filter1",
-						"filter1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'tracking',",
-						"     folderPath: ($datatype),",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true,",
-						"     partitionFileNames:[(concat($sitename, '-ready-to-import', '.csv'))],",
+						"     partitionFileNames:[(concat('ranking', '-', toString(currentDate() + $days), '.csv'))],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> CharmaDataToImport"
+						"     partitionBy('hash', 1)) ~> SaveToRanking",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          uid as string,",
+						"          uuid as string,",
+						"          url as string,",
+						"          referrer_url as string,",
+						"          web_client as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          {__v} as string",
+						"     ),",
+						"     partitionFileNames:[(concat('aggreted_and_sorted', '-', toString(currentDate() + $days), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveSortedAggregation"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CharmaCRMRawData')]",
-				"[concat(variables('factoryId'), '/linkedServices/CRM Charma')]"
+				"[concat(variables('factoryId'), '/datasets/Charma_RawData_SimpleTracking')]"
 			]
 		},
 		{
@@ -7892,10 +6606,6 @@
 							"name": "saveCurrentMonthStats"
 						},
 						{
-							"dataset": {
-								"referenceName": "HRNytt_banners_last_3_months",
-								"type": "DatasetReference"
-							},
 							"name": "sink1"
 						},
 						{
@@ -8049,18 +6759,16 @@
 						"     partitionBy('hash', 1)) ~> saveCurrentMonthStats",
 						"sort1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string,",
-						"          Column_2 as string,",
-						"          Column_3 as string",
-						"     ),",
 						"     partitionFileNames:[(concat('banners-last-3-months','.csv'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: false,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1),",
+						"     preCommands: [],",
+						"     postCommands: []) ~> sink1",
 						"sort2 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -8089,7 +6797,6 @@
 				"[concat(variables('factoryId'), '/datasets/HRNytt_Stage_Banners_Clicks')]",
 				"[concat(variables('factoryId'), '/datasets/HRNytt_Stage_Banners')]",
 				"[concat(variables('factoryId'), '/datasets/HRNytt_Banners_Current_Month')]",
-				"[concat(variables('factoryId'), '/datasets/HRNytt_banners_last_3_months')]",
 				"[concat(variables('factoryId'), '/datasets/HRNytt_Agg_By_Page')]"
 			]
 		},
@@ -8792,42 +7499,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SystembolagetStores')]",
 				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TriggerCharma_SimpleTracking')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CharmaCRM_Simple_Trackings",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"domain_id": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id')]",
-							"days": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days')]",
-							"site": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_site')]",
-							"datatype": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_datatype')]",
-							"days_to": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2023-12-04T16:07:00",
-						"timeZone": "W. Europe Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CharmaCRM_Simple_Trackings')]"
 			]
 		}
 	]

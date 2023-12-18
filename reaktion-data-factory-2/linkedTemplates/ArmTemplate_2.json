@@ -13,105 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/Kandidata')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"redirect_name": {
-						"type": "string",
-						"defaultValue": "@item()"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@concat(dataset().redirect_name, '.csv')",
-							"type": "Expression"
-						},
-						"folderPath": "stats/kandidata",
-						"fileSystem": "hrnytt"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Kandidata_HRN0178_Leeds')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "kandidata_pixel_hrn0178.csv",
-						"folderPath": "stats/kandidata",
-						"fileSystem": "hrnytt"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Mongo_TrackingPixels')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -346,42 +247,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TrackingsParquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "tracking.parquet",
-						"fileSystem": "tracking"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "id",
-						"type": "INT32"
-					},
-					{
-						"name": "email",
-						"type": "UTF8"
-					},
-					{
-						"name": "remove_from_adressgruppen",
-						"type": "BOOLEAN"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Utbildnigar_Redirects')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -483,517 +348,204 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/WineExcel')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/CharmaCRM_Redirects')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Excel",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "dudet2.xlsx",
-						"fileSystem": "wines"
-					},
-					"sheetIndex": 0
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
+				"activities": [
+					{
+						"name": "Copy_Redirects_From_MongoDB",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbMongoDbApiSource",
+								"batchSize": 100,
+								"filter": {
+									"value": "{   domain_id : @{pipeline().parameters.domain_id}, \n    createdAt : {\n        $gte : ISODate('@{formatDateTime(addDays(utcNow(), \n                        pipeline().parameters.days), 'yyyy-MM-dd')}'),\n        $lt : ISODate('@{formatDateTime(utcNow(),'yyyy-MM-dd')}') \n    }\n}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['tags'][0]"
+										},
+										"sink": {
+											"name": "items",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['category']"
+										},
+										"sink": {
+											"name": "category",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['uid']"
+										},
+										"sink": {
+											"name": "uid",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['uuid']"
+										},
+										"sink": {
+											"name": "uuid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['ip']"
+										},
+										"sink": {
+											"name": "ip",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['domain_id']"
+										},
+										"sink": {
+											"name": "domain_id",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"path": "$['url']"
+										},
+										"sink": {
+											"name": "url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['redirect_name']"
+										},
+										"sink": {
+											"name": "redirect_name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['referrer_url']"
+										},
+										"sink": {
+											"name": "referrer_url",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']['$date']"
+										},
+										"sink": {
+											"name": "createdAt_$date",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['updatedAt']['$date']"
+										},
+										"sink": {
+											"name": "updatedAt_$date",
+											"type": "Int64"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Mongo_TrackingRedirects",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Charma_RawData_Redirects",
+								"type": "DatasetReference",
+								"parameters": {
+									"site": {
+										"value": "@pipeline().parameters.site",
+										"type": "Expression"
+									},
+									"datatype": {
+										"value": "@pipeline().parameters.datatype",
+										"type": "Expression"
+									}
+								}
+							}
+						]
 					}
-				]
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"domain_id": {
+						"type": "int",
+						"defaultValue": 107
+					},
+					"days": {
+						"type": "int",
+						"defaultValue": -1
+					},
+					"site": {
+						"type": "string",
+						"defaultValue": "charma"
+					},
+					"datatype": {
+						"type": "string",
+						"defaultValue": "redirects"
+					}
+				},
+				"folder": {
+					"name": "CRM/Charma"
+				},
+				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingRedirects')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Kandidata_Redirects')]",
@@ -1332,8 +884,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingRedirects')]",
-				"[concat(variables('factoryId'), '/datasets/Kandidata')]"
+				"[concat(variables('factoryId'), '/datasets/Mongo_TrackingRedirects')]"
 			]
 		},
 		{
@@ -2125,6 +1676,473 @@
 						"          is_active",
 						"     ),",
 						"     partitionBy('hash', 1)) ~> sink4"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DataFlowForSimpleTrackings')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Charma_RawData_SimpleTracking",
+								"type": "DatasetReference"
+							},
+							"name": "RawDataFromBlob"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Charma_RawData_SimpleTracking",
+								"type": "DatasetReference"
+							},
+							"name": "SaveToReadyCSV"
+						},
+						{
+							"dataset": {
+								"referenceName": "Charma_RawData_SimpleTracking",
+								"type": "DatasetReference"
+							},
+							"name": "SaveToRanking"
+						},
+						{
+							"dataset": {
+								"referenceName": "Charma_RawData_SimpleTracking",
+								"type": "DatasetReference"
+							},
+							"name": "SaveSortedAggregation"
+						}
+					],
+					"transformations": [
+						{
+							"name": "RemoveReaktionID"
+						},
+						{
+							"name": "AggregateByPageTilte"
+						},
+						{
+							"name": "rank1"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     sitename as string (\"charma.io\"),",
+						"     datatype as string (\"simple_trackings\"),",
+						"     days as integer (-4),",
+						"     site as string (\"charma.io\")",
+						"}",
+						"source(output(",
+						"          uid as integer,",
+						"          url as string,",
+						"          referrer_url as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          {createdAt_$date} as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> RawDataFromBlob",
+						"RawDataFromBlob filter(!in([",
+						"    287962,",
+						"    77602,",
+						"    77233,",
+						"    278328,",
+						"    4,",
+						"    1,",
+						"    315594,",
+						"    315769,",
+						"    278594,",
+						"    77229,",
+						"    77212,",
+						"    287409,",
+						"    287410,",
+						"    287411,",
+						"    287412,",
+						"    287408,",
+						"    287479,",
+						"    287457,",
+						"    287463,",
+						"    287464,",
+						"    287474,",
+						"    287477,",
+						"    287478,",
+						"    287481,",
+						"    287482,",
+						"    287483,",
+						"    298466,",
+						"    422164,",
+						"    1118405",
+						"     ], uid)) ~> RemoveReaktionID",
+						"RemoveReaktionID aggregate(groupBy(page_title),",
+						"     uid = count()) ~> AggregateByPageTilte",
+						"AggregateByPageTilte rank(asc(uid, true),",
+						"     output(uid as long)) ~> rank1",
+						"AggregateByPageTilte sort(desc(uid, true)) ~> sort1",
+						"RemoveReaktionID sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          uid as string,",
+						"          uuid as string,",
+						"          url as string,",
+						"          referrer_url as string,",
+						"          web_client as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          {__v} as string",
+						"     ),",
+						"     partitionFileNames:[(concat('simple_trackings', '-', toString(currentDate() + $days), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveToReadyCSV",
+						"rank1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          uid as string,",
+						"          uuid as string,",
+						"          url as string,",
+						"          referrer_url as string,",
+						"          web_client as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          {__v} as string",
+						"     ),",
+						"     partitionFileNames:[(concat('ranking', '-', toString(currentDate() + $days), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveToRanking",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          uid as string,",
+						"          uuid as string,",
+						"          url as string,",
+						"          referrer_url as string,",
+						"          web_client as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          {__v} as string",
+						"     ),",
+						"     partitionFileNames:[(concat('aggreted_and_sorted', '-', toString(currentDate() + $days), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SaveSortedAggregation"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EDR_BasicFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "EDR"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "EDR_CSV_Source",
+								"type": "DatasetReference"
+							},
+							"name": "getDataFromCSVSource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "CRM Charma",
+								"type": "LinkedServiceReference"
+							},
+							"name": "saveToRedirectsCSV"
+						}
+					],
+					"transformations": [
+						{
+							"name": "aggByTag"
+						},
+						{
+							"name": "sortByVisitsDesc"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          tag as string,",
+						"          category as string,",
+						"          created as string,",
+						"          updated as string,",
+						"          uid as string,",
+						"          url as string,",
+						"          domain_id as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> getDataFromCSVSource",
+						"getDataFromCSVSource aggregate(groupBy(tag),",
+						"     visits = count(tag),",
+						"     partitionBy('hash', 1)) ~> aggByTag",
+						"aggByTag sort(desc(visits, true)) ~> sortByVisitsDesc",
+						"sortByVisitsDesc sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'charmacrm',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     partitionFileNames:['charma_crm.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> saveToRedirectsCSV"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HRNytt_Banners')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "HRNytt"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Stage_Banners_Clicks",
+								"type": "DatasetReference"
+							},
+							"name": "BannersClicks"
+						},
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Stage_Banners",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Banners_Current_Month",
+								"type": "DatasetReference"
+							},
+							"name": "saveCurrentMonthStats"
+						},
+						{
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "HRNytt_Agg_By_Page",
+								"type": "DatasetReference"
+							},
+							"name": "saveCurrentMonthAggByPage"
+						}
+					],
+					"transformations": [
+						{
+							"name": "aggByDateCurrentMonth"
+						},
+						{
+							"name": "sortByBannerIDandDateCurrentMonth"
+						},
+						{
+							"name": "aMonthAgo"
+						},
+						{
+							"name": "ThreeMonthsAgo"
+						},
+						{
+							"name": "currentMonth"
+						},
+						{
+							"name": "aggByBannerIDandDate2"
+						},
+						{
+							"name": "sort1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "aggByPagesCurrentMonth"
+						},
+						{
+							"name": "sortByMostClicked"
+						},
+						{
+							"name": "joinWithBannersTable"
+						},
+						{
+							"name": "sort2"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     firstDayOfMonth as date (subDays(currentDate(),dayOfMonth(currentDate())))",
+						"}",
+						"source(output(",
+						"          id as integer,",
+						"          url as string,",
+						"          full_url as string,",
+						"          date as date,",
+						"          created as timestamp,",
+						"          banner_id as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> BannersClicks",
+						"source(output(",
+						"          id as integer,",
+						"          published as timestamp,",
+						"          image as string,",
+						"          position as string,",
+						"          created as timestamp,",
+						"          updated as timestamp,",
+						"          code as string,",
+						"          order as integer,",
+						"          title as string,",
+						"          image_url as string,",
+						"          code_mobile as string,",
+						"          valid_until as timestamp,",
+						"          clicks as integer,",
+						"          impressions as integer,",
+						"          mobile_image as string,",
+						"          small_mobile_image as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     partitionBy('hash', 1)) ~> source1",
+						"currentMonth aggregate(groupBy(banner_id,",
+						"          date),",
+						"     cliks = count(banner_id),",
+						"     partitionBy('hash', 1)) ~> aggByDateCurrentMonth",
+						"aggByDateCurrentMonth sort(desc(banner_id, true),",
+						"     desc(date, true),",
+						"     partitionBy('hash', 1)) ~> sortByBannerIDandDateCurrentMonth",
+						"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 1))) ~> aMonthAgo",
+						"BannersClicks filter(date >  toDate( subMonths(currentTimestamp(), 3))) ~> ThreeMonthsAgo",
+						"BannersClicks filter(date <= lastDayOfMonth((currentDate('Europe/Stockholm'))) && date > subDays(currentDate(), dayOfMonth(currentDate()))) ~> currentMonth",
+						"ThreeMonthsAgo aggregate(groupBy(banner_id,",
+						"          date),",
+						"     clicks = count(banner_id),",
+						"     partitionBy('hash', 1)) ~> aggByBannerIDandDate2",
+						"aggByBannerIDandDate2 sort(desc(banner_id, true),",
+						"     desc(date, true),",
+						"     partitionBy('hash', 1)) ~> sort1",
+						"source1 select(mapColumn(",
+						"          id,",
+						"          published,",
+						"          position,",
+						"          title,",
+						"          valid_until,",
+						"          impressions",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"sortByBannerIDandDateCurrentMonth, select1 join(banner_id == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> join1",
+						"currentMonth aggregate(groupBy(url,",
+						"          banner_id),",
+						"     clicks = count(banner_id),",
+						"     partitionBy('hash', 1)) ~> aggByPagesCurrentMonth",
+						"aggByPagesCurrentMonth sort(desc(clicks, true),",
+						"     partitionBy('hash', 1)) ~> sortByMostClicked",
+						"sortByMostClicked, select1 join(banner_id == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinWithBannersTable",
+						"joinWithBannersTable sort(desc(clicks, true),",
+						"     partitionBy('hash', 1)) ~> sort2",
+						"join1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:[(concat('banners-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          date,",
+						"          cliks,",
+						"          title",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> saveCurrentMonthStats",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:[(concat('banners-last-3-months','.csv'))],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: false,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1),",
+						"     preCommands: [],",
+						"     postCommands: []) ~> sink1",
+						"sort2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string",
+						"     ),",
+						"     partitionFileNames:[(concat('banners-by-page-current-month', toString(month(currentUTC())),'-', toString(year(currentUTC())), '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     header: (['url']),",
+						"     mapColumn(",
+						"          url,",
+						"          clicks,",
+						"          position,",
+						"          title",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> saveCurrentMonthAggByPage"
 					]
 				}
 			},

@@ -87,34 +87,6 @@
 			"type": "string",
 			"defaultValue": "tracking-prod"
 		},
-		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
-			"type": "int",
-			"defaultValue": 107
-		},
-		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_days": {
-			"type": "int",
-			"defaultValue": -1
-		},
-		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
-			"type": "string",
-			"defaultValue": "charma"
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id": {
-			"type": "int",
-			"defaultValue": 107
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days": {
-			"type": "int",
-			"defaultValue": -999
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site": {
-			"type": "string",
-			"defaultValue": "charma"
-		},
-		"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype": {
-			"type": "string",
-			"defaultValue": "trackings"
-		},
 		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
 			"type": "string",
 			"defaultValue": "charma.io"
@@ -134,6 +106,18 @@
 		"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_days_to": {
 			"type": "int",
 			"defaultValue": -1
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
+			"type": "int",
+			"defaultValue": 107
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_days": {
+			"type": "int",
+			"defaultValue": -1
+		},
+		"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
+			"type": "string",
+			"defaultValue": "charma"
 		},
 		"containerUri": {
 			"type": "string",
@@ -279,26 +263,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_2')]"
-			]
-		},
-		{
-			"name": "reaktion-data-factory-2_ArmTemplate_4",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
-			"properties": {
-				"mode": "incremental",
-				"templateLink": {
-					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"factoryName": {
-						"value": "[parameters('factoryName')]"
 					},
 					"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id": {
 						"value": "[parameters('Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_domain_id')]"
@@ -308,18 +272,6 @@
 					},
 					"Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site": {
 						"value": "[parameters('Trigger_CRM_Charma_Redirects_properties_CharmaCRM_Redirects_parameters_site')]"
-					},
-					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id": {
-						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_domain_id')]"
-					},
-					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days": {
-						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_days')]"
-					},
-					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site": {
-						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_site')]"
-					},
-					"Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype": {
-						"value": "[parameters('Trigger_CRM_Charma_Trackings_properties_ProcessTrackingsForCRM_parameters_datatype')]"
 					},
 					"TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id": {
 						"value": "[parameters('TriggerCharma_SimpleTracking_properties_CharmaCRM_Simple_Trackings_parameters_domain_id')]"
@@ -339,7 +291,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_3')]"
+				"[resourceId('Microsoft.Resources/deployments', 'reaktion-data-factory-2_ArmTemplate_2')]"
 			]
 		}
 	]
