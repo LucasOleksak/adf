@@ -16,6 +16,9 @@
 				"type": "int"
 			}
 		},
+		"folder": {
+			"name": "Charma"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
