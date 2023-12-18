@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CharmaCRMRawData",
+						"referenceName": "CharmaCRM_RawData_SimpleTracking",
 						"type": "DatasetReference"
 					},
 					"name": "RawDataFromBlob"
@@ -15,21 +15,21 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "CharmaCRMRawData",
+						"referenceName": "CharmaCRM_RawData_SimpleTracking",
 						"type": "DatasetReference"
 					},
 					"name": "SaveToReadyCSV"
 				},
 				{
 					"dataset": {
-						"referenceName": "CharmaCRMRawData",
+						"referenceName": "CharmaCRM_RawData_SimpleTracking",
 						"type": "DatasetReference"
 					},
 					"name": "SaveToRanking"
 				},
 				{
 					"dataset": {
-						"referenceName": "CharmaCRMRawData",
+						"referenceName": "CharmaCRM_RawData_SimpleTracking",
 						"type": "DatasetReference"
 					},
 					"name": "SaveSortedAggregation"

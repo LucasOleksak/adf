@@ -98,7 +98,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CharmaCRMRawData",
+						"referenceName": "CharmaCRM_RawData_SimpleTracking",
 						"type": "DatasetReference",
 						"parameters": {
 							"datatype": {
