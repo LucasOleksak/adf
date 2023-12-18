@@ -3,20 +3,7 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipelines": [
-			{
-				"pipelineReference": {
-					"referenceName": "ProcessTrackingsForCRM",
-					"type": "PipelineReference"
-				},
-				"parameters": {
-					"domain_id": 107,
-					"days": -999,
-					"site": "charma",
-					"datatype": "trackings"
-				}
-			}
-		],
+		"pipelines": [],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
