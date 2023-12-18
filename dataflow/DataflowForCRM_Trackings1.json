@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CharmaCRMRawData",
+						"referenceName": "Charma_RawData_Redirects",
 						"type": "DatasetReference"
 					},
 					"name": "CharmaRawDataCSV"
@@ -29,7 +29,7 @@
 			"scriptLines": [
 				"parameters{",
 				"     did as string (\"107\"),",
-				"     sitename as string (\"charma\"),",
+				"     site as string (\"charma\"),",
 				"     datatype as string (\"redirects\")",
 				"}",
 				"source(output(",
@@ -90,7 +90,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true,",
-				"     partitionFileNames:[(concat($sitename, '-ready-to-import', '.csv'))],",
+				"     partitionFileNames:[(concat($site, '-ready-to-import', '.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
