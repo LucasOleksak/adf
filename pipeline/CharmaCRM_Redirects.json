@@ -163,62 +163,6 @@
 						}
 					}
 				]
-			},
-			{
-				"name": "Process_Redirects_For_CRM",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Copy_Redirects_From_MongoDB",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "DataflowForCRM_Trackings1",
-						"type": "DataFlowReference",
-						"parameters": {
-							"did": {
-								"value": "'@{pipeline().parameters.domain_id}'",
-								"type": "Expression"
-							},
-							"site": {
-								"value": "'@{pipeline().parameters.site}'",
-								"type": "Expression"
-							},
-							"datatype": "\"redirects\""
-						},
-						"datasetParameters": {
-							"CharmaRawDataCSV": {
-								"site": "charma",
-								"datatype": "redirects"
-							}
-						},
-						"linkedServiceParameters": {
-							"CharmaRawDataCSV": {
-								"schemaLinkedService": {
-									"site": "charma",
-									"datatype": "redirects"
-								}
-							}
-						}
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
 			}
 		],
 		"parameters": {
