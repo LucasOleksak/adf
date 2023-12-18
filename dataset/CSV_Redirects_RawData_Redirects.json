@@ -1,5 +1,5 @@
 {
-	"name": "CSV_Redirects_Raw_Mongo_Data",
+	"name": "CSV_Redirects_RawData_Redirects",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CRM Charma",
