@@ -1329,7 +1329,14 @@
 					{
 						"name": "CopySimpleTracking",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "currentDate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1549,6 +1556,169 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "SendConfirmation",
+						"description": "",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ProcessDataFromSimpleTrackings",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod2-16.swedencentral.logic.azure.com:443/workflows/b013f98b16e74506b998a2c79c035596/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gqBa8MsTmvbHDiVxlxFC9fSAZ3UVVa4UIjj8uT6zBQo",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{\n    \"site\" : \"@{pipeline().parameters.site}\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "SendReportWhenProcessFails",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ProcessDataFromSimpleTrackings",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "CopySimpleTracking",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod2-27.swedencentral.logic.azure.com:443/workflows/9aa03ccc308746458b26fa5466906f05/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8bEtcVRnaKYvzgUjCkC0kjHeDPIIViAUBdnBlwwry4Q",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{\n    \"site\" : \"@{pipeline().parameters.site}\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Call_CRM_API",
+						"description": "Send POST to CRM and start to process data",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ProcessDataFromSimpleTrackings",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@variables('API_Endpoint')",
+								"type": "Expression"
+							},
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "@variables('API_Token')",
+									"type": "Expression"
+								}
+							},
+							"body": {
+								"value": "{\n    \"file\" : \"@{concat('simple_trackings-', variables('currentDate'), '.csv')}\", \n    \"site\" : \"@{pipeline().parameters.site}\" \n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "currentDate",
+						"description": "This variable is used to crate filename which will be processed in CRM",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "API_Endpoint",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "currentDate",
+							"value": {
+								"value": "@{formatDateTime(addDays(utcNow(), pipeline().parameters.days), 'yyyy-MM-dd')}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "API_Endpoint",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "API_Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "API_Endpoint",
+							"value": "https://crm-charma.azurewebsites.net/api/import/simple_trackings"
+						}
+					},
+					{
+						"name": "API_Token",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "API_Token",
+							"value": "Token 32a8bc8bc9292957da0db8b69fc4078f6c0121e2"
+						}
 					}
 				],
 				"policy": {
@@ -1574,6 +1744,17 @@
 					"days_to": {
 						"type": "int",
 						"defaultValue": -4
+					}
+				},
+				"variables": {
+					"currentDate": {
+						"type": "String"
+					},
+					"API_Endpoint": {
+						"type": "String"
+					},
+					"API_Token": {
+						"type": "String"
 					}
 				},
 				"folder": {
