@@ -255,7 +255,7 @@
 					"url": "https://prod2-16.swedencentral.logic.azure.com:443/workflows/b013f98b16e74506b998a2c79c035596/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gqBa8MsTmvbHDiVxlxFC9fSAZ3UVVa4UIjj8uT6zBQo",
 					"method": "POST",
 					"body": {
-						"value": "{\n    \"site\" : \"@{pipeline().parameters.site}\"\n}",
+						"value": "{\n    \"site\" : \"@{pipeline().parameters.site}\",\n     \"filename\" : \"@{concat('simple_trackings-', variables('currentDate'), '.csv')}\", \n}",
 						"type": "Expression"
 					}
 				}
