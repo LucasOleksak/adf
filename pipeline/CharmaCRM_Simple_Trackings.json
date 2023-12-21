@@ -327,7 +327,7 @@
 						}
 					},
 					"body": {
-						"value": "{\n    \"file\" : \"@{concat('simple_trackings-', variables('currentDate'), '.csv')}\", \n    \"site\" : \"charma.ioo\"\n}",
+						"value": "{\n    \"file\" : \"@{concat('simple_trackings-', variables('currentDate'), '.csv')}\", \n    \"site\" : \"@{pipeline().parameters.site}\" \n}",
 						"type": "Expression"
 					}
 				}
