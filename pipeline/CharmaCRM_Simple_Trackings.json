@@ -5,7 +5,14 @@
 			{
 				"name": "CopySimpleTracking",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "currentDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -308,10 +315,31 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://crm-charma.azurewebsites.net/api/import/trackings",
+					"url": "https://crm-charma.azurewebsites.net/api/import/simple_trackings",
 					"method": "POST",
 					"headers": {
 						"Authorization": "Token 32a8bc8bc9292957da0db8b69fc4078f6c0121e2"
+					},
+					"body": {
+						"value": "{\n    \"file\" : \"@{concat('simple_trackings-', variables('currentDate'), '.csv')}\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "currentDate",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "currentDate",
+					"value": {
+						"value": "@{formatDateTime(addDays(utcNow(), pipeline().parameters.days), 'yyyy-MM-dd')}",
+						"type": "Expression"
 					}
 				}
 			}
@@ -336,6 +364,11 @@
 			"days_to": {
 				"type": "int",
 				"defaultValue": -4
+			}
+		},
+		"variables": {
+			"currentDate": {
+				"type": "String"
 			}
 		},
 		"folder": {
