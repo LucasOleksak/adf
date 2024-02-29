@@ -1718,6 +1718,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "SaveSortedAggregation"
+						},
+						{
+							"dataset": {
+								"referenceName": "Charma_RawData_SimpleTracking",
+								"type": "DatasetReference"
+							},
+							"name": "Latest"
 						}
 					],
 					"transformations": [
@@ -1844,7 +1851,26 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SaveSortedAggregation"
+						"     partitionBy('hash', 1)) ~> SaveSortedAggregation",
+						"RemoveReaktionID sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          uid as string,",
+						"          uuid as string,",
+						"          url as string,",
+						"          referrer_url as string,",
+						"          web_client as string,",
+						"          page_title as string,",
+						"          domain as string,",
+						"          {__v} as string",
+						"     ),",
+						"     partitionFileNames:[(concat('simple_trackings', '-', 'latest', '.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> Latest"
 					]
 				}
 			},

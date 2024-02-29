@@ -1546,6 +1546,11 @@
 											"value": "@pipeline().parameters.days",
 											"type": "Expression"
 										}
+									},
+									"Latest": {
+										"datatype": "@pipeline().parameters.datatype",
+										"site": "@pipeline().parameters.site",
+										"days": "@pipeline().parameters.days"
 									}
 								}
 							},
@@ -1555,36 +1560,6 @@
 								"computeType": "General"
 							},
 							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "SendConfirmation",
-						"description": "",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "ProcessDataFromSimpleTrackings",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://prod2-16.swedencentral.logic.azure.com:443/workflows/b013f98b16e74506b998a2c79c035596/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gqBa8MsTmvbHDiVxlxFC9fSAZ3UVVa4UIjj8uT6zBQo",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "{\n    \"site\" : \"@{pipeline().parameters.site}\"\n}",
-								"type": "Expression"
-							}
 						}
 					},
 					{
@@ -1613,49 +1588,11 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod2-27.swedencentral.logic.azure.com:443/workflows/9aa03ccc308746458b26fa5466906f05/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8bEtcVRnaKYvzgUjCkC0kjHeDPIIViAUBdnBlwwry4Q",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod2-27.swedencentral.logic.azure.com:443/workflows/9aa03ccc308746458b26fa5466906f05/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8bEtcVRnaKYvzgUjCkC0kjHeDPIIViAUBdnBlwwry4Q",
 							"body": {
 								"value": "{\n    \"site\" : \"@{pipeline().parameters.site}\"\n}",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "Call_CRM_API",
-						"description": "Send POST to CRM and start to process data",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "ProcessDataFromSimpleTrackings",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": {
-								"value": "@variables('API_Endpoint')",
-								"type": "Expression"
-							},
-							"method": "POST",
-							"headers": {
-								"Authorization": {
-									"value": "@variables('API_Token')",
-									"type": "Expression"
-								}
-							},
-							"body": {
-								"value": "{\n    \"file\" : \"@{concat('simple_trackings-', variables('currentDate'), '.csv')}\", \n    \"site\" : \"@{pipeline().parameters.site}\" \n}",
 								"type": "Expression"
 							}
 						}
@@ -1703,7 +1640,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "API_Endpoint",
-							"value": "https://crm-charma.azurewebsites.net/api/import/simple_trackings"
+							"value": "https://crm-charma.reaktion.se/api/import/simple_trackings"
 						}
 					},
 					{
@@ -2185,9 +2122,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 							"body": {
 								"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
 								"type": "Expression"
@@ -2232,9 +2169,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
 							"body": "Å"
 						}
 					},
@@ -2496,9 +2433,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 							"body": {
 								"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
 								"type": "Expression"
@@ -2543,9 +2480,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
 							"body": "Å"
 						}
 					},
@@ -2774,9 +2711,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod-25.norwayeast.logic.azure.com:443/workflows/eb9fad300f714438ba3d90a8690d6906/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3D5tXJdVl0SOgti5co1YknbPcejP9uVSu9MXMCqTc4",
 							"body": {
 								"value": "{  \"ListOfFiles\" : @{variables('file_items')} }",
 								"type": "Expression"
@@ -2821,9 +2758,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod-10.norwayeast.logic.azure.com:443/workflows/6e9518f156e14b30b332b302efc22bd0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k9Rye9fCt8qmna6AVgo2av0jKcL-tOuou_vgKMs5KC8",
 							"body": "Å"
 						}
 					},
@@ -3249,9 +3186,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod2-18.swedencentral.logic.azure.com:443/workflows/d1dc9525b458498590d62cdcb61839c0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CqkODBsoXEFAEIinCN2FugoMURvgqP-Rz7qsfNc5XvI",
 							"method": "POST",
 							"headers": {},
+							"url": "https://prod2-18.swedencentral.logic.azure.com:443/workflows/d1dc9525b458498590d62cdcb61839c0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CqkODBsoXEFAEIinCN2FugoMURvgqP-Rz7qsfNc5XvI",
 							"body": "{ filename : \"\" }"
 						}
 					},
