@@ -221,6 +221,11 @@
 									"value": "@pipeline().parameters.days",
 									"type": "Expression"
 								}
+							},
+							"Latest": {
+								"datatype": "@pipeline().parameters.datatype",
+								"site": "@pipeline().parameters.site",
+								"days": "@pipeline().parameters.days"
 							}
 						}
 					},
